@@ -1,0 +1,9 @@
+---
+- hosts: kubernetes
+  
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - geerlingguy.docker
+    - geerlingguy.kubernetes

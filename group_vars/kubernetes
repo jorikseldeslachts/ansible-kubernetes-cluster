@@ -1,0 +1,24 @@
+---
+
+# Docker vars
+docker_install_compose: false
+docker_users:
+  - jorik
+  - docker
+
+
+# Kubernetes vars
+kubernetes_version: '1.14'
+kubernetes_version_rhel_package: '1.14.2'
+
+kubernetes_role: master
+kubernetes_allow_pods_on_master: true
+
+kubernetes_pod_network_cidr: '10.8.8.0/16'
+kubernetes_ignore_preflight_errors: 'all'
+
+kubernetes_enable_web_ui: true
+kubernetes_web_ui_manifest_file: https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+
+kubernetes_flannel_manifest_file_rbac: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
+kubernetes_flannel_manifest_file: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
