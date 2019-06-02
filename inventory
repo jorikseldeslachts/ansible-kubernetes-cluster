@@ -1,0 +1,11 @@
+# [all:vars]
+# ansible_connection=ssh 
+# ansible_ssh_user=vagrant 
+# ansible_ssh_pass=vagrant
+
+[masters]
+master ansible_host=k8s-host-1 ansible_user=root
+
+[workers]
+worker1 ansible_host=k8s-host-2 ansible_user=root
+worker2 ansible_host=k8s-host-3 ansible_user=root

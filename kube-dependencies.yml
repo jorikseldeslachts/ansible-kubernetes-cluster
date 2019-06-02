@@ -1,0 +1,104 @@
+
+###################### All ######################
+- hosts: all
+  become: yes
+
+  tasks:
+    # - name: Create a centos user
+    #   user:
+    #     name: centos
+    #     password: "SHA512"
+    #     state: present
+    #     shell: /bin/bash 
+    #     system: no
+    #     createhome: yes
+    #     home: /home/centos
+
+    - name: Open Kubernetes ports on the firewall
+      firewalld:
+        port: "{{ item }}/tcp"
+        permanent: yes
+        immediate: yes
+        state: enabled
+      with_items:
+        - "6443"
+        - "10250"
+        - "30000-32767"
+        - "6783"
+
+    - name: install Docker
+      yum:
+        name: docker
+        state: present
+        update_cache: true
+
+    - name: start Docker
+      service:
+        name: docker
+        state: started
+
+#    - name: disable SELinux
+#      command: setenforce 0
+
+    - name: disable SELinux on reboot
+      selinux:
+        state: disabled
+
+    - name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
+      sysctl:
+        name: net.bridge.bridge-nf-call-ip6tables
+        value: 1
+        state: present
+
+    - name: ensure net.bridge.bridge-nf-call-iptables is set to 1
+      sysctl:
+        name: net.bridge.bridge-nf-call-iptables
+        value: 1
+        state: present
+
+    - name: add Kubernetes' YUM repository
+      yum_repository:
+        name: Kubernetes
+        description: Kubernetes YUM repository
+        baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+        gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+        gpgcheck: yes
+
+    - name: install kubelet
+      yum:
+          name: kubelet-1.14.0
+          state: present
+          update_cache: true
+
+    - name: install kubeadm
+      yum:
+          name: kubeadm-1.14.0
+          state: present
+
+    - name: start kubelet
+      service:
+        name: kubelet
+        enabled: yes
+        state: started
+
+###################### Master only ###################### 
+- hosts: master
+  become: yes
+
+  tasks:
+    - name: install kubectl
+      yum:
+        name: kubectl-1.14.0
+        state: present
+        allow_downgrade: yes
+
+    - name: install basic bash completion
+      yum: 
+        name: bash-completion
+        state: present
+
+    - name: "kubectl bash completion: source the completion script in ~/.bashrc file"
+      shell: echo 'source <(kubectl completion bash)' >> ~/.bashrc
+     
+    - name: "kubectl bash completion: add the completion script to /etc/bash_completion.d"
+      shell: kubectl completion bash >/etc/bash_completion.d/kubectl

@@ -1,0 +1,32 @@
+
+# "Adding workers to the cluster involves executing a single 
+# command on each. This command includes the necessary 
+# cluster information, such as the IP address and port of 
+# the master's API Server, and a secure token. 
+# Only nodes that pass in the secure token will be able join 
+# the cluster."
+
+###################### Master ######################
+- hosts: master
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: get join command
+      shell: kubeadm token create --print-join-command
+      register: join_command_raw
+
+    - name: set join command
+      set_fact:
+        join_command: "{{ join_command_raw.stdout_lines[0] }}"
+
+
+###################### Workers ######################
+- hosts: workers
+  become: yes
+  tasks:
+    - name: join cluster
+      shell: "{{ hostvars['master'].join_command }} --ignore-preflight-errors all  >> node_joined.txt"
+      # shell: "{{ hostvars[groups['master'][0]]['join_command'] }} >> node_joined.txt"
+      args:
+        chdir: $HOME
+        creates: node_joined.txt
