@@ -38,6 +38,7 @@
       service:
         name: docker
         state: started
+        enabled: yes
 
 #    - name: disable SELinux
 #      command: setenforce 0
@@ -71,11 +72,13 @@
           name: kubelet-1.14.0
           state: present
           update_cache: true
+          enabled: yes
 
     - name: install kubeadm
       yum:
           name: kubeadm-1.14.0
           state: present
+          enabled: yes
 
     - name: start kubelet
       service:
@@ -93,6 +96,7 @@
         name: kubectl-1.14.0
         state: present
         allow_downgrade: yes
+        enabled: yes
 
     - name: install basic bash completion
       yum: 
