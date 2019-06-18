@@ -21,12 +21,12 @@
         immediate: yes
         state: enabled
       with_items:
-        - "6443"
-        - "10250"
-        - "30000-32767"
-        - "6783"
         - "80"
         - "443"
+        - "6783"
+        - "10250"
+        - "10255"
+        - "30000-32767"
 
     - name: install Docker
       yum:
@@ -89,6 +89,18 @@
   become: yes
 
   tasks:
+    - name: Open Extra Kubernetes ports on the master node firewall
+      firewalld:
+        port: "{{ item }}/tcp"
+        permanent: yes
+        immediate: yes
+        state: enabled
+      with_items:
+        - "2379-2380"
+        - "6443"
+        - "10251"
+        - "10252"
+
     - name: install kubectl
       yum:
         name: kubectl-1.14.0
@@ -105,3 +117,4 @@
      
     - name: "kubectl bash completion: add the completion script to /etc/bash_completion.d"
       shell: kubectl completion bash >/etc/bash_completion.d/kubectl
+
