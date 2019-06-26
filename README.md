@@ -1,5 +1,101 @@
 # Kubernetes with Ansible
 
+## Setup om KVM
+
+- [KVM cheat sheet](https://www.techotopia.com/index.php/Installing_a_KVM_Guest_OS_from_the_Command-line_(virt-install))
+
+```bash
+# create disks / volumes
+cd /var/lib/libvirt/filesystems
+for i in {4..6}
+do
+    qemu-img create -f qcow2 /var/lib/libvirt/filesystems/k8s-host-$i.qcow2 50G
+done
+
+# create vm's --> voor help: --network=?\
+for i in {4..6}
+do
+    virt-install \
+        --name=k8s-host-$i \
+        --os-variant=centos7.0 \
+        --vcpus=2 \
+        --memory=6144 \
+        --cdrom=/var/lib/libvirt/images/k8s-host-$i.iso \
+        --disk vol=galaxy_vms/k8s-host-$i.qcow2 \
+        --network network:galaxy_net_lan \
+        --vnc
+done
+
+# snapshots
+for i in {4..6}
+do
+    virsh snapshot-create-as \
+        --domain k8s-host-$i \
+        --name k8s-host-$i-clean \
+        --description "Clean before ansible/k8s"
+done
+
+# check snapshots
+for i in {4..6}
+do
+    virsh snapshot-list --domain k8s-host-$i
+done
+
+# revert
+for i in {4..6}
+do
+    virsh snapshot-revert k8s-host-$i k8s-host-$i-clean
+done
+
+```
+
+## Ansible
+
+```bash
+# install pip
+sudo apt install -y python-pip
+
+# install requirements
+sudo pip install -r requirements.txt
+
+# ansible version should be >=2.8
+ansible --version
+
+# ssh keys
+for i in {24,25,26}
+do
+    ssh-copy-id root@10.66.66.$i
+    echo "10.66.66.$i done"
+done
+
+# update && upgrade
+for i in {24,25,26}
+do
+    ssh root@10.66.66.$i yum update -y
+    ssh root@10.66.66.$i yum upgrade -y
+    ssh root@10.66.66.$i yum clean all
+    echo "10.66.66.$i done"
+done
+
+# remove yum lock if ansible crashing
+for i in {24,25,26}
+do
+    ssh root@10.66.66.$i rm -rf /var/run/yum.pid
+    echo "10.66.66.$i done"
+done
+
+# reboot
+for i in {4,5,6}
+do
+    ssh root@10.66.66.2$i hostnamectl set-hostname k8s-host-$i.milkywaygalaxy.be
+    ssh root@10.66.66.2$i reboot -h now
+    echo "Rebooting 10.66.66.$i ..."
+done
+```
+
+
+
+
 ## Usefull links
 
 > [Digitalocean Ansible cluster tutorial](https://www.digitalocean.com/community/tutorials/how-to-create-a-kubernetes-cluster-using-kubeadm-on-centos-7)
@@ -12,9 +108,7 @@
 ## Running order
 
 1) install 3 vms with custom ISO's
-2) disable swap
-    - comment/delete /etc/fstab/
-    - swapoff -a
+2) docker.yml
 3) kube-dependencies.yml
 4) master.yml
 5) workers.yml
@@ -35,13 +129,7 @@
 | | kubectl cluster-info |
 | Allow pods on master | kubectl taint node k8s-host-1.cosmos.milkywaygalaxy.be node-role.kubernetes.io/master:NoSchedule- |
 | | |
-| | |
-| | |
-| | |
-| | |
-| | |
-| | |
-| | |
+
 
 ## Cockpit
 

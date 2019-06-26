@@ -6,6 +6,9 @@
 - hosts: master
   become: yes
   tasks:
+    # - name: Pull kubeadm images beforehand
+    #   shell: kubeadm config images pull
+
     - name: initialize the cluster
       shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
       args:

@@ -1,0 +1,47 @@
+- hosts: all
+  become: yes
+# docker docks:
+# https://docs.docker.com/install/linux/docker-ce/centos/
+
+  tasks:
+    - name: Remove all old Docker packages
+      yum: 
+        name: "{{ item }}"
+        state: removed
+      with_items:
+        - docker
+        - docker-client
+        - docker-client-latest
+        - docker-common
+        - docker-latest
+        - docker-latest-logrotate
+        - docker-logrotate
+        - docker-engi
+
+    - name: Make sure all required packages are installed
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - yum-utils
+        - device-mapper-persistent-data
+        - lvm2
+
+    - name: Add Docker repository
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
+    #   become: yes
+        
+    - name: Install Docker
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - docker-ce
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
