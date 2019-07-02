@@ -81,6 +81,7 @@ done
 for i in {24,25,26}
 do
     ssh root@10.66.66.$i rm -rf /var/run/yum.pid
+    ssh root@10.66.66.$i yum clean all
     echo "10.66.66.$i done"
 done
 

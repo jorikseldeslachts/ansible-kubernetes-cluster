@@ -68,18 +68,20 @@
         name: Kubernetes
         description: Kubernetes YUM repository
         baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-        gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+        gpgkey: 
+          - https://packages.cloud.google.com/yum/doc/yum-key.gpg
+          - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
         gpgcheck: yes
 
     - name: install kubelet
       yum:
-        name: kubelet-1.14.0
+        name: kubelet # kubelet-1.14.0
         state: present
         update_cache: yes
           
     - name: install kubeadm
       yum:
-        name: kubeadm-1.14.0
+        name: kubeadm # kubeadm-1.14.0
         state: present
         update_cache: yes
 
@@ -108,7 +110,7 @@
 
     - name: install kubectl
       yum:
-        name: kubectl-1.14.0
+        name: kubectl # kubectl-1.14.0
         state: present
         allow_downgrade: yes
 

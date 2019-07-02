@@ -40,8 +40,23 @@
       with_items:
         - docker-ce
 
+
+    # kubernetes docker config driver=systemd
+    # https://kubernetes.io/docs/setup/production-environment/container-runtimes/
+    - name: Create docker config directory for daemon.json
+      file:
+        path: /etc/docker
+        state: directory
+        mode: 0755
+
+    - name: Copy daemon.json template
+      template:
+        src: daemon.json.j2
+        dest: /etc/docker/daemon.json
+        mode: 0644
+      
     - name: Start Docker service
       service:
         name: docker
-        state: started
+        state: restarted
         enabled: yes
