@@ -65,18 +65,20 @@ ansible --version
 for i in {24,25,26}
 do
     ssh-copy-id root@10.66.66.$i
+    ssh-copy-id jorik@10.66.66.$i
     echo "10.66.66.$i done"
 done
 
 # update && upgrade
 for i in {24,25,26}
 do
-    ssh root@10.66.66.$i yum update -y
-    ssh root@10.66.66.$i yum upgrade -y
-    ssh root@10.66.66.$i yum clean all
+    ssh root@10.66.66.$i \
+        yum update -y && \
+        yum upgrade -y && \
+        yum clean all
     echo "10.66.66.$i done"
 done
-
+  
 # remove yum lock if ansible crashing
 for i in {24,25,26}
 do
@@ -92,6 +94,8 @@ do
     ssh root@10.66.66.2$i reboot -h now
     echo "Rebooting 10.66.66.$i ..."
 done
+
+
 ```
 
 
@@ -136,3 +140,55 @@ done
 
 - 1 cockpit GUI for all servers
 - [https://k8s-host-1:9090](https://k8s-host-1:9090)
+
+
+## Router
+```bash
+# ISO
+./generate_galaxyos_iso.py \
+    --source_iso=CentOS-7-x86_64-Minimal-1810.iso \
+    --current_os=centos \
+    --name=skygate \
+    --ip=10.66.66.9 \
+    --netmask=255.255.255.224 \
+    --gateway=10.66.66.2 \
+    --nic=ens3 \
+    --disk=vda \
+    --nameservers=213.133.98.98,213.133.99.99,213.133.100.100 \
+    --hostname=skygate.milkywaygalaxy.be
+
+# volume
+qemu-img create -f qcow2 /var/lib/libvirt/filesystems/skygate.qcow2 30G
+
+# VM
+virt-install \
+    --name=skygate \
+    --os-variant=centos7.0 \
+    --vcpus=1 \
+    --memory=6144 \
+    --cdrom=/var/lib/libvirt/images/skygate.iso \
+    --disk vol=galaxy_vms/skygate.qcow2 \
+    --network network:galaxy_net_lan \
+    --vnc
+
+# add nic
+virsh attach-interface  \
+    --source galaxy_net_lan  \
+    --domain skygate  \
+    --type network   \
+    --model virtio  \
+    --config  \
+    --live
+
+virsh attach-interface \
+    --domain skygate \
+    bridge br29 \
+    --model virtio \
+    --mac 00:50:56:15:24:da \
+    --config \
+    --live
+
+    
+
+
+```
