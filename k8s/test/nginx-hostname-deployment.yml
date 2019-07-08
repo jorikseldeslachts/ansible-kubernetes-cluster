@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: nginx-hostname
+  labels:
+    app: nginx-hostname
+  namespace: nginx-hostname
+  annotations:
+    monitoring: "true"
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-hostname
+
+  template:
+    metadata:
+      labels:
+        app: nginx-hostname
+
+    spec:
+      containers:
+      # - image: stenote/nginx-hostname
+      - image: nginx
+        name: nginx-hostname
+
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+          requests: 
+            memory: "1Gi"
+            cpu: "500m"
