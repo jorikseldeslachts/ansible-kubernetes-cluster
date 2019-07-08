@@ -5,12 +5,25 @@ metadata:
     app: nginx-hostname
   name: nginx-hostname-service
   namespace: nginx-hostname
+
+
 spec:
-  ports:
-  - nodePort: 30500
-    port: 80
-    protocol: TCP
-    targetPort: 80
+  type: ClusterIP
+  # clusterIP: x.x.x.x
   selector:
     app: nginx-hostname
-  type: NodePort
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 80
+
+  
+# spec:
+#   ports:
+#   - nodePort: 30500
+#     port: 80
+#     protocol: TCP
+#     targetPort: 80
+#   selector:
+#     app: nginx-hostname
+#   type: NodePort
