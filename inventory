@@ -1,6 +1,6 @@
 [masters]
-master ansible_host=k8s-host-4.milkywaygalaxy.be ansible_user=root
+master ansible_host=10.66.66.11 ansible_user=root
 
 [workers]
-worker1 ansible_host=k8s-host-5.milkywaygalaxy.be ansible_user=root
-worker2 ansible_host=k8s-host-6.milkywaygalaxy.be ansible_user=root
+worker1 ansible_host=10.66.66.12 ansible_user=root
+worker2 ansible_host=10.66.66.13 ansible_user=root
