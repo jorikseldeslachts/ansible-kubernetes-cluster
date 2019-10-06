@@ -27,6 +27,14 @@
       command: swapoff -a
       when: ansible_swaptotal_mb > 0
 
+    - name: Add users to Docker group
+      user:
+        name: "{{ item }}"
+        groups: "docker,{{ item }}"
+        append: yes
+      with_items:
+        - "jorik"
+
     - name: Open Kubernetes ports on the firewall
       firewalld:
         port: "{{ item }}/tcp"
@@ -40,12 +48,6 @@
         - "10250"
         - "10255"
         - "30000-32767"
-
-    # - name: Make sure Docker is installed
-    #   include_tasks: "docker.yml"
-
-#    - name: disable SELinux
-#      command: setenforce 0
 
     - name: disable SELinux on reboot
       selinux:
