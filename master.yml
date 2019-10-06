@@ -6,8 +6,8 @@
 - hosts: master
   become: yes
   tasks:
-    # - name: Pull kubeadm images beforehand
-    #   shell: kubeadm config images pull
+    - name: Pull kubeadm images beforehand
+      shell: kubeadm config images pull
 
     - name: initialize the cluster
       shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
@@ -15,6 +15,7 @@
       args:
         chdir: $HOME
         creates: cluster_initialized.txt
+      register: kubernetes_init_stat
 
     - name: create .kube directory
       become: yes
@@ -32,6 +33,13 @@
         owner: jorik
         # group: jorik ??????
 
+    # - name: Allow running pods on the master node
+    #   become: yes
+    #   become_user: jorik
+    #   shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+    #   # when:
+    #   #   - not kubernetes_init_stat.stat.exists
+
     - name: install Pod network
       become: yes
       become_user: jorik
@@ -40,9 +48,3 @@
         chdir: $HOME
         creates: pod_network_setup.txt
 
-    # - name: Allow running pods on the master node
-    #   become: yes
-    #   become_user: jorik
-    #   shell: kubectl taint nodes --all node-role.kubernetes.io/master-
-    #   when:
-    #     - not kubernetes_init_stat.stat.exists
