@@ -159,6 +159,7 @@ done
 
 # volume
 qemu-img create -f qcow2 /var/lib/libvirt/filesystems/skygate.qcow2 30G
+qemu-img create -f qcow2 /var/lib/libvirt/filesystems/kubegate.qcow2 50G
 
 # VM
 virt-install \
@@ -171,17 +172,27 @@ virt-install \
     --network network:galaxy_net_lan \
     --vnc
 
+virt-install \
+    --name=kubegate \
+    --os-variant=freebsd8 \
+    --vcpus=1 \
+    --memory=6144 \
+    --cdrom=/var/lib/libvirt/images/pfSense-CE-2.4.4-RELEASE-p1-amd64.iso \
+    --disk vol=galaxy_vms/kubegate.qcow2 \
+    --vnc
+
+
 # add nic
 virsh attach-interface  \
     --source galaxy_net_lan  \
-    --domain skygate  \
+    --domain kubegate  \
     --type network   \
     --model virtio  \
     --config  \
     --live
 
 virsh attach-interface \
-    --domain skygate \
+    --domain kubegate \
     bridge br29 \
     --model virtio \
     --mac 00:50:56:15:24:da \
