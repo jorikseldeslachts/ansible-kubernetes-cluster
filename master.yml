@@ -33,12 +33,12 @@
         owner: jorik
         # group: jorik ??????
 
-    # - name: Allow running pods on the master node
-    #   become: yes
-    #   become_user: jorik
-    #   shell: kubectl taint nodes --all node-role.kubernetes.io/master-
-    #   # when:
-    #   #   - not kubernetes_init_stat.stat.exists
+    - name: Allow running pods on the master node
+      become: yes
+      become_user: jorik
+      shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+      when:
+        - not kubernetes_init_stat.stat.exists
 
     - name: install Pod network
       become: yes
