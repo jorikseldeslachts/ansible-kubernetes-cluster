@@ -9,9 +9,9 @@
     - name: Pull kubeadm images beforehand
       shell: kubeadm config images pull
 
+      # this cidr has to be the same as in the flannel config!! otherwise coredns pods won't start!
     - name: initialize the cluster
       shell: "kubeadm init --pod-network-cidr=10.88.0.0/16 >> cluster_initialized.txt"
-      #command: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
       args:
         chdir: $HOME
         creates: cluster_initialized.txt
@@ -31,7 +31,6 @@
         dest: /home/jorik/.kube/config
         remote_src: yes
         owner: jorik
-        # group: jorik ??????
 
     - name: Allow running pods on the master node
       become: yes
