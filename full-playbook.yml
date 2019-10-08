@@ -1,0 +1,5 @@
+- import_playbook: inventory docker.yml
+- import_playbook: inventory kube-dependencies.yml
+- import_playbook: inventory master.yml
+- import_playbook: inventory workers.yml
+- import_playbook: inventory cockpit.yml
