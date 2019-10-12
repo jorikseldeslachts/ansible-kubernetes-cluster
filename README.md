@@ -203,3 +203,16 @@ virsh attach-interface \
 
 
 ```
+
+
+
+---
+
+# TODO
+
+- install tools: wget htop nano vim 
+- install nginx ingress
+- install test project
+- install kubectx/kubens
+- make /DATA dir
+- storage??
