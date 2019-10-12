@@ -49,6 +49,16 @@
         - "10255"
         - "30000-32767"
 
+    - name: Open Flannel ports on the firewall
+      firewalld:
+        port: "{{ item }}/udp"
+        permanent: yes
+        immediate: yes
+        state: enabled
+      with_items:
+        - "8472"
+        - "8285"
+
     - name: disable SELinux on reboot
       selinux:
         state: disabled
