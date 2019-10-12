@@ -210,9 +210,10 @@ virsh attach-interface \
 
 # TODO
 
-- install tools: wget htop nano vim 
+- install tools: wget htop nano vim tree bridge-utils
 - install nginx ingress
 - install test project
 - install kubectx/kubens
 - make /DATA dir
 - storage??
+- SET HOSTNAMES IN HOSTFILE!!!! THAT IS WHAT MADE NETWORK FUCKEDUP
