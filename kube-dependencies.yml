@@ -38,12 +38,13 @@
     - name: Open Kubernetes ports on the firewall
       firewalld:
         port: "{{ item }}"
+        masquerade: yes
         permanent: yes
         immediate: yes
         state: enabled
       with_items:
-        - "80/udp"
-        - "443/udp"
+        # - "80/udp"
+        # - "443/udp"
         - "80/tcp"
         - "443/tcp"
         - "6783/tcp"
@@ -54,6 +55,7 @@
     - name: Open Flannel ports on the firewall
       firewalld:
         port: "{{ item }}"
+        masquerade: yes
         permanent: yes
         immediate: yes
         state: enabled
