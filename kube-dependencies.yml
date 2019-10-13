@@ -37,27 +37,29 @@
 
     - name: Open Kubernetes ports on the firewall
       firewalld:
-        port: "{{ item }}/tcp"
+        port: "{{ item }}"
         permanent: yes
         immediate: yes
         state: enabled
       with_items:
-        - "80"
-        - "443"
-        - "6783"
-        - "10250"
-        - "10255"
-        - "30000-32767"
+        - "80/udp"
+        - "443/udp"
+        - "80/tcp"
+        - "443/tcp"
+        - "6783/tcp"
+        - "10250/tcp"
+        - "10255/tcp"
+        - "30000-32767/tcp"
 
     - name: Open Flannel ports on the firewall
       firewalld:
-        port: "{{ item }}/udp"
+        port: "{{ item }}"
         permanent: yes
         immediate: yes
         state: enabled
       with_items:
-        - "8472"
-        - "8285"
+        - "8472/udp"
+        - "8285/udp"
 
     - name: disable SELinux on reboot
       selinux:
