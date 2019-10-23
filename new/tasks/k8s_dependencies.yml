@@ -1,0 +1,123 @@
+- name: Disable SELinux on reboot
+  selinux:
+    state: disabled
+
+- name: "Create a {{k8s_user}} user"
+  user:
+    name: {{k8s_user}}
+    password: "SHA512"
+    state: present
+    shell: /bin/bash
+    system: no
+    createhome: yes
+    home: "/home/{{k8s_user}}"
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: "Add user {{k8s_user}} to Docker group"
+  user:
+    name: "{{ k8s_user }}"
+    groups: "docker,{{ item }}"
+    append: yes
+
+- name: Open Kubernetes ports on the firewall
+  firewalld:
+    port: "{{ item }}"
+    masquerade: yes
+    permanent: yes
+    immediate: yes
+    state: enabled
+  with_items:
+    - "80/tcp"
+    - "443/tcp"
+    - "6783/tcp"
+    - "10250/tcp"
+    - "10255/tcp"
+    - "30000-32767/tcp"
+
+- name: Ensure net.bridge.bridge-nf-call-ip6tables is set to 1 (IPv6)
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+    state: present
+
+- name: Ensure net.bridge.bridge-nf-call-iptables is set to 1 (IPv4)
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+
+- name: Add Kubernetes YUM repository
+  yum_repository:
+    name: Kubernetes
+    description: Kubernetes YUM repository
+    baseurl: "{{k8s_repository_url}}"
+    gpgkey: 
+      - https://packages.cloud.google.com/yum/doc/yum-key.gpg
+      - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    gpgcheck: yes
+      
+- name: Install kubeadm
+  yum:
+    name: kubeadm # kubeadm-1.14.0
+    state: present
+    update_cache: yes
+
+- name: Install kubelet
+  yum:
+    name: kubelet # kubelet-1.14.0
+    state: present
+    update_cache: yes
+
+- name: Start kubelet
+  service:
+    name: kubelet
+    enabled: yes
+    state: started
+
+###################### Master only ###################### 
+
+- name: Open Extra Kubernetes ports on the master nodes firewall
+  when: inventory_hostname in groups['masters']
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  with_items:
+    - "2379-2380/tcp"
+    - "6443/tcp"
+    - "10251/tcp"
+    - "10252/tcp"
+
+- name: Install kubectl
+  when: inventory_hostname in groups['masters']
+  yum:
+    name: kubectl # kubectl-1.14.0
+    state: present
+    allow_downgrade: yes
+
+- name: Install basic bash completion
+  when: inventory_hostname in groups['masters']
+  yum: 
+    name: bash-completion
+    state: present
+
+- name: "Kubectl bash completion: source the completion script in ~/.bashrc file"
+  when: inventory_hostname in groups['masters']
+  shell: echo 'source <(kubectl completion bash)' >> ~/.bashrc
+  
+- name: "Kubectl bash completion: add the completion script to /etc/bash_completion.d"
+  when: inventory_hostname in groups['masters']
+  shell: kubectl completion bash >/etc/bash_completion.d/kubectl
+

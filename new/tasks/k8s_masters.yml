@@ -1,0 +1,33 @@
+###################### Master ######################
+
+- name: Pull kubeadm images beforehand
+  shell: kubeadm config images pull
+
+# this cidr has to be the same as in the CNI config!! otherwise coredns pods won't start!
+- name: Initialize the cluster
+  shell: "kubeadm init --pod-network-cidr={{k8s_cni_cidr}} >> cluster_initialized.txt"
+  args:
+    chdir: $HOME
+    creates: cluster_initialized.txt
+  register: kubernetes_init_stat
+
+- name: Create .kube directory
+  become: yes
+  become_user: "{{k8s_user}}"
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: 0755
+
+- name: Copy admin.conf to user's kube config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "/home/{{k8s_user}}/.kube/config"
+    remote_src: yes
+    owner: "{{k8s_user}}"
+
+- name: Allow running pods on the master node
+  become: yes
+  become_user: "{{k8s_user}}"
+  shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+  when: "{{k8s_pods_scheduled_on_master}}"

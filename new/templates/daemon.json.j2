@@ -1,0 +1,11 @@
+{
+  "exec-opts": ["native.cgroupdriver={{docker_cgroup_driver}}"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "{{docker_storage_driver}}",
+  "storage-opts": [
+    "overlay2.override_kernel_check=true"
+  ]
+}

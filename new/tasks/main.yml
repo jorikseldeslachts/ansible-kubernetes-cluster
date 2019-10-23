@@ -1,0 +1,44 @@
+
+- name: Starting Kubernetes installation
+  debug: 
+    msg: "Starting installation. HA masters: {{k8s_ha_masters}}"
+
+- name: Install some handy packages
+  yum: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - {{extra_handy_packages}}
+
+- name: Include Docker installation tasks
+  include: docker.yml
+  when: {{install_docker}}
+
+- name: Include k8s dependency tasks
+  include: k8s_dependencies.yml
+  when: {{install_docker}}
+
+- name: Include master node tasks
+  include: k8s_masters.yml
+  when: inventory_hostname in groups['masters']
+
+- name: "Include tasks for Flannel CNI plugin"
+  include: flannel_cni.yml.yml
+  when: 
+    - inventory_hostname in groups['masters']
+    - "{{k8s_cni_plugin |lower}}" == 'flannel'
+
+- name: Include worker node tasks
+  include: k8s_workers.yml
+  when: inventory_hostname in groups['workers'] 
+
+
+
+
+
+
+
+# print status messages:
+# - docker status/info
+# - firewall-cmd --list-all
+# - kubectl
