@@ -10,6 +10,13 @@
   with_items:
     - {{extra_handy_packages}}
 
+- name: Update hostfile with all nodes
+  lineinfile:
+    path: /etc/hosts
+    line: '{{item.ip}}   {{item.hostname}}'
+  with_items:
+    - {{hostfile_entries}}
+
 - name: Include Docker installation tasks
   include: docker.yml
   when: {{install_docker}}

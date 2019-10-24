@@ -210,14 +210,14 @@ virsh attach-interface \
 
 # TODO
 
-- install tools: wget htop nano vim tree bridge-utils
+<!-- - install tools: wget htop nano vim tree bridge-utils -->
 - install nginx ingress
 - install test project
-- install kubectx/kubens
+<!-- - install kubectx/kubens -->
 - make /DATA dir
 - storage??
 - SET HOSTNAMES IN HOSTFILE!!!! THAT IS WHAT MADE NETWORK FUCKEDUP
-- masquerading: register + print debug
+<!-- - masquerading: register + print debug -->
 - get nodes : register + debug
 - print if cni1 is aangemaakt
 - -kubernetes dashboard!

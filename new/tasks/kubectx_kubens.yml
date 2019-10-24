@@ -1,16 +1,14 @@
 
-- name: Create .kube directory
-  become: yes
-  become_user: "{{k8s_user}}"
+- name: Create .kubectx directory
   file:
-    path: $HOME/.kube
     state: directory
+    path: "/home/{{k8s_user}}/.kubectx"
     mode: 0755
 
 - name: Clone kubectx and kubens git repository
   git:
     repo: "{{k8s_kubectx_repository_url}}"
-    dest: /home/{{k8s_user}}/.kubectx  
+    dest: "/home/{{k8s_user}}/.kubectx"
 
 - name: Create symlink for kubens
   file:

@@ -12,7 +12,7 @@ k8s_ha_masters: False
 k8s_pods_scheduled_on_master: True
 k8s_user: jorik
 k8s_cni_plugin: flannel
-k8s_cni_cidr: 10.244.0.0/16
+k8s_cni_cidr: 10.244.0.0/16 # for now use the same as in the git yaml!!!
 k8s_cni_file_url: https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
 k8s_packages_repository_url: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
 k8s_kubectx_repository_url: https://github.com/ahmetb/kubectx
@@ -31,3 +31,11 @@ extra_handy_packages:
   - vim
   - tree
   - bridge-utils
+
+hostfile_entries:
+  - hostname: k8s-node-1
+    ip: 10.66.66.11
+  - hostname: k8s-node-2
+    ip: 10.66.66.12
+  - hostname: k8s-node-3
+    ip: 10.66.66.13
