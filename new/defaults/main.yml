@@ -1,24 +1,29 @@
 
 # What to install
+install_kubectx_kubens: True
+install_docker: True
 install_prometheus: True
 install_grafana: True
 install_k8s_dashboard: True
 install_nginx_ingress: True
 
+# k8s vars
 k8s_ha_masters: False
 k8s_pods_scheduled_on_master: True
 k8s_user: jorik
 k8s_cni_plugin: flannel
 k8s_cni_cidr: 10.244.0.0/16
 k8s_cni_file_url: https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
-k8s_repository_url: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+k8s_packages_repository_url: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+k8s_kubectx_repository_url: https://github.com/ahmetb/kubectx
 
-docker_pre_install: True
+# docker vars
 docker_remove_old_docker_packages: True
 docker_repository_url: https://download.docker.com/linux/centos/docker-ce.repo
 docker_cgroup_driver: systemd
 docker_storage_driver: overlay2
 
+# extra vars
 extra_handy_packages:
   - wget
   - htop

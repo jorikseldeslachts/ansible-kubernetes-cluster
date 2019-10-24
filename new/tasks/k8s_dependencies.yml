@@ -61,7 +61,7 @@
   yum_repository:
     name: Kubernetes
     description: Kubernetes YUM repository
-    baseurl: "{{k8s_repository_url}}"
+    baseurl: "{{k8s_packages_repository_url}}"
     gpgkey: 
       - https://packages.cloud.google.com/yum/doc/yum-key.gpg
       - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
