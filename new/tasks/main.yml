@@ -22,6 +22,12 @@
   include: k8s_masters.yml
   when: inventory_hostname in groups['masters']
 
+- name: Include installation of tools kubens & kubectx on master nodes
+  include: kubectx_kubens.yml
+  when: 
+    - inventory_hostname in groups['masters']
+    - {{install_kubectx_kubens}}
+
 - name: "Include tasks for Flannel CNI plugin"
   include: flannel_cni.yml.yml
   when: 
@@ -42,3 +48,4 @@
 # - docker status/info
 # - firewall-cmd --list-all
 # - kubectl
+# kubens
