@@ -10,10 +10,10 @@
   with_items:
     - {{extra_handy_packages}}
 
-- name: Update hostfile with all nodes
+- name: Update hostfile with all node ip's
   lineinfile:
     path: /etc/hosts
-    line: '{{item.ip}}   {{item.hostname}}'
+    line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
   with_items:
     - {{hostfile_entries}}
 

@@ -6,6 +6,7 @@ install_prometheus: True
 install_grafana: True
 install_k8s_dashboard: True
 install_nginx_ingress: True
+install_cockpit: True
 
 # k8s vars
 k8s_ha_masters: False
@@ -34,8 +35,11 @@ extra_handy_packages:
 
 hostfile_entries:
   - hostname: k8s-node-1
+    domain: milkywaygalaxy.be
     ip: 10.66.66.11
   - hostname: k8s-node-2
+    domain: milkywaygalaxy.be
     ip: 10.66.66.12
   - hostname: k8s-node-3
+    domain: milkywaygalaxy.be
     ip: 10.66.66.13
