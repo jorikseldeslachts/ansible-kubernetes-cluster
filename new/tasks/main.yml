@@ -19,11 +19,11 @@
 
 - name: Include Docker installation tasks
   include: docker.yml
-  when: {{install_docker}}
+  when: install_docker |bool
 
 - name: Include k8s dependency tasks
   include: k8s_dependencies.yml
-  when: {{install_docker}}
+  when: install_docker |bool
 
 - name: Include master node tasks
   include: k8s_masters.yml
@@ -33,7 +33,7 @@
   include: kubectx_kubens.yml
   when: 
     - inventory_hostname in groups['masters']
-    - {{install_kubectx_kubens}}
+    - install_kubectx_kubens |bool
 
 - name: "Include tasks for Flannel CNI plugin"
   include: flannel_cni.yml.yml
@@ -45,10 +45,16 @@
   include: k8s_workers.yml
   when: inventory_hostname in groups['workers'] 
 
+- name: Include Cockpit installation tasks
+  include: cockpit.yml
+  when: install_cockpit |bool
 
 
 
 
+- name: Kubernetes installation complete
+  debug: 
+    msg: "Kubernetes installation complete"
 
 
 # print status messages:
