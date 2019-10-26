@@ -59,7 +59,7 @@
 
 # workers setup
 - name: Include worker node tasks
-  include: k8s_workers.yml
+  include: k8s_join_workers.yml
   when: inventory_hostname in groups['workers'] 
 
 
