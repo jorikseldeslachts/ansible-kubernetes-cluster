@@ -64,9 +64,9 @@
 
 
 # Cockpit
-- name: Include Cockpit installation tasks
-  include: cockpit.yml
-  when: install_cockpit |bool
+# - name: Include Cockpit installation tasks
+#   include: cockpit.yml
+#   when: install_cockpit |bool
 
 
 # Debug
