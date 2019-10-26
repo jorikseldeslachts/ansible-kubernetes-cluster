@@ -12,7 +12,8 @@ install_cockpit: True
 k8s_loadbalancer_ip: 10.66.66.1
 k8s_ha_masters: True
 k8s_pods_scheduled_on_master: True
-k8s_user: jorik
+k8s_user: k8s
+k8s_user_password: $6$O5Or6GyG$rfAnZ84jbEq.WaX9WOFe0GM2Lpqev8v5z/rCXCSPeKnXInLwHJfUCXtq2g/kj/DcecOT6Iy7vPbYmpYOdCck2.
 k8s_kubeadm_config_path: /tmp/kubeadm-ha/kubeadm-config.yml
 k8s_cni_plugin: flannel
 k8s_cni_cidr: 10.88.0.0/16 # for now use the same as in the git yaml!!!

@@ -5,7 +5,8 @@
 - name: "Create a {{k8s_user}} user"
   user:
     name: "{{k8s_user}}"
-    password: "SHA512"
+    password: "{{k8s_user_password}}"
+    update_password: on_create
     state: present
     shell: /bin/bash
     system: no
