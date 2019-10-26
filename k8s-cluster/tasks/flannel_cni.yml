@@ -6,7 +6,8 @@
 - name: Install Flannel CNI plugin
   become: yes
   become_user: "{{k8s_user}}"
-  shell: "kubectl apply -f {{k8s_cni_file_url | regex_replace(original_flannel_pod_cidr, k8s_cni_cidr)}} \>> pod_network_setup.txt"
+  shell: |
+    kubectl apply -f {{k8s_cni_file_url | regex_replace(original_flannel_pod_cidr, k8s_cni_cidr)}} >> pod_network_setup.txt"
   args:
     chdir: $HOME
     creates: pod_network_setup.txt
