@@ -39,7 +39,7 @@
   when: inventory_hostname in groups['master-initial']
 
 - name: "Include tasks for Flannel CNI plugin"
-  include: flannel_cni.yml.yml
+  include: flannel_cni.yml
   when: 
     - inventory_hostname in groups['masters']
     - k8s_cni_plugin |lower == 'flannel'
