@@ -27,7 +27,7 @@
 - name: "Add user {{k8s_user}} to Docker group"
   user:
     name: "{{ k8s_user }}"
-    groups: "docker,{{ item }}"
+    groups: "docker,{{ k8s_user }}"
     append: yes
 
 - name: Ensure net.bridge.bridge-nf-call-ip6tables is set to 1 (IPv6)
