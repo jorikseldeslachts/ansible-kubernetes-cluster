@@ -11,14 +11,14 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - extra_handy_packages
+    - "{{extra_handy_packages}}"
 
 - name: Update hostfile with all node ip's
   lineinfile:
     path: /etc/hosts
     line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
   with_items:
-    - hostfile_entries
+    - "{{hostfile_entries}}"
 
 
 # Docker

@@ -47,7 +47,7 @@
   with_items:
     - 8472/udp
     - 8285/udp
-  when: {{k8s_cni_plugin |lower}} == 'flannel'
+  when: "{{k8s_cni_plugin |lower}}" == 'flannel'
   
 
 
