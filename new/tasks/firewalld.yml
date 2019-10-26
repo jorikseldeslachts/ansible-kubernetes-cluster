@@ -3,6 +3,8 @@
 - name: Enable IP masquerading
   shell: "firewall-cmd --permanent --add-masquerade"
 
+
+# All nodes
 - name: Open Kubernetes firewalld ports
   firewalld:
     port: "{{ item }}"
@@ -19,6 +21,8 @@
     - 10255/tcp
     - 30000-32767/tcp
 
+
+# Masters
 - name: Open Extra Kubernetes firewalld ports on master nodes 
   when: inventory_hostname in groups['masters']
   firewalld:
@@ -31,8 +35,23 @@
     - 6443/tcp
     - 10251/tcp
     - 10252/tcp
+
+
+# Flannel CNI
+- name: Open Flannel CNI ports on the firewall
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  with_items:
+    - 8472/udp
+    - 8285/udp
+  when: {{k8s_cni_plugin |lower}} == 'flannel'
   
 
+
+# Reload
 - name: Reload firewalld
   shell: firewall-cmd --reload
 
