@@ -1,0 +1,39 @@
+
+# CNI requires masquerading
+- name: Enable IP masquerading
+  shell: "firewall-cmd --permanent --add-masquerade"
+
+- name: Open Kubernetes firewalld ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  with_items:
+    - 80/tcp
+    - 443/tcp
+    - 53/tcp
+    - 53/udp
+    - 6783/tcp
+    - 10250/tcp
+    - 10255/tcp
+    - 30000-32767/tcp
+
+- name: Open Extra Kubernetes firewalld ports on master nodes 
+  when: inventory_hostname in groups['masters']
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  with_items:
+    - 2379-2380/tcp
+    - 6443/tcp
+    - 10251/tcp
+    - 10252/tcp
+  
+
+- name: Reload firewalld
+  shell: firewall-cmd --reload
+
+ 

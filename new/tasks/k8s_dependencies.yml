@@ -30,21 +30,6 @@
     groups: "docker,{{ item }}"
     append: yes
 
-- name: Open Kubernetes ports on the firewall
-  firewalld:
-    port: "{{ item }}"
-    masquerade: yes
-    permanent: yes
-    immediate: yes
-    state: enabled
-  with_items:
-    - "80/tcp"
-    - "443/tcp"
-    - "6783/tcp"
-    - "10250/tcp"
-    - "10255/tcp"
-    - "30000-32767/tcp"
-
 - name: Ensure net.bridge.bridge-nf-call-ip6tables is set to 1 (IPv6)
   sysctl:
     name: net.bridge.bridge-nf-call-ip6tables
@@ -86,19 +71,6 @@
     state: started
 
 ###################### Master only ###################### 
-
-- name: Open Extra Kubernetes ports on the master nodes firewall
-  when: inventory_hostname in groups['masters']
-  firewalld:
-    port: "{{ item }}"
-    permanent: yes
-    immediate: yes
-    state: enabled
-  with_items:
-    - "2379-2380/tcp"
-    - "6443/tcp"
-    - "10251/tcp"
-    - "10252/tcp"
 
 - name: Install kubectl
   when: inventory_hostname in groups['masters']
