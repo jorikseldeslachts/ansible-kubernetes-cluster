@@ -39,10 +39,10 @@
   shell: |  
     {{master_join_command}} \
       --certificate-key {{master_upload_cert}} \
-      --experimental-control-plane >> ha_master_added.txt"
+      --experimental-control-plane >> master_node_joined.txt"
   args:
     chdir: "/home/{{k8s_user}}/"
-    creates: ha_master_added.txt
+    creates: master_node_joined.txt
 
 
 # Get node status
