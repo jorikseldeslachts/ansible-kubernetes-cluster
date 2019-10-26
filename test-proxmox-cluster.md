@@ -87,4 +87,12 @@ done
   - Test DNS
     - Snapshot VM after clean install
 
-  
+## Ansible
+
+```sh
+# syntax check
+ansible-playbook k8s-playbook.yml --syntax-check -i k8s-cluster/inventory
+
+# run playbook on servers
+ansible-playbook k8s-playbook.yml -i k8s-cluster/inventory --ask-become-pass -u jorik
+```
