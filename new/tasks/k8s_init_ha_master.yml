@@ -1,0 +1,57 @@
+
+# kubeadm token create --ttl 10m --print-join-command
+# kubeadm init phase upload-certs --experimental-upload-certs
+
+# kubeadm join 192.168.122.170:6443 \
+#     --experimental-control-plane \
+#     --certificate-key 9555b74008f24687eb964bd90a164ecb5760a89481d9c55a77c129b7db438168 \
+#     --token xaw58o.0fjg0xp0ohpucwhr \
+#     --discovery-token-ca-cert-hash sha256:5efac16c86e5f2ed6b20c6dbcbf3a9daa5bf75aa604097dbf49fdc3d1fd5ff7d
+
+
+# first create token on initial master
+- name: Create join token on initial master
+  shell: |
+    kubeadm token create \
+      --ttl 10m \
+      --print-join-command"
+  register: master_join_command
+  when: inventory_hostname in groups['master-initial']
+
+- name: Debug master_join_command
+  debug:
+    msg: "{{master_join_command}}"
+
+- name: Upload certs on initial master
+  shell: |
+    kubeadm init phase upload-certs \
+      --experimental-upload-certs | grep -v upload-certs
+  register: master_upload_cert
+  when: inventory_hostname in groups['master-initial']
+  
+- name: Debug master_upload_cert
+  debug:
+    msg: "{{master_upload_cert}}"
+
+
+# Join new HA masters
+- name: Join HA masters to the cluster
+  shell: |  
+    {{master_join_command}} \
+      --certificate-key {{master_upload_cert}} \
+      --experimental-control-plane >> ha_master_added.txt"
+  args:
+    chdir: "/home/{{k8s_user}}/"
+    creates: ha_master_added.txt
+
+
+# Get node status
+- name: Get node status
+  become_user: "{{k8s_user}}"
+  shell: |
+    kubectl get nodes
+  register: get_nodes
+
+- name: Debug get nodes
+  debug:
+    msg: "{{k8s_user}}"

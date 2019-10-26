@@ -3,13 +3,39 @@
 - name: Pull kubeadm images beforehand
   shell: kubeadm config images pull
 
+
+# add
+# customg
+# config file
+# for apiversion: cluster
+# https://www.youtube.com/watch?v=27v36t-3afQ&t=151s
+# custom pod/bridge network etc etc
+# controlpane endpoint to nginx: roundrobin
+
+- name: Copy custom kubeadm-config.yml
+  template:
+    src: kubeadm-config.yml.j2
+    dest: "{{k8s_kubeadm_config_path}}"
+
 # this cidr has to be the same as in the CNI config!! otherwise coredns pods won't start!
-- name: Initialize the cluster
-  shell: "kubeadm init --pod-network-cidr={{k8s_cni_cidr}} >> cluster_initialized.txt"
+- name: Initialize the cluster without HA config
+  shell: |
+    kubeadm init \
+      --pod-network-cidr={{k8s_cni_cidr}} >> cluster_initialized.txt"
   args:
     chdir: "/home/{{k8s_user}}/"
     creates: cluster_initialized.txt
-  register: kubernetes_init_stat
+  when: not k8s_ha_masters |bool
+
+- name: Initialize the cluster with HA config
+  shell: |
+    kubeadm init \
+      --config={{k8s_kubeadm_config_path}} \
+      --experimental-upload-certs >> cluster_initialized.txt
+  args:
+    chdir: "/home/{{k8s_user}}/"
+    creates: cluster_initialized.txt
+  when: k8s_ha_masters |bool
 
 - name: Create .kube directory
   file:

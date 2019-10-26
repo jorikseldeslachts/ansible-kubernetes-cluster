@@ -9,9 +9,11 @@ install_nginx_ingress: True
 install_cockpit: True
 
 # k8s vars
+k8s_loadbalancer_ip: 10.66.66.1
 k8s_ha_masters: True
 k8s_pods_scheduled_on_master: True
 k8s_user: jorik
+k8s_kubeadm_config_path: /tmp/kubeadm-ha/kubeadm-config.yml
 k8s_cni_plugin: flannel
 k8s_cni_cidr: 10.244.0.0/16 # for now use the same as in the git yaml!!!
 k8s_cni_file_url: https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
