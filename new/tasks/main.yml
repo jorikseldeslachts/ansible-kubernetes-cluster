@@ -25,21 +25,27 @@
   include: k8s_dependencies.yml
   when: install_docker |bool
 
-- name: Include master node tasks
-  include: k8s_masters.yml
-  when: inventory_hostname in groups['masters']
-
-- name: Include installation of tools kubens & kubectx on master nodes
-  include: kubectx_kubens.yml
-  when: 
-    - inventory_hostname in groups['masters']
-    - install_kubectx_kubens |bool
+- name: Include first master init tasks
+  include: k8s_init_first_master.yml
+  when: inventory_hostname in groups['master-initial']
 
 - name: "Include tasks for Flannel CNI plugin"
   include: flannel_cni.yml.yml
   when: 
     - inventory_hostname in groups['masters']
     - "{{k8s_cni_plugin |lower}}" == 'flannel'
+
+- name: Include HA masters init tasks
+  include: k8s_init_ha_master.yml
+  when: 
+    - {{k8s_ha_masters}} |bool
+    - inventory_hostname in groups['master-ha']
+
+- name: Include installation of tools kubens & kubectx on all master nodes
+  include: kubectx_kubens.yml
+  when: 
+    - inventory_hostname in groups['masters']
+    - install_kubectx_kubens |bool
 
 - name: Include worker node tasks
   include: k8s_workers.yml
