@@ -4,7 +4,7 @@
 
 - name: "Create a {{k8s_user}} user"
   user:
-    name: {{k8s_user}}
+    name: "{{k8s_user}}"
     password: "SHA512"
     state: present
     shell: /bin/bash

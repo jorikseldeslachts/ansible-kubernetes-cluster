@@ -14,7 +14,7 @@
   shell: |
     kubeadm token create \
       --ttl 10m \
-      --print-join-command"
+      --print-join-command
   register: master_join_command
   when: inventory_hostname in groups['master-initial']
 
@@ -39,7 +39,7 @@
   shell: |  
     {{master_join_command}} \
       --certificate-key {{master_upload_cert}} \
-      --experimental-control-plane >> master_node_joined.txt"
+      --experimental-control-plane >> master_node_joined.txt
   args:
     chdir: "/home/{{k8s_user}}/"
     creates: master_node_joined.txt

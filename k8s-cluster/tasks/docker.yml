@@ -11,7 +11,7 @@
     - docker-latest-logrotate
     - docker-logrotate
     - docker-engi
-  when: {{docker_remove_old_docker_packages}}
+  when: docker_remove_old_docker_packages |bool
 
 - name: Make sure all required packages are installed
   yum:
@@ -25,7 +25,7 @@
 
 - name: Add Docker repository
   get_url:
-    url: {{docker_repository_url}}
+    url: "{{docker_repository_url}}"
     dest: /etc/yum.repos.d/docker-ce.repo
     
 - name: Install Docker
