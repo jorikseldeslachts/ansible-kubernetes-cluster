@@ -7,27 +7,28 @@
 - name: Initialize the cluster
   shell: "kubeadm init --pod-network-cidr={{k8s_cni_cidr}} >> cluster_initialized.txt"
   args:
-    chdir: $HOME
+    chdir: "/home/{{k8s_user}}/"
     creates: cluster_initialized.txt
   register: kubernetes_init_stat
 
 - name: Create .kube directory
-  become: yes
-  become_user: "{{k8s_user}}"
   file:
-    path: $HOME/.kube
+    path: "/home/{{k8s_user}}/.kube"
     state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
     mode: 0755
 
-- name: Copy admin.conf to user's kube config
+- name: Copy admin.conf to .kube folder
   copy:
     src: /etc/kubernetes/admin.conf
     dest: "/home/{{k8s_user}}/.kube/config"
-    remote_src: yes
     owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    remote_src: yes
 
-- name: Allow running pods on the master node
-  become: yes
-  become_user: "{{k8s_user}}"
-  shell: kubectl taint nodes --all node-role.kubernetes.io/master-
-  when: "{{k8s_pods_scheduled_on_master}}"
+# - name: Allow running pods on the master node
+#   become: yes
+#   become_user: "{{k8s_user}}"
+#   shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+#   when: "{{k8s_pods_scheduled_on_master}}"
