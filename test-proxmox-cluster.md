@@ -67,7 +67,7 @@ do
         --source_iso=CentOS-7-x86_64-Minimal-1908.iso \
         --current_os=centos \
         --name=k8s-node-$i \
-        --ip=10.66.66.1$i \
+        --ip=10.66.66.$i \
         --netmask=255.255.255.240 \
         --gateway=10.66.66.1 \
         --nic=ens18 \
@@ -94,5 +94,5 @@ done
 ansible-playbook k8s-playbook.yml --syntax-check -i k8s-cluster/inventory
 
 # run playbook on servers
-ansible-playbook k8s-playbook.yml -i k8s-cluster/inventory --ask-become-pass -u jorik
+ansible-playbook -i k8s-cluster/inventory -u jorik --ask-become-pass k8s-playbook.yml 
 ```
