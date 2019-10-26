@@ -74,23 +74,34 @@
 ###################### Master only ###################### 
 
 - name: Install kubectl
-  when: inventory_hostname in groups['masters']
   yum:
     name: kubectl # kubectl-1.14.0
     state: present
     allow_downgrade: yes
+  when: inventory_hostname in groups['masters']
+  
+- name: Create alias k for kubectl
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: "alias k=kubectl"
 
 - name: Install basic bash completion
-  when: inventory_hostname in groups['masters']
   yum: 
     name: bash-completion
     state: present
-
-- name: "Kubectl bash completion: source the completion script in ~/.bashrc file"
   when: inventory_hostname in groups['masters']
-  shell: echo 'source <(kubectl completion bash)' >> ~/.bashrc
+
+- name: "Kubectl bash completion: source the completion script in /home/{{k8s_user}}/.bashrc file"
+  shell: |
+    echo 'source <(kubectl completion bash)' >> /home/{{k8s_user}}/.bashrc
+  when: inventory_hostname in groups['masters']
   
 - name: "Kubectl bash completion: add the completion script to /etc/bash_completion.d"
+  shell: |
+    kubectl completion bash > /etc/bash_completion.d/kubectl
   when: inventory_hostname in groups['masters']
-  shell: kubectl completion bash >/etc/bash_completion.d/kubectl
 
+- name: Extend bash completion to also work for alias k
+  shell: |
+    echo 'complete -F __start_kubectl k' >> /home/{{k8s_user}}/.bashrc
+  when: inventory_hostname in groups['masters']
