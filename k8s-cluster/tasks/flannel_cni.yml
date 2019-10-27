@@ -1,5 +1,5 @@
 # Replace the CIDR
-- name: "Register original Flannel pods CIDR: 10.244.0.0/16"
+- name: "Register original pod cidr"
   set_fact:
     original_flannel_pod_cidr: 10.244.0.0/16
 
@@ -14,4 +14,6 @@
 
 - name: Flannel installed pod CIDR
   debug: 
-    msg: "{{k8s_cni_cidr}}"
+    msg:
+      - "Original pod CIDR: {{original_flannel_pod_cidr}}"
+      - "Installed pod CIDR: {{k8s_cni_cidr}}"
