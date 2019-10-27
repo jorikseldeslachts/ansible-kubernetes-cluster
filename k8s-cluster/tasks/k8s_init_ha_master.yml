@@ -1,9 +1,9 @@
 
 # kubeadm token create --ttl 10m --print-join-command
-# kubeadm init phase upload-certs --experimental-upload-certs
+# kubeadm init phase upload-certs --upload-certs
 
 # kubeadm join 192.168.122.170:6443 \
-#     --experimental-control-plane \
+#     --control-plane \
 #     --certificate-key 9555b74008f24687eb964bd90a164ecb5760a89481d9c55a77c129b7db438168 \
 #     --token xaw58o.0fjg0xp0ohpucwhr \
 #     --discovery-token-ca-cert-hash sha256:5efac16c86e5f2ed6b20c6dbcbf3a9daa5bf75aa604097dbf49fdc3d1fd5ff7d
@@ -25,7 +25,7 @@
 - name: Upload certs on initial master
   shell: |
     kubeadm init phase upload-certs \
-      --experimental-upload-certs | grep -v upload-certs
+      --upload-certs | grep -v upload-certs
   register: master_upload_cert
   when: inventory_hostname in groups['master-initial']
   
@@ -39,7 +39,7 @@
   shell: |  
     {{master_join_command}} \
       --certificate-key {{master_upload_cert}} \
-      --experimental-control-plane >> master_node_joined.txt
+      --control-plane >> master_node_joined.txt
   args:
     chdir: "/home/{{k8s_user}}/"
     creates: master_node_joined.txt
