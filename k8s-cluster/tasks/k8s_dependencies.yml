@@ -13,7 +13,10 @@
     createhome: yes
     home: "/home/{{k8s_user}}"
 
-- name: "Conf"
+- name: "Configure prompt colors to blue for {{k8s_user}}"
+  lineinfile:
+    # path: "/home/{{k8s_user}}/.bashrc"
+    # line: ""
 
 - name: Remove swapfile from /etc/fstab
   mount:
