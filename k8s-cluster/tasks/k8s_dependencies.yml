@@ -92,8 +92,9 @@
   when: inventory_hostname in groups['masters']
 
 - name: "Kubectl bash completion: source the completion script in /home/{{k8s_user}}/.bashrc file"
-  shell: |
-    echo 'source <(kubectl completion bash)' >> /home/{{k8s_user}}/.bashrc
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: "source <(kubectl completion bash)"
   when: inventory_hostname in groups['masters']
   
 - name: "Kubectl bash completion: add the completion script to /etc/bash_completion.d"
@@ -102,6 +103,7 @@
   when: inventory_hostname in groups['masters']
 
 - name: Extend bash completion to also work for alias k
-  shell: |
-    echo 'complete -F __start_kubectl k' >> /home/{{k8s_user}}/.bashrc
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: "complete -F __start_kubectl k"
   when: inventory_hostname in groups['masters']

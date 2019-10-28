@@ -221,3 +221,6 @@ virsh attach-interface \
 - get nodes : register + debug
 - print if cni1 is aangemaakt
 - -kubernetes dashboard!
+- k8s .bashrc
+    - blue colors
+    - bash completion get added every rerun ">>" --> replace with lineinfile
