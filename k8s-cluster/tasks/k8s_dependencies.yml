@@ -13,6 +13,8 @@
     createhome: yes
     home: "/home/{{k8s_user}}"
 
+- name: "Conf"
+
 - name: Remove swapfile from /etc/fstab
   mount:
     name: "{{ item }}"

@@ -15,5 +15,6 @@
 - name: Flannel installed pod CIDR
   debug: 
     msg:
-      - "Original pod CIDR: {{original_flannel_pod_cidr}}"
-      - "Installed pod CIDR: {{k8s_cni_cidr}}"
+      # - "Original pod CIDR: {{original_flannel_pod_cidr}}"
+      # - "Installed pod CIDR: {{k8s_cni_cidr}}"
+      - "Configured pod CIDR to {{k8s_cni_cidr}} instead of original {{original_flannel_pod_cidr}}"
