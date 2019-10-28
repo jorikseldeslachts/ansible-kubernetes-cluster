@@ -51,7 +51,7 @@
     - inventory_hostname in groups['master-ha']
 
 - name: Include installation of tools kubens & kubectx on all master nodes
-  include: kubectx_kubens.yml
+  include: k8s_kubectx_kubens.yml
   when: 
     - inventory_hostname in groups['masters']
     - install_kubectx_kubens |bool
