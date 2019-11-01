@@ -21,7 +21,7 @@ k8s_packages_repository_url: https://packages.cloud.google.com/yum/repos/kuberne
 k8s_kubectx_repository_url: https://github.com/ahmetb/kubectx
 
 # docker vars
-docker_version: 18.09.10
+docker_version: 18.09.9
 docker_remove_old_docker_packages: True
 docker_repository_url: https://download.docker.com/linux/centos/docker-ce.repo
 docker_cgroup_driver: systemd
