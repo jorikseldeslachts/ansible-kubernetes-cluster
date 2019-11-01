@@ -17,6 +17,7 @@ k8s_user_password: $6$O5Or6GyG$rfAnZ84jbEq.WaX9WOFe0GM2Lpqev8v5z/rCXCSPeKnXInLwH
 k8s_cni_plugin: flannel
 k8s_cni_cidr: 10.88.0.0/16 # for now use the same as in the git yaml!!!
 k8s_cni_file_url: https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
+k8s_cni_tmp_file: /tmp/flannel_cni.yml
 k8s_packages_repository_url: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
 k8s_kubectx_repository_url: https://github.com/ahmetb/kubectx
 
