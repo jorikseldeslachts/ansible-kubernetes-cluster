@@ -55,6 +55,15 @@
 ########################### master-ha ###############################
 
 # Join new HA masters
+- name: Create .kube directory
+  file:
+    path: "/home/{{k8s_user}}/.kube"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0755
+  when: inventory_hostname in groups['master-ha']
+
 - name: Join HA masters to the cluster
   shell: |  
     {{master_join_command}} \
@@ -65,21 +74,12 @@
     creates: master_node_joined.txt
   when: inventory_hostname in groups['master-ha']
 
-- name: Create .kube directory
-  file:
-    path: "/home/{{k8s_user}}/.kube"
-    state: directory
-    owner: "{{k8s_user}}"
-    group: "{{k8s_user}}"
-    mode: 0755
-  when: inventory_hostname in groups['master-ha']
-
 - name: Configure kube config on HA masters
   # shell: |
   #   echo {{kube_config_content.stdout}} > /home/{{k8s_user}}/.kube/config
   # when: inventory_hostname in groups['master-ha']
   copy:
-    content: "{{ kube_config_content.stdout_lines }}"
+    content: "{{ kube_config_content }}"
     dest: "/home/{{k8s_user}}/.kube/config"
   when: inventory_hostname in groups['master-ha']
 
