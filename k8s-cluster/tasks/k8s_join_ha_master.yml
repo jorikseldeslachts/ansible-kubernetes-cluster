@@ -56,6 +56,21 @@
     creates: master_node_joined.txt
   when: inventory_hostname in groups['master-ha']
 
+- name: Create .kube directory
+  file:
+    path: "/home/{{k8s_user}}/.kube"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0755
+  when: inventory_hostname in groups['master-ha']
+
+- name: Sync config from initial master to other HA masters
+  synchronize:
+    src: "/home/{{k8s_user}}/.kube"
+    dest: "/home/{{k8s_user}}/.kube"
+  delegate_to: "{{groups['master-initial'][0]}}"
+  when: inventory_hostname in groups['master-ha']
 
 
 ########################### all mastes ###############################
