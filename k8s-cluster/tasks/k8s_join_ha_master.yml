@@ -49,7 +49,7 @@
 
 - name: Debug kube config
   debug:
-    msg: "{{ kube_config_content.stdout }}"
+    msg: "{{ kube_config_content }}"
   when: inventory_hostname in groups['master-initial']
 
 ########################### master-ha ###############################
@@ -75,12 +75,8 @@
   when: inventory_hostname in groups['master-ha']
 
 - name: Configure kube config on HA masters
-  # shell: |
-  #   echo {{kube_config_content.stdout}} > /home/{{k8s_user}}/.kube/config
-  # when: inventory_hostname in groups['master-ha']
-  copy:
-    content: "{{ kube_config_content.results }}"
-    dest: "/home/{{k8s_user}}/.kube/config"
+  shell: |
+    echo {{kube_config_content.stdout}} > /home/{{k8s_user}}/.kube/config
   when: inventory_hostname in groups['master-ha']
 
 
