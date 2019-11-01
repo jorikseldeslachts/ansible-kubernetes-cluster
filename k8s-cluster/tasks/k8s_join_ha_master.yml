@@ -9,6 +9,10 @@
 #     --discovery-token-ca-cert-hash sha256:5efac16c86e5f2ed6b20c6dbcbf3a9daa5bf75aa604097dbf49fdc3d1fd5ff7d
 
 
+
+
+########################### master-initial ###############################
+
 # First create token on initial master
 - name: Create join token on initial master
   shell: |
@@ -17,11 +21,11 @@
       --print-join-command
   register: master_join_command
   when: inventory_hostname in groups['master-initial']
-  when: inventory_hostname in groups['masters']
 
 - name: Debug master_join_command
   debug:
     msg: "{{master_join_command}}"
+  when: inventory_hostname in groups['master-initial']
 
 
 # Upload certs on initial master
@@ -35,7 +39,11 @@
 - name: Debug master_upload_cert
   debug:
     msg: "{{master_upload_cert}}"
+  when: inventory_hostname in groups['master-initial']
 
+
+
+########################### master-ha ###############################
 
 # Join new HA masters
 - name: Join HA masters to the cluster
@@ -46,7 +54,11 @@
   args:
     chdir: "/home/{{k8s_user}}/"
     creates: master_node_joined.txt
+  when: inventory_hostname in groups['master-ha']
 
+
+
+########################### all mastes ###############################
 
 # Get node status
 - name: Get node status
@@ -54,7 +66,9 @@
   shell: |
     kubectl get nodes
   register: get_nodes
+  when: inventory_hostname in groups['masters']
 
 - name: Debug get nodes
   debug:
     msg: "{{k8s_user}}"
+  when: inventory_hostname in groups['masters']
