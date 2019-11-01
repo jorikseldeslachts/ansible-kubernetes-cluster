@@ -76,7 +76,7 @@
 
 - name: Configure kube config 
   shell: |
-    echo {{kube_config_content}} > /home/{{k8s_user}}/.kube/config
+    echo {{ kube_config_content.stdout }} > /home/{{k8s_user}}/.kube/config
   when: inventory_hostname in groups['master-ha']
 
 
