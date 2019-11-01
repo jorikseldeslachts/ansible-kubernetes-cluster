@@ -1,47 +1,47 @@
 
-# Debug
-# - name: Starting Kubernetes installation
-#   debug: 
-#     msg: "Starting installation. HA masters: {{k8s_ha_masters}}"
+Debug
+- name: Starting Kubernetes installation
+  debug: 
+    msg: "Starting installation. HA masters: {{k8s_ha_masters}}"
 
 
-# # Preparation
-# - name: Install some handy packages
-#   yum: 
-#     name: "{{ item }}"
-#     state: present
-#   with_items:
-#     - "{{extra_handy_packages}}"
+# Preparation
+- name: Install some handy packages
+  yum: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{extra_handy_packages}}"
 
-# - name: Update hostfile with all node ip's
-#   lineinfile:
-#     path: /etc/hosts
-#     line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
-#   with_items:
-#     - "{{hostfile_entries}}"
-
-
-# # Docker
-# - name: Include Docker installation tasks
-#   include: docker.yml
-#   when: install_docker |bool
+- name: Update hostfile with all node ip's
+  lineinfile:
+    path: /etc/hosts
+    line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
+  with_items:
+    - "{{hostfile_entries}}"
 
 
-# # Firewalld
-# - name: Include Firewalld configuration tasks
-#   include: firewalld.yml
+# Docker
+- name: Include Docker installation tasks
+  include: docker.yml
+  when: install_docker |bool
 
 
-# # K8s dependencies
-# - name: Include k8s dependency tasks
-#   include: k8s_dependencies.yml
-#   when: install_docker |bool
+# Firewalld
+- name: Include Firewalld configuration tasks
+  include: firewalld.yml
 
 
-# # Masters setup
-# - name: Include first master init tasks
-#   include: k8s_init_first_master.yml
-#   when: inventory_hostname in groups['master-initial']
+# K8s dependencies
+- name: Include k8s dependency tasks
+  include: k8s_dependencies.yml
+  when: install_docker |bool
+
+
+# Masters setup
+- name: Include first master init tasks
+  include: k8s_init_first_master.yml
+  when: inventory_hostname in groups['master-initial']
 
 - name: "Include tasks for Flannel CNI plugin"
   include: flannel_cni.yml
