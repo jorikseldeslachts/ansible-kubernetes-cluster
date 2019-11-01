@@ -1,5 +1,5 @@
 
-Debug
+# Debug
 - name: Starting Kubernetes installation
   debug: 
     msg: "Starting installation. HA masters: {{k8s_ha_masters}}"
