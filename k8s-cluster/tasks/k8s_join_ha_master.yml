@@ -41,16 +41,22 @@
     msg: "{{ master_upload_cert.stdout }}"
   when: inventory_hostname in groups['master-initial']
 
+
+
 - name: Register kube config
   shell: |
     cat /home/{{k8s_user}}/.kube/config
-  register: kube_config_content
+  register: kube_config_content_raw
   when: inventory_hostname in groups['master-initial']
 
 - name: Debug kube config
   debug:
-    msg: "{{ kube_config_content }}"
+    msg: "{{ kube_config_content_raw.stdout }}"
   when: inventory_hostname in groups['master-initial']
+
+- name: Register var kube_config_content
+  set_fact:
+    kube_config_content: "{{kube_config_content_raw.stdout}}"
 
 ########################### master-ha ###############################
 
@@ -73,11 +79,6 @@
     chdir: "/home/{{k8s_user}}/"
     creates: master_node_joined.txt
   when: inventory_hostname in groups['master-ha']
-
-
-- name: Debug kube config
-  debug:
-    msg: "{{ kube_config_content.stdout }}"
 
 - name: Configure kube config on HA masters
   shell: |
