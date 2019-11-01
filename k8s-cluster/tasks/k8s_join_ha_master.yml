@@ -74,7 +74,7 @@
     mode: 0755
   when: inventory_hostname in groups['master-ha']
 
-- name: Configure kube config 
+- name: Configure kube config on HA masters
   shell: |
     echo {{ kube_config_content.stdout }} > /home/{{k8s_user}}/.kube/config
   when: inventory_hostname in groups['master-ha']
