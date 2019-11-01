@@ -47,7 +47,7 @@
   with_items:
     - 8472/udp
     - 8285/udp
-  when: "{{k8s_cni_plugin |lower}}" == 'flannel'
+  when: "{{ k8s_cni_plugin |lower }} == flannel"
   
 
 
@@ -55,4 +55,13 @@
 - name: Reload firewalld
   shell: firewall-cmd --reload
 
- 
+
+# Check / Debug
+- name: Get firewalld configuration
+  shell: |
+    firewall-cmd --list-all
+  register: firewalld_output
+
+- name: Debug firewalld configuration
+  debug:
+    msg: "{{firewalld_output}}"

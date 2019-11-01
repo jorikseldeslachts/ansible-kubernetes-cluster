@@ -31,16 +31,6 @@
 - name: Include Firewalld configuration tasks
   include: firewalld.yml
 
-- name: Get firewalld configuration
-  shell: |
-    firewall-cmd --list-all
-  register: firewalld_output
-
-- name: Debug firewalld configuration
-  debug:
-    msg: "{{firewalld_output}}"
-
-
 
 # K8s dependencies
 - name: Include k8s dependency tasks
