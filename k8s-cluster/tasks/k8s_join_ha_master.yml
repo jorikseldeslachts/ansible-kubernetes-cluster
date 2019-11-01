@@ -49,7 +49,7 @@
 
 - name: Debug kube config
   debug:
-    msg: "{{kube_config_content}}"
+    msg: "{{ kube_config_content.stdout }}"
   when: inventory_hostname in groups['master-initial']
 
 ########################### master-ha ###############################
