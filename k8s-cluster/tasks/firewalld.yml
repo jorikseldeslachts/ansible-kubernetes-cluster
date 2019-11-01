@@ -64,4 +64,6 @@
 
 - name: Debug firewalld configuration
   debug:
-    msg: "{{firewalld_output}}"
+    msg: 
+      - "{{ firewalld_output.stdout_lines }}"
+      - "{{ firewalld_output.stderr_lines }}"
