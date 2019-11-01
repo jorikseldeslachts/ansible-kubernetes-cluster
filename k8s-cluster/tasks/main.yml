@@ -82,6 +82,5 @@
 
 # print status messages:
 # - docker status/info
-# - firewall-cmd --list-all
 # - kubectl
 # kubens

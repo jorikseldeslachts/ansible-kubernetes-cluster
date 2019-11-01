@@ -9,7 +9,7 @@
 #     --discovery-token-ca-cert-hash sha256:5efac16c86e5f2ed6b20c6dbcbf3a9daa5bf75aa604097dbf49fdc3d1fd5ff7d
 
 
-# first create token on initial master
+# First create token on initial master
 - name: Create join token on initial master
   shell: |
     kubeadm token create \
@@ -17,11 +17,14 @@
       --print-join-command
   register: master_join_command
   when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname in groups['masters']
 
 - name: Debug master_join_command
   debug:
     msg: "{{master_join_command}}"
 
+
+# Upload certs on initial master
 - name: Upload certs on initial master
   shell: |
     kubeadm init phase upload-certs \
