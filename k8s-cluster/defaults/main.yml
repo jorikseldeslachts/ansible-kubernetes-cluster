@@ -36,12 +36,15 @@ extra_handy_packages:
   - bridge-utils
 
 hostfile_entries:
-  - hostname: k8s-node-1
+  - hostname: k8s-node-5
     domain: milkywaygalaxy.be
-    ip: 10.66.66.11
-  - hostname: k8s-node-2
+    ip: 10.66.66.5
+  - hostname: k8s-node-6
     domain: milkywaygalaxy.be
-    ip: 10.66.66.12
-  - hostname: k8s-node-3
+    ip: 10.66.66.6
+  - hostname: k8s-node-7
     domain: milkywaygalaxy.be
-    ip: 10.66.66.13
+    ip: 10.66.66.7
+  - hostname: k8s-node-8
+    domain: milkywaygalaxy.be
+    ip: 10.66.66.8
