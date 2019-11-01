@@ -89,6 +89,7 @@
   lineinfile:
     path: "/home/{{k8s_user}}/.bashrc"
     line: "alias k=kubectl"
+  when: inventory_hostname in groups['masters']
 
 - name: Install basic bash completion
   yum: 
