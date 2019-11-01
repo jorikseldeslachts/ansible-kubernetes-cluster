@@ -9,7 +9,7 @@ install_nginx_ingress: True
 install_cockpit: True
 
 # k8s vars
-k8s_loadbalancer_ip: 10.66.66.1
+k8s_loadbalancer_ip: 10.66.66.1 # zie nginx extra config
 k8s_ha_masters: True
 k8s_pods_scheduled_on_master: True
 k8s_user: k8s
