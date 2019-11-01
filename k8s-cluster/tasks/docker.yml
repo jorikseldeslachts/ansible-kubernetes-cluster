@@ -30,8 +30,11 @@
     
 - name: Install Docker
   yum:
-    name: docker-ce
+    name: "{{item}}"
     state: latest
+  with_items:
+    - "docker-ce-{{docker_version}}"
+    - "docker-ce-cli-{{docker_version}}"
 
 # kubernetes docker config driver=systemd
 # https://kubernetes.io/docs/setup/production-environment/container-runtimes/
