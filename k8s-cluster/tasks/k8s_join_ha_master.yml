@@ -57,6 +57,7 @@
 - name: Register var kube_config_content
   set_fact:
     kube_config_content: "{{kube_config_content_raw.stdout}}"
+  when: inventory_hostname in groups['master-initial']
 
 ########################### master-ha ###############################
 
