@@ -74,6 +74,11 @@
     creates: master_node_joined.txt
   when: inventory_hostname in groups['master-ha']
 
+
+- name: Debug kube config
+  debug:
+    msg: "{{ kube_config_content.stdout }}"
+
 - name: Configure kube config on HA masters
   shell: |
     echo {{kube_config_content.stdout}} > /home/{{k8s_user}}/.kube/config
