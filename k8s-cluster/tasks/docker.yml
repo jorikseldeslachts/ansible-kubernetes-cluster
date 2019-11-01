@@ -39,6 +39,10 @@
       - "docker-ce-{{docker_version}}"
       - "docker-ce-cli-{{docker_version}}"
 
+- name: "Installed Docker version:"
+  debug:
+    msg: "{{docker_version}}"
+
 # kubernetes docker config driver=systemd
 # https://kubernetes.io/docs/setup/production-environment/container-runtimes/
 - name: Create docker config directory for daemon.json
