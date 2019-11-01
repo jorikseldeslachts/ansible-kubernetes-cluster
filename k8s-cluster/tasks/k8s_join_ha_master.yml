@@ -42,8 +42,9 @@
   when: inventory_hostname in groups['master-initial']
 
 - name: Register kube config
-  set_fact:
-    kube_config_content: "{{ lookup('file', '/home/{{k8s_user}}/.kube/config') }}"
+  shell: |
+    cat /home/{{k8s_user}}/.kube/config
+  register: kube_config_content
   when: inventory_hostname in groups['master-initial']
 
 - name: Debug kube config
