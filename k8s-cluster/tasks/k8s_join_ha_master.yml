@@ -24,7 +24,7 @@
 
 - name: Debug master_join_command
   debug:
-    msg: "{{master_join_command}}"
+    msg: "{{ master_join_command.stdout }}"
   when: inventory_hostname in groups['master-initial']
 
 
@@ -38,7 +38,7 @@
   
 - name: Debug master_upload_cert
   debug:
-    msg: "{{master_upload_cert}}"
+    msg: "{{ master_upload_cert.stdout }}"
   when: inventory_hostname in groups['master-initial']
 
 
@@ -70,5 +70,5 @@
 
 - name: Debug get nodes
   debug:
-    msg: "{{k8s_user}}"
+    msg: "{{ get_nodes.stdout_lines }}"
   when: inventory_hostname in groups['masters']
