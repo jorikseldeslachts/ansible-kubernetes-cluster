@@ -1,27 +1,29 @@
 - name: Remove all old Docker packages
   yum: 
-    name: "{{ item }}"
+    name: "{{ docker_remove_packages }}"
     state: removed
-  with_items:
-    - docker
-    - docker-client
-    - docker-client-latest
-    - docker-common
-    - docker-latest
-    - docker-latest-logrotate
-    - docker-logrotate
-    - docker-engi
+  vars:
+    docker_remove_packages:
+      - docker
+      - docker-client
+      - docker-client-latest
+      - docker-common
+      - docker-latest
+      - docker-latest-logrotate
+      - docker-logrotate
+      - docker-engi
   when: docker_remove_old_docker_packages |bool
 
 - name: Make sure all required packages are installed
   yum:
-    name: "{{ item }}"
+    name: "{{ docker_required_packages }}"
     state: present
-  with_items:
-    - yum-utils
-    - bridge-utils
-    - device-mapper-persistent-data
-    - lvm2
+  vars:
+    docker_required_packages:
+      - yum-utils
+      - bridge-utils
+      - device-mapper-persistent-data
+      - lvm2
 
 - name: Add Docker repository
   get_url:
@@ -30,11 +32,12 @@
     
 - name: Install Docker
   yum:
-    name: "{{item}}"
+    name: "{{docker_packages}}"
     state: latest
-  with_items:
-    - "docker-ce-{{docker_version}}"
-    - "docker-ce-cli-{{docker_version}}"
+  vars:
+    docker_packages:
+      - "docker-ce-{{docker_version}}"
+      - "docker-ce-cli-{{docker_version}}"
 
 # kubernetes docker config driver=systemd
 # https://kubernetes.io/docs/setup/production-environment/container-runtimes/
