@@ -41,7 +41,15 @@
     msg: "{{ master_upload_cert.stdout }}"
   when: inventory_hostname in groups['master-initial']
 
+- name: Register kube config
+  set_fact:
+    kube_config_content: "{{ lookup('config', '/home/{{k8s_user}}/.kube/') }}"
+  when: inventory_hostname in groups['master-initial']
 
+- name: Debug kube config
+  debug:
+    msg: "{{kube_config_content}}"
+  when: inventory_hostname in groups['master-initial']
 
 ########################### master-ha ###############################
 
@@ -65,11 +73,9 @@
     mode: 0755
   when: inventory_hostname in groups['master-ha']
 
-- name: "Sync config from initial master ({{groups['master-initial'][0]}}) to other HA masters"
-  synchronize:
-    src: "/home/{{k8s_user}}/.kube"
-    dest: "/home/{{k8s_user}}/.kube"
-  delegate_to: "{{groups['master-initial'][0]}}"
+- name: Configure kube config 
+  shell: |
+    echo {{kube_config_content}} > /home/{{k8s_user}}/.kube/config
   when: inventory_hostname in groups['master-ha']
 
 
