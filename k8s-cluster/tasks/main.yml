@@ -50,7 +50,7 @@
     - k8s_cni_plugin |lower == 'flannel'
 
 - name: Include HA masters init tasks
-  include: k8s_init_ha_master.yml
+  include: k8s_join_ha_master.yml
   when: 
     - k8s_ha_masters |bool
     # - inventory_hostname in groups['master-ha']
