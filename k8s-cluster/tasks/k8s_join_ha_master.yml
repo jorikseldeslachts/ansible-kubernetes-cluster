@@ -78,8 +78,8 @@
   # shell: |
   #   echo {{kube_config_content.stdout}} > /home/{{k8s_user}}/.kube/config
   # when: inventory_hostname in groups['master-ha']
-  template:
-    src: "{{ kube_config_content.stdout }}"
+  copy:
+    content: "{{ kube_config_content.results }}"
     dest: "/home/{{k8s_user}}/.kube/config"
   when: inventory_hostname in groups['master-ha']
 
