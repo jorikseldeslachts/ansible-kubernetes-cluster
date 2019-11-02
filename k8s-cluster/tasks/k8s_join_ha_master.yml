@@ -52,6 +52,7 @@
 - name: Debug kube config
   debug:
     msg: "{{ hostvars[groups['master-initial'][0]]['kube_config_content_raw'] }}"
+  when: inventory_hostname in groups['master-initial']
 
 # - name: Register var kube_config_content
 #   set_fact:
