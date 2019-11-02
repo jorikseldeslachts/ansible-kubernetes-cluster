@@ -46,19 +46,13 @@
 - name: Register kube config
   shell: |
     cat /home/{{k8s_user}}/.kube/config
-  register: kube_config_content_raw
+  register: kube_config_content
   when: inventory_hostname in groups['master-initial']
 
 - name: Debug kube config
   debug:
-    msg: "{{ hostvars[groups['master-initial'][0]]['kube_config_content_raw'] }}"
+    msg: "{{ hostvars[groups['master-initial'][0]]['kube_config_content.stdout'] }}"
   when: inventory_hostname in groups['master-initial']
-
-# - name: Register var kube_config_content
-#   set_fact:
-#     kube_config_content: "{{kube_config_content_raw.stdout}}"
-#   when: inventory_hostname in groups['master-initial']
-
 
 
 ########################### master-ha ###############################
@@ -85,7 +79,7 @@
 
 - name: Configure kube config on HA masters
   shell: |
-    echo {{kube_config_content}} > /home/{{k8s_user}}/.kube/config
+    echo {{kube_config_content.stdout}} > /home/{{k8s_user}}/.kube/config
   when: inventory_hostname in groups['master-ha']
 
 
