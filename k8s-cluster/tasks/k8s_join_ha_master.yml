@@ -51,7 +51,7 @@
 
 - name: Debug kube config
   debug:
-    msg: "{{ hostvars[groups['master-initial'][0]]['kube_config_content.stdout'] }}"
+    msg: "{{ hostvars[groups['master-initial'][0]]['kube_config_content'].stdout }}"
   when: inventory_hostname in groups['master-initial']
 
 
@@ -79,7 +79,7 @@
 
 - name: Configure kube config on HA masters
   shell: |
-    echo {{kube_config_content.stdout}} > /home/{{k8s_user}}/.kube/config
+    echo {{ hostvars[groups['master-initial'][0]]['kube_config_content'].stdout }} > /home/{{k8s_user}}/.kube/config
   when: inventory_hostname in groups['master-ha']
 
 
