@@ -54,7 +54,7 @@
       - "master_join_command: {{master_join_command}}"
       - "master_upload_certs: {{master_upload_certs}}"
       - "kube_config_content: {{kube_config_content}}"
-    when: inventory_hostname in groups['master-ha'][0]
+  when: inventory_hostname in groups['master-ha'][0]
 
 - name: Create .kube directory
   file:
