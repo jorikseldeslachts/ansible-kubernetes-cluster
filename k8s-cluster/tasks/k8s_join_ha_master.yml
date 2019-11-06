@@ -17,7 +17,7 @@
     kubeadm token create \
       --ttl 10m \
       --print-join-command
-  register: master_join_command_raw
+  register: kubeadm_token_create_result
   when: inventory_hostname in groups['master-initial']
 
 
@@ -26,7 +26,7 @@
   shell: |
     kubeadm init phase upload-certs \
       --upload-certs | grep -v upload-certs
-  register: master_upload_certs_raw
+  register: kubeadm_init_phase_result
   when: inventory_hostname in groups['master-initial']
   
 
@@ -44,8 +44,8 @@
 # vars
 - name: Register vars on HA masters
   set_fact:
-    master_join_command: "{{ hostvars[groups['master-initial'][0]]['master_join_command_raw'].stdout }}"
-    master_upload_certs: "{{ hostvars[groups['master-initial'][0]]['master_upload_certs_raw'].stdout }}"
+    master_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'].stdout }}"
+    master_upload_cert: "{{ hostvars[groups['master-initial'][0]]['kubeadm_init_phase_result'].stdout }}"
     kube_config_content: "{{ hostvars[groups['master-initial'][0]]['kube_config_content_raw'].stdout }}"
   when: inventory_hostname in groups['master-ha']
 
@@ -53,7 +53,7 @@
   debug:
     msg:
       - "master_join_command: {{master_join_command}}"
-      - "master_upload_certs: {{master_upload_certs}}"
+      - "master_upload_cert: {{master_upload_cert}}"
       - "kube_config_content: {{kube_config_content}}"
   when: inventory_hostname in groups['master-ha'][0]
 
@@ -63,7 +63,7 @@
   set_fact:
     full_join_command: |
       {{master_join_command}} \
-        --certificate-key {{master_upload_certs}} \
+        --certificate-key {{master_upload_cert}} \
         --control-plane >> master_node_joined.txt
   when: inventory_hostname in groups['master-ha']
 
@@ -87,7 +87,7 @@
 - name: Join HA masters to the cluster
   # shell: |  
   #   {{master_join_command}} \
-  #     --certificate-key {{master_upload_certs}} \
+  #     --certificate-key {{master_upload_cert}} \
   #     --control-plane >> master_node_joined.txt
   shell: "{{full_join_command}}"
   args:
