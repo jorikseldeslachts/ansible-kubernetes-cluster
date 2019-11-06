@@ -66,7 +66,7 @@
     #     --certificate-key {{master_upload_cert}} \
     #     --control-plane >> master_node_joined.txt
     full_join_command: |
-      {{master_join_command}} --certificate-key {{master_upload_cert}} --control-plane >> master_node_joined.txt
+      {{master_join_command}} --certificate-key {{master_upload_cert}} --control-plane ---v={{k8s_api_debug_level}} >> master_node_joined.txt
   when: inventory_hostname in groups['master-ha']
 
 - name: Debug master join command

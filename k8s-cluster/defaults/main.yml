@@ -21,6 +21,7 @@ k8s_cni_tmp_file: /tmp/flannel_cni.yml
 k8s_packages_repository_url: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
 k8s_kubectx_repository_url: https://github.com/ahmetb/kubectx
 k8s_cadvisor_port: 4194
+k8s_api_debug_level: 2
 
 # docker vars
 docker_version: 18.09.9
