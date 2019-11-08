@@ -62,7 +62,7 @@
 - name: Register HA master join command
   set_fact:
     full_join_command: |
-      {{master_join_command}} --certificate-key {{master_upload_certs}} --control-plane ---v={{k8s_api_debug_level}}
+      "{{master_join_command}} --certificate-key {{master_upload_certs}} --control-plane ---v={{k8s_api_debug_level}}"
   when: inventory_hostname in groups['master-ha']
 
 - name: Debug master join command
@@ -83,7 +83,7 @@
   when: inventory_hostname in groups['master-ha']
 
 - name: Join HA masters to the cluster
-  shell: "{{full_join_command}}  >> master_node_joined.txt"
+  shell: "{{full_join_command}} >> master_node_joined.txt"
   args:
     executable: /bin/bash
     chdir: "/home/{{k8s_user}}/"
