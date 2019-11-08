@@ -45,7 +45,7 @@
 - name: Register vars on HA masters
   set_fact:
     master_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'].stdout }}"
-    master_upload_cert: "{{ hostvars[groups['master-initial'][0]]['kubeadm_init_phase_result'].stdout }}"
+    master_upload_certs: "{{ hostvars[groups['master-initial'][0]]['kubeadm_init_phase_result'].stdout }}"
     kube_config_content: "{{ hostvars[groups['master-initial'][0]]['kube_config_content_raw'].stdout }}"
   when: inventory_hostname in groups['master-ha']
 
@@ -53,20 +53,16 @@
   debug:
     msg:
       - "master_join_command: {{master_join_command}}"
-      - "master_upload_cert: {{master_upload_cert}}"
+      - "master_upload_certs: {{master_upload_certs}}"
       - "kube_config_content: {{kube_config_content}}"
   when: inventory_hostname in groups['master-ha']
 
 
-# join command
+# full join command
 - name: Register HA master join command
   set_fact:
-    # full_join_command: |
-    #   {{master_join_command}} \
-    #     --certificate-key {{master_upload_cert}} \
-    #     --control-plane >> master_node_joined.txt
     full_join_command: |
-      {{master_join_command}} --certificate-key {{master_upload_cert}} --control-plane ---v={{k8s_api_debug_level}} >> master_node_joined.txt
+      {{master_join_command}} --certificate-key {{master_upload_certs}} --control-plane ---v={{k8s_api_debug_level}} >> master_node_joined.txt
   when: inventory_hostname in groups['master-ha']
 
 - name: Debug master join command
@@ -87,10 +83,6 @@
   when: inventory_hostname in groups['master-ha']
 
 - name: Join HA masters to the cluster
-  # shell: |  
-  #   {{master_join_command}} \
-  #     --certificate-key {{master_upload_cert}} \
-  #     --control-plane >> master_node_joined.txt
   shell: "{{full_join_command}}"
   args:
     chdir: "/home/{{k8s_user}}/"
