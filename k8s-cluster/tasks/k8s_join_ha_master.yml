@@ -72,7 +72,7 @@
 - name: Debug master join command
   debug:
     var: "{{full_join_command}}"
-  when: inventory_hostname in groups['master-ha'][0]
+  when: inventory_hostname in groups['master-ha']
 
 
 
