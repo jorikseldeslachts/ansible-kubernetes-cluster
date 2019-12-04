@@ -85,19 +85,19 @@
   debug:
     msg: "{{ docker_cgroup_driver.stdout }}"
   
-- name: Replace crgroup-driver
-  replace:
-    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    regexp: "--cgroup-driver=(systemd|cgroupfs)"
-    replace: "--cgroup-driver={{docker_cgroup_driver.stdout}}"
-    backup: no
+# - name: Replace crgroup-driver
+#   replace:
+#     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+#     regexp: "--cgroup-driver=(systemd|cgroupfs)"
+#     replace: "--cgroup-driver={{docker_cgroup_driver.stdout}}"
+#     backup: no
 
-- name: Replace cadvisor-port
-  replace:
-    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    regexp: "cadvisor-port=0"
-    replace: "cadvisor-port={{k8s_cadvisor_port}}"
-    backup: no
+# - name: Replace cadvisor-port
+#   replace:
+#     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+#     regexp: "cadvisor-port=0"
+#     replace: "cadvisor-port={{k8s_cadvisor_port}}"
+#     backup: no
 
 
 ###################### Master only ###################### 
