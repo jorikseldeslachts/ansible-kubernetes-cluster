@@ -83,7 +83,7 @@
 
 - name: "Docker debug driver"
   debug:
-    msg: "{{docker_cgroup_driver}}"
+    msg: "{{ docker_cgroup_driver.stdout }}"
   
 - name: Replace crgroup-driver
   replace:
