@@ -9,8 +9,6 @@
 #     --discovery-token-ca-cert-hash sha256:5efac16c86e5f2ed6b20c6dbcbf3a9daa5bf75aa604097dbf49fdc3d1fd5ff7d
 
 
-
-
 ########################### master-initial ###############################
 
 # First create token on initial master
@@ -19,12 +17,7 @@
     kubeadm token create \
       --ttl 10m \
       --print-join-command
-  register: master_join_command
-  when: inventory_hostname in groups['master-initial']
-
-- name: Debug master_join_command
-  debug:
-    msg: "{{ master_join_command.stdout }}"
+  register: kubeadm_token_create_result
   when: inventory_hostname in groups['master-initial']
 
 
@@ -33,31 +26,53 @@
   shell: |
     kubeadm init phase upload-certs \
       --upload-certs | grep -v upload-certs
-  register: master_upload_cert
+  register: kubeadm_init_phase_result
   when: inventory_hostname in groups['master-initial']
   
-- name: Debug master_upload_cert
-  debug:
-    msg: "{{ master_upload_cert.stdout }}"
-  when: inventory_hostname in groups['master-initial']
 
-
-
+# .kube config
 - name: Register kube config
   shell: |
     cat /home/{{k8s_user}}/.kube/config
-  register: kube_config_content
+  register: kube_config_content_raw
   when: inventory_hostname in groups['master-initial']
 
-- name: Debug kube config
-  debug:
-    msg: "{{ hostvars[groups['master-initial'][0]]['kube_config_content'].stdout }}"
-  when: inventory_hostname in groups['master-initial']
 
 
 ########################### master-ha ###############################
 
-# Join new HA masters
+# vars
+- name: Register vars on HA masters
+  set_fact:
+    master_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'].stdout }}"
+    master_upload_certs: "{{ hostvars[groups['master-initial'][0]]['kubeadm_init_phase_result'].stdout }}"
+    kube_config_content: "{{ hostvars[groups['master-initial'][0]]['kube_config_content_raw'].stdout }}"
+  when: inventory_hostname in groups['master-ha']
+
+- name: Debug vars on first HA master
+  debug:
+    msg:
+      - "master_join_command: {{master_join_command}}"
+      - "master_upload_certs: {{master_upload_certs}}"
+      - "kube_config_content: {{kube_config_content}}"
+  when: inventory_hostname in groups['master-ha']
+
+
+# full join command
+- name: Register HA master join command
+  set_fact:
+    full_join_command: |
+      {{master_join_command}} --certificate-key {{master_upload_certs}} --control-plane --v={{k8s_api_debug_level}}
+  when: inventory_hostname in groups['master-ha']
+
+- name: Debug master join command
+  debug:
+    msg: "{{full_join_command}}"
+  when: inventory_hostname in groups['master-ha']
+
+
+
+# kube config + join
 - name: Create .kube directory
   file:
     path: "/home/{{k8s_user}}/.kube"
@@ -68,18 +83,17 @@
   when: inventory_hostname in groups['master-ha']
 
 - name: Join HA masters to the cluster
-  shell: |  
-    {{master_join_command}} \
-      --certificate-key {{master_upload_cert}} \
-      --control-plane >> master_node_joined.txt
+  shell: "{{full_join_command}} >> master_node_joined.txt"
   args:
+    executable: /bin/bash
     chdir: "/home/{{k8s_user}}/"
     creates: master_node_joined.txt
   when: inventory_hostname in groups['master-ha']
 
 - name: Configure kube config on HA masters
-  shell: |
-    echo {{ hostvars[groups['master-initial'][0]]['kube_config_content'].stdout }} > /home/{{k8s_user}}/.kube/config
+  copy:
+    content: "{{kube_config_content}}"
+    dest: "/home/{{k8s_user}}/.kube/config"
   when: inventory_hostname in groups['master-ha']
 
 

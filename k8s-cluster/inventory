@@ -6,12 +6,12 @@ master-initial
 master-ha
 
 [master-initial]
-master1 ansible_host=10.66.66.5 ansible_user=root
+master-initial ansible_host=10.66.66.5 ansible_user=root
 
 [master-ha]
-master2 ansible_host=10.66.66.6 ansible_user=root
-master3 ansible_host=10.66.66.7 ansible_user=root
+master-ha-1 ansible_host=10.66.66.6 ansible_user=root
+master-ha-2 ansible_host=10.66.66.7 ansible_user=root
 
 [workers]
-worker1 ansible_host=10.66.66.8 ansible_user=root
+worker-1 ansible_host=10.66.66.8 ansible_user=root
 
