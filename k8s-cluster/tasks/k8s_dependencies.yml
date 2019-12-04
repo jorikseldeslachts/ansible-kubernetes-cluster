@@ -80,6 +80,10 @@
   shell: |
     docker info 2>/dev/null |grep -i cgroup | cut -d":" -f2 | tr -d " "
   register: docker_cgroup_driver
+
+- name: "Docker debug driver"
+  debug:
+    msg: "{{docker_cgroup_driver}}"
   
 - name: Replace crgroup-driver
   replace:
