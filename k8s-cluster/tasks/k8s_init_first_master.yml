@@ -39,6 +39,7 @@
   shell: |
     kubeadm init \
       --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml \
+      --apiserver-advertise-address={{k8s_loadbalancer_ip}} \
       --upload-certs >> cluster_initialized.txt
   args:
     chdir: "/home/{{k8s_user}}/"
