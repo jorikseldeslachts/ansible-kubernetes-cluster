@@ -37,7 +37,7 @@
 
 
 # Masters setup
-- name: Include first master init tasks
+- name: Include init tasks for first initial master
   include: k8s_init_first_master.yml
   when: inventory_hostname in groups['master-initial']
 
@@ -45,7 +45,7 @@
 
 
 
-- name: "Include tasks for Flannel CNI plugin"
+- name: Include tasks for Flannel CNI plugin
   include: flannel_cni.yml
   when: 
     - inventory_hostname in groups['masters']
@@ -64,22 +64,22 @@
     - install_kubectx_kubens |bool
 
 
-# workers setup
-- name: Include worker node tasks
-  include: k8s_join_workers.yml
-  when: inventory_hostname in groups['workers'] 
+# # workers setup
+# - name: Include worker node tasks
+#   include: k8s_join_workers.yml
+#   when: inventory_hostname in groups['workers'] 
 
 
-# Cockpit
-# - name: Include Cockpit installation tasks
-#   include: cockpit.yml
-#   when: install_cockpit |bool
+# # Cockpit
+# # - name: Include Cockpit installation tasks
+# #   include: cockpit.yml
+# #   when: install_cockpit |bool
 
 
-# Debug
-- name: Kubernetes installation complete
-  debug: 
-    msg: "Kubernetes installation complete"
+# # Debug
+# - name: Kubernetes installation complete
+#   debug: 
+#     msg: "Kubernetes installation complete"
 
 
 # print status messages:
