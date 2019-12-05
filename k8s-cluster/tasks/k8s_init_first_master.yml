@@ -12,10 +12,18 @@
 # custom pod/bridge network etc etc
 # controlpane endpoint to nginx: roundrobin
 
+- name: Create kubeadm config path
+  file:
+    path: "{{k8s_kubeadm_config_path}}"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0755
+
 - name: Copy custom kubeadm-config.yml
   template:
     src: kubeadm-config.yml.j2
-    dest: /tmp/kubeadm-config.yml
+    dest: "{{k8s_kubeadm_config_path}}/kubeadm-config.yml"
 
 # this cidr has to be the same as in the CNI config!! otherwise coredns pods won't start!
 - name: Initialize the cluster without HA config
@@ -30,7 +38,7 @@
 - name: Initialize the cluster with HA config
   shell: |
     kubeadm init \
-      --config=/tmp/kubeadm-config.yml \
+      --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml \
       --upload-certs >> cluster_initialized.txt
   args:
     chdir: "/home/{{k8s_user}}/"
