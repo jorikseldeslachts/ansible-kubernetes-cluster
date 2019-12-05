@@ -1,33 +1,33 @@
 
-# # Debug
-# - name: Starting Kubernetes installation
-#   debug: 
-#     msg: "Starting installation. HA masters: {{k8s_ha_masters}}"
+# Debug
+- name: Starting Kubernetes installation
+  debug: 
+    msg: "Starting installation. HA masters: {{k8s_ha_masters}}"
 
 
-# # Preparation
-# - name: Install some handy packages
-#   yum: 
-#     name: "{{ extra_handy_packages }}"
-#     state: present
+# Preparation
+- name: Install some handy packages
+  yum: 
+    name: "{{ extra_handy_packages }}"
+    state: present
 
-# - name: Update hostfile with all node ip's
-#   lineinfile:
-#     path: /etc/hosts
-#     line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
-#   with_items:
-#     - "{{hostfile_entries}}"
-
-
-# # Docker
-# - name: Include Docker installation tasks
-#   include: docker.yml
-#   when: install_docker |bool
+- name: Update hostfile with all node ip's
+  lineinfile:
+    path: /etc/hosts
+    line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
+  with_items:
+    - "{{hostfile_entries}}"
 
 
-# # Firewalld
-# - name: Include Firewalld configuration tasks
-#   include: firewalld.yml
+# Docker
+- name: Include Docker installation tasks
+  include: docker.yml
+  when: install_docker |bool
+
+
+# Firewalld
+- name: Include Firewalld configuration tasks
+  include: firewalld.yml
 
 
 # K8s dependencies
