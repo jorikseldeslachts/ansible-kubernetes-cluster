@@ -5,7 +5,7 @@ kubernetesVersion: stable
 controlPlaneEndpoint: {{k8s_loadbalancer_ip}}:6443
 {%endif%}
 networking:
-  podSubnet: {{k8s_cni_cidr}}
+  podSubnet: {{k8s_cni_pod_cidr}}
   serviceSubnet: {{k8s_service_cidr}}
   dnsDomain: cluster.local
 apiServer:
