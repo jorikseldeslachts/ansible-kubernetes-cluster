@@ -1,12 +1,5 @@
-
-# kubeadm token create --ttl 10m --print-join-command
-# kubeadm init phase upload-certs --upload-certs
-
-# kubeadm join 192.168.122.170:6443 \
-#     --control-plane \
-#     --certificate-key 9555b74008f24687eb964bd90a164ecb5760a89481d9c55a77c129b7db438168 \
-#     --token xaw58o.0fjg0xp0ohpucwhr \
-#     --discovery-token-ca-cert-hash sha256:5efac16c86e5f2ed6b20c6dbcbf3a9daa5bf75aa604097dbf49fdc3d1fd5ff7d
+# https://itnext.io/on-premise-ha-kubernetes-cluster-15e41f18bd12
+# https://octetz.com/posts/ha-control-plane-k8s-kubeadm
 
 
 ########################### master-initial ###############################
@@ -30,15 +23,6 @@
   when: inventory_hostname in groups['master-initial']
   
 
-# .kube config
-# - name: Register kube config
-#   shell: |
-#     cat /home/{{k8s_user}}/.kube/config
-#   register: kube_config_content_raw
-#   when: inventory_hostname in groups['master-initial']
-
-
-
 ########################### master-ha ###############################
 
 # vars
@@ -46,7 +30,6 @@
   set_fact:
     master_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'].stdout }}"
     master_upload_certs: "{{ hostvars[groups['master-initial'][0]]['kubeadm_init_phase_result'].stdout }}"
-    # kube_config_content: "{{ hostvars[groups['master-initial'][0]]['kube_config_content_raw'].stdout }}"
   when: inventory_hostname in groups['master-ha']
 
 - name: Debug vars on first HA master
@@ -54,7 +37,6 @@
     msg:
       - "master_join_command: {{master_join_command}}"
       - "master_upload_certs: {{master_upload_certs}}"
-      # - "kube_config_content: {{kube_config_content}}"
   when: inventory_hostname in groups['master-ha']
 
 
@@ -84,13 +66,6 @@
     chdir: "/home/{{k8s_user}}/"
     creates: master_node_joined.txt
   when: inventory_hostname in groups['master-ha']
-
-
-# - name: Configure kube config on HA masters
-#   copy:
-#     content: "{{kube_config_content}}"
-#     dest: "/home/{{k8s_user}}/.kube/config"
-#   when: inventory_hostname in groups['master-ha']
 
 
 # kube config + join
@@ -127,3 +102,4 @@
   debug:
     msg: "{{ get_nodes.stdout_lines }}"
   when: inventory_hostname in groups['masters']
+  
