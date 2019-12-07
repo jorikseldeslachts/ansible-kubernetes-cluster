@@ -22,7 +22,7 @@
     regexp: "{{original_flannel_pod_cidr}}"
     replace: "{{k8s_cni_pod_cidr}}"
 
-- name: Install Flannel CNI plugin
+- name: Apply Flannel CNI plugin
   become: yes
   become_user: "{{k8s_user}}"
   shell: |
