@@ -1,12 +1,12 @@
-apiVersion: kubeadm.k8s.io/v1beta1
+apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 kubernetesVersion: stable
 # REPLACE with `loadbalancer` IP
 controlPlaneEndpoint: "{{k8s_loadbalancer_ip}}:6443"
 networking:
   podSubnet: "{{k8s_cni_cidr}}"
-  # serviceSubnet: "10.99.0.0/16"
-  # dnsDomain: "cluster.local"
+  serviceSubnet: 10.99.0.0/16 # 10.96.0.0/12
+  dnsDomain: cluster.local
 apiServer:
   certSANs:
   - 10.66.66.5
