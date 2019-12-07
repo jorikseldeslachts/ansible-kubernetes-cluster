@@ -16,7 +16,7 @@
 # vars
 - name: Register vars on workers
   set_fact:
-    worker_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'].stdout }}"
+    worker_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'] }}"
   when: inventory_hostname in groups['workers']
 
 - name: Debug worker join command
