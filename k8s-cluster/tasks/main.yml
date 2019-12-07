@@ -41,27 +41,23 @@
   include: k8s_init_first_master.yml
   when: inventory_hostname in groups['master-initial']
 
-
-
-
-
 - name: Include tasks for Flannel CNI plugin
   include: flannel_cni.yml
   when: 
     - inventory_hostname in groups['masters']
     - k8s_cni_plugin |lower == 'flannel'
 
-- name: Include HA masters init tasks
-  include: k8s_join_ha_master.yml
-  when: 
-    - k8s_ha_masters |bool
-    # - inventory_hostname in groups['master-ha']
+# - name: Include HA masters init tasks
+#   include: k8s_join_ha_master.yml
+#   when: 
+#     - k8s_ha_masters |bool
+#     # - inventory_hostname in groups['master-ha']
 
-- name: Include installation of tools kubens & kubectx on all master nodes
-  include: k8s_kubectx_kubens.yml
-  when: 
-    - inventory_hostname in groups['masters']
-    - install_kubectx_kubens |bool
+# - name: Include installation of tools kubens & kubectx on all master nodes
+#   include: k8s_kubectx_kubens.yml
+#   when: 
+#     - inventory_hostname in groups['masters']
+#     - install_kubectx_kubens |bool
 
 
 # # workers setup
