@@ -65,5 +65,4 @@
   debug:
     msg: 
       - "Node group: {{group_names}}"
-      - "Config: {{ firewalld_output.stdout_lines |to_nice_json(indent=4) }}"
-      - "Errors: {{ firewalld_output.stderr_lines |to_nice_json(indent=4) }}"
+      - "{{ firewalld_output.stdout_lines }}"
