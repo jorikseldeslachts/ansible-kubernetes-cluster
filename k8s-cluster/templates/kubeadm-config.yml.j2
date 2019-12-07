@@ -1,24 +1,23 @@
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 kubernetesVersion: stable
-# REPLACE with `loadbalancer` IP
-controlPlaneEndpoint: "{{k8s_loadbalancer_ip}}:6443"
+{%if k8s_ha_masters %}
+controlPlaneEndpoint: {{k8s_loadbalancer_ip}}:6443
+{%endif%}
 networking:
-  podSubnet: "{{k8s_cni_cidr}}"
-  serviceSubnet: 10.99.0.0/16 # 10.96.0.0/12
+  podSubnet: {{k8s_cni_cidr}}
+  serviceSubnet: {{k8s_service_cidr}}
   dnsDomain: cluster.local
 apiServer:
   certSANs:
-  - 10.66.66.5
-  - 10.66.66.6
-  - 10.66.66.7
   - localhost
   - 127.0.0.1
-  - k8s-node-5.milkywaygalaxy.be
-  - k8s-node-6.milkywaygalaxy.be
-  - k8s-node-7.milkywaygalaxy.be
-  - k8s-node-5
-  - k8s-node-6
-  - k8s-node-7
+{%if k8s_ha_masters %}
   - 10.66.66.1
   # - lb.kube-cp.com
+{%endif%}
+{%for node in hostfile_entries %}
+  - {{node.ip}}
+  - {{node.hostname}}
+  - {{node.hostname}}.{{node.domain}}
+{%endfor%}

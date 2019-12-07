@@ -10,7 +10,7 @@ install_cockpit: True
 
 # k8s vars
 k8s_loadbalancer_ip: 10.66.66.1 # zie nginx extra config
-k8s_ha_masters: False
+k8s_ha_masters: True
 k8s_pods_scheduled_on_master: True
 k8s_user: k8s
 k8s_user_password: $6$O5Or6GyG$rfAnZ84jbEq.WaX9WOFe0GM2Lpqev8v5z/rCXCSPeKnXInLwHJfUCXtq2g/kj/DcecOT6Iy7vPbYmpYOdCck2.
@@ -18,6 +18,7 @@ k8s_cni_plugin: flannel
 k8s_cni_cidr: 10.88.0.0/16 # for now use the same as in the git yaml!!!
 k8s_cni_file_url: https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
 k8s_cni_tmp_file: /tmp/flannel_cni.yml
+k8s_service_cidr: 10.99.0.0/16 # 10.96.0.0/12
 k8s_packages_repository_url: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
 k8s_kubectx_repository_url: https://github.com/ahmetb/kubectx
 k8s_cadvisor_port: 4194
