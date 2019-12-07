@@ -7,12 +7,12 @@
     kubeadm token create \
       --ttl 10m \
       --print-join-command
-  register: kubeadm_token_create_result
+  register: kubeadm_token_for_worker_result
   when: inventory_hostname in groups['master-initial']
 
 - name: Debug worker join command on master
   debug:
-    msg: "{{kubeadm_token_create_result}}"
+    msg: "{{kubeadm_token_for_worker_result}}"
 
 
 ###################### Workers ######################
@@ -20,7 +20,7 @@
 # vars
 - name: Register vars on workers
   set_fact:
-    worker_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'] }}"
+    worker_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_for_worker_result'] }}"
   when: inventory_hostname in groups['workers']
 
 - name: Debug worker join command
