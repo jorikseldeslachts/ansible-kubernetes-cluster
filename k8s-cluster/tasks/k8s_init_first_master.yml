@@ -29,7 +29,7 @@
 - name: Initialize the cluster without HA config
   shell: |
     kubeadm init \
-      --pod-network-cidr={{k8s_cni_cidr}} >> cluster_initialized.txt
+      --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml >> cluster_initialized.txt
   args:
     chdir: "/home/{{k8s_user}}/"
     creates: cluster_initialized.txt
