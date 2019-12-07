@@ -31,11 +31,11 @@
   
 
 # .kube config
-- name: Register kube config
-  shell: |
-    cat /home/{{k8s_user}}/.kube/config
-  register: kube_config_content_raw
-  when: inventory_hostname in groups['master-initial']
+# - name: Register kube config
+#   shell: |
+#     cat /home/{{k8s_user}}/.kube/config
+#   register: kube_config_content_raw
+#   when: inventory_hostname in groups['master-initial']
 
 
 
@@ -46,7 +46,7 @@
   set_fact:
     master_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'].stdout }}"
     master_upload_certs: "{{ hostvars[groups['master-initial'][0]]['kubeadm_init_phase_result'].stdout }}"
-    kube_config_content: "{{ hostvars[groups['master-initial'][0]]['kube_config_content_raw'].stdout }}"
+    # kube_config_content: "{{ hostvars[groups['master-initial'][0]]['kube_config_content_raw'].stdout }}"
   when: inventory_hostname in groups['master-ha']
 
 - name: Debug vars on first HA master
@@ -54,7 +54,7 @@
     msg:
       - "master_join_command: {{master_join_command}}"
       - "master_upload_certs: {{master_upload_certs}}"
-      - "kube_config_content: {{kube_config_content}}"
+      # - "kube_config_content: {{kube_config_content}}"
   when: inventory_hostname in groups['master-ha']
 
 
@@ -82,6 +82,17 @@
     mode: 0755
   when: inventory_hostname in groups['master-ha']
 
+- name: Copy admin.conf to .kube folder
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "/home/{{k8s_user}}/.kube/config"
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    remote_src: yes
+  when: inventory_hostname in groups['master-ha']
+
+
+# join master to cluster
 - name: Join HA masters to the cluster
   shell: "{{full_join_command}} >> master_node_joined.txt"
   args:
@@ -90,11 +101,11 @@
     creates: master_node_joined.txt
   when: inventory_hostname in groups['master-ha']
 
-- name: Configure kube config on HA masters
-  copy:
-    content: "{{kube_config_content}}"
-    dest: "/home/{{k8s_user}}/.kube/config"
-  when: inventory_hostname in groups['master-ha']
+# - name: Configure kube config on HA masters
+#   copy:
+#     content: "{{kube_config_content}}"
+#     dest: "/home/{{k8s_user}}/.kube/config"
+#   when: inventory_hostname in groups['master-ha']
 
 
 ########################### all mastes ###############################
