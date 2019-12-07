@@ -44,18 +44,3 @@
     chdir: "/home/{{k8s_user}}/"
     creates: worker_node_joined.txt
   when: inventory_hostname in groups['workers']
-
-
-########################### master ###############################
-
-# Get node status
-- name: Get node status
-  become_user: "{{k8s_user}}"
-  shell: kubectl get nodes
-  register: get_nodes
-  when: inventory_hostname in groups['masters']
-
-- name: Debug get nodes
-  debug:
-    msg: "{{ get_nodes.stdout_lines }}"
-  when: inventory_hostname in groups['masters']
