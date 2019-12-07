@@ -29,9 +29,9 @@
 #   when: install_docker |bool
 
 
-# # Firewalld
-# - name: Include Firewalld configuration tasks
-#   include: firewalld.yml
+# Firewalld
+- name: Include Firewalld configuration tasks
+  include: firewalld.yml
 
 
 # # K8s dependencies
