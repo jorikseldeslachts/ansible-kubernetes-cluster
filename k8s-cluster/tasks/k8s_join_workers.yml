@@ -10,6 +10,10 @@
   register: kubeadm_token_create_result
   when: inventory_hostname in groups['master-initial']
 
+- name: Debug worker join command on master
+  debug:
+    msg: "{{kubeadm_token_create_result}}"
+
 
 ###################### Workers ######################
 
