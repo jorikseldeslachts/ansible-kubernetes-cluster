@@ -65,5 +65,5 @@
   debug:
     msg: 
       - "Node group: {{group_names}}"
-      - "{{ firewalld_output.stdout_lines }}"
+      - "Config: {{ firewalld_output.stdout_lines }}"
       - "Errors: {{ firewalld_output.stderr_lines }}"
