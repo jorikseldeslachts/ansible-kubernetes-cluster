@@ -18,6 +18,10 @@
   with_items:
     - "{{hostfile_entries}}"
 
+- name: Update node hostnames
+  hostname:
+    name: "{{inventory_hostname}}"
+
 
 # Docker
 - name: Include Docker installation tasks
@@ -51,7 +55,6 @@
   include: k8s_join_ha_master.yml
   when: 
     - k8s_ha_masters |bool
-    # - inventory_hostname in groups['master-ha']
 
 - name: Include installation of tools kubens & kubectx on all master nodes
   include: k8s_kubectx_kubens.yml
