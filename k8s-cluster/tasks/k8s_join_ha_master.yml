@@ -71,6 +71,23 @@
   when: inventory_hostname in groups['master-ha']
 
 
+# join master to cluster
+- name: Join HA masters to the cluster
+  shell: |
+    {{full_join_command}} |tee master_node_joined.txt
+  args:
+    executable: /bin/bash
+    chdir: "/home/{{k8s_user}}/"
+    creates: master_node_joined.txt
+  when: inventory_hostname in groups['master-ha']
+
+
+# - name: Configure kube config on HA masters
+#   copy:
+#     content: "{{kube_config_content}}"
+#     dest: "/home/{{k8s_user}}/.kube/config"
+#   when: inventory_hostname in groups['master-ha']
+
 
 # kube config + join
 - name: Create .kube directory
@@ -90,22 +107,6 @@
     group: "{{k8s_user}}"
     remote_src: yes
   when: inventory_hostname in groups['master-ha']
-
-
-# join master to cluster
-- name: Join HA masters to the cluster
-  shell: "{{full_join_command}} >> master_node_joined.txt"
-  args:
-    executable: /bin/bash
-    chdir: "/home/{{k8s_user}}/"
-    creates: master_node_joined.txt
-  when: inventory_hostname in groups['master-ha']
-
-# - name: Configure kube config on HA masters
-#   copy:
-#     content: "{{kube_config_content}}"
-#     dest: "/home/{{k8s_user}}/.kube/config"
-#   when: inventory_hostname in groups['master-ha']
 
 
 ########################### all mastes ###############################
