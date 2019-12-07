@@ -35,7 +35,7 @@
     creates: cluster_initialized.txt
   when: not k8s_ha_masters |bool
 
-- name: Initialize the cluster with HA config
+- name: "Initialize the cluster with HA config: {{k8s_kubeadm_config_path}}/kubeadm-config.yml"
   shell: |
     kubeadm init \
       --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml \
