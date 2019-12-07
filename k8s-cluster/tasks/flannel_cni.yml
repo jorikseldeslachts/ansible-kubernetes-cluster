@@ -26,10 +26,16 @@
   become: yes
   become_user: "{{k8s_user}}"
   shell: |
-    kubectl apply -f {{k8s_cni_config_path}}/flannel-cni-config.yml >> pod_network_setup.txt
+    kubectl apply -f {{k8s_cni_config_path}}/flannel-cni-config.yml |tee pod_network_setup.txt
   args:
     chdir: "/home/{{k8s_user}}/"
     creates: pod_network_setup.txt
+  register: kubectl_output
+
+- name: Kubectl output
+  debug:
+    msg: 
+      - "{{ kubectl_output.stdout_lines }}"
 
 - name: Flannel installed pod CIDR
   debug: 
