@@ -50,7 +50,6 @@
   when: k8s_cni_plugin |lower == "flannel"
   
 
-
 # Reload
 - name: Reload firewalld
   shell: firewall-cmd --reload
@@ -59,11 +58,12 @@
 # Check / Debug
 - name: Get firewalld configuration
   shell: |
-    firewall-cmd --list-all
+    firewall-cmd --list-all | egrep -i "interfaces|services| ports|masquerade"
   register: firewalld_output
 
 - name: Debug firewalld configuration
   debug:
     msg: 
+      - "Node group: {{group_names}}"
       - "{{ firewalld_output.stdout_lines }}"
-      - "{{ firewalld_output.stderr_lines }}"
+      - "Errors: {{ firewalld_output.stderr_lines }}"
