@@ -13,6 +13,7 @@
 - name: Debug worker join command on master
   debug:
     msg: "{{kubeadm_token_for_worker_result}}"
+  when: inventory_hostname in groups['master-initial']
 
 
 ###################### Workers ######################
