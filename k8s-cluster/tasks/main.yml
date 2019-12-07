@@ -63,10 +63,10 @@
     - install_kubectx_kubens |bool
 
 
-# # workers setup
-# - name: Include worker node tasks
-#   include: k8s_join_workers.yml
-#   when: inventory_hostname in groups['workers'] 
+# workers setup
+- name: Include worker node tasks
+  include: k8s_join_workers.yml
+  when: inventory_hostname in groups['workers'] 
 
 
 # # Cockpit
