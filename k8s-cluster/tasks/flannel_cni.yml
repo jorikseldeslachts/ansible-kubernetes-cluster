@@ -14,11 +14,11 @@
 - name: Download CNI yaml file
   get_url:
     url: "{{k8s_cni_file_url}}"
-    dest: "{{k8s_cni_config_path}}/flannel_cni.yml"
+    dest: "{{k8s_cni_config_path}}/flannel-cni-config.yml"
 
 - name: Replace original pod CIDR with custom pod CIDR in yaml file
   replace:
-    path: "{{k8s_cni_config_path}}/flannel_cni.yml"
+    path: "{{k8s_cni_config_path}}/flannel-cni-config.yml"
     regexp: "{{original_flannel_pod_cidr}}"
     replace: "{{k8s_cni_pod_cidr}}"
 
@@ -26,7 +26,7 @@
   become: yes
   become_user: "{{k8s_user}}"
   shell: |
-    kubectl apply -f {{k8s_cni_tmp_file}} >> pod_network_setup.txt
+    kubectl apply -f {{k8s_cni_config_path}}/flannel-cni-config.yml >> pod_network_setup.txt
   args:
     chdir: "/home/{{k8s_user}}/"
     creates: pod_network_setup.txt
