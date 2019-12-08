@@ -1,8 +1,9 @@
 
-# # Debug
-# - name: Starting Kubernetes installation
-#   debug: 
-#     msg: "Starting installation. HA masters: {{k8s_ha_masters}}"
+# Debug
+- name: Starting Kubernetes installation
+  debug: 
+    msg: 
+      - "{{inventory_hostname}}: {{group_names}}"
 
 
 # # Preparation
@@ -34,10 +35,10 @@
 #   include: firewalld.yml
 
 
-# # K8s dependencies
-# - name: Include k8s dependency tasks
-#   include: k8s_dependencies.yml
-#   when: install_docker |bool
+# K8s dependencies
+- name: Include k8s dependency tasks
+  include: k8s_dependencies.yml
+  when: install_docker |bool
 
 
 # # Masters setup
