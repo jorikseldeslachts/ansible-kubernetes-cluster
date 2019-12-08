@@ -15,7 +15,7 @@
 - name: "Configure Nginx ingress replica amount (replicas: {{k8s_ingress_replicas}})"
   replace:
     path: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
-    regexp: "replicas:"
+    regexp: "replicas:*"
     replace: "replicas: {{k8s_ingress_replicas}}"
 
 
