@@ -12,21 +12,26 @@
     url: "{{k8s_ingress_file_url}}"
     dest: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
 
+
+########################### Only apply on first master ###############################
 - name: Apply Nginx ingress plugin
   become: yes
   become_user: "{{k8s_user}}"
   shell: |
     kubectl apply -f {{k8s_ingress_config_path}}/nginx-ingress-config.yml
   register: kubectl_output
+  when: inventory_hostname in groups['master-initial']
 
 - name: Kubectl output
   debug:
     msg: 
       - "{{ kubectl_output.stdout_lines }}"
+  when: inventory_hostname in groups['master-initial']
 
 - name: Nginx ingress installed
   debug: 
     msg:
       - "replicas: {{k8s_ingress_replicas}}"
+  when: inventory_hostname in groups['master-initial']
 
 # kubectl get pods -n ingress-nginx
