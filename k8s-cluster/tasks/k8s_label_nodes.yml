@@ -47,7 +47,7 @@
 
 - name: Debug node labels
   debug:
-    msg: "{{item.stdout_lines}}"
+    msg: "{{item.stdout_lines | items2dict }}"
   with_items:
     - "{{node_labels.results}}"
   when: inventory_hostname in groups['master-initial']
