@@ -2,9 +2,18 @@
 
 - name: test
   debug:
-    msg: "{{item}}"
+    msg: "master: {{item}}"
   with_items: 
     - "{{groups['masters']}}"
+  when: inventory_hostname in groups['master-initial']
+  
+
+- name: test
+  debug:
+    msg: "worker: {{item}}"
+  with_items: 
+    - "{{groups['workers']}}"
+  when: inventory_hostname in groups['master-initial']
 
 
 # - name: Label masters
