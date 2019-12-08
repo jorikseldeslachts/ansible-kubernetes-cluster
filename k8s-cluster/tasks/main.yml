@@ -99,3 +99,4 @@
 # kubens
 # reinit van masters/joins tegengaan van nodes die al gejoined zijn
 # enkel joinen als nog geen deel
+# k9s
