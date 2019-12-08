@@ -9,6 +9,7 @@
   shell: |
     kubeadm token create \
       --ttl 10h \
+      --description ansible_join_token_{{lookup('pipe','date +%Y%m%d%H%M%S')}} \
       --print-join-command
   register: kubeadm_token_create_result
   when: inventory_hostname in groups['master-initial']
