@@ -77,7 +77,6 @@
 
 
 ###################### All ######################
-tasks:
 - name: Join nodes to cockpit dashboard
   copy:
     src: cockpit-multiple-server.conf.j2
