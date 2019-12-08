@@ -5,7 +5,7 @@
 - name: Create join token on master
   shell: |
     kubeadm token create \
-      --ttl 10m \
+      --ttl 10h \
       --print-join-command
   register: kubeadm_token_create_result
   when: inventory_hostname in groups['master-initial']
