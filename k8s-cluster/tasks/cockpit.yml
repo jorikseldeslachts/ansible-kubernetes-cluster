@@ -78,7 +78,7 @@
 
 ###################### All ######################
 - name: Join nodes to cockpit dashboard
-  copy:
+  template:
     src: cockpit-multiple-server.conf.j2
     dest: /etc/cockpit/machines.d/99-webui.json
     owner: root
