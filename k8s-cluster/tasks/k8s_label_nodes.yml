@@ -22,7 +22,7 @@
   when: inventory_hostname in groups['master-initial']
   
 
-- name: Set worker label on masters
+- name: Set worker label on workers
   become_user: "{{k8s_user}}"
   shell: "kubectl label node {{item}} node-role.kubernetes.io/worker=worker"
   with_items: 
