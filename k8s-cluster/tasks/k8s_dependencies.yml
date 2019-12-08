@@ -6,7 +6,7 @@
   user:
     name: "{{k8s_user}}"
     password: "{{k8s_user_password}}"
-    comment: "{{k8s_user}} admin"
+    comment: "Kubernetes Admin"
     update_password: on_create
     state: present
     shell: /bin/bash
