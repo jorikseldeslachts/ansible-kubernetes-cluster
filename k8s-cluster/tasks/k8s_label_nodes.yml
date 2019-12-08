@@ -1,0 +1,34 @@
+# labeling for all nodes is done through a master
+
+- name: test
+  debug:
+    msg: "{{item}}"
+  with_items: groups['masters']
+
+
+# - name: Label masters
+#   become_user: "{{k8s_user}}"
+#   shell: |
+#     kubectl label node k8s-node-8 node-role.kubernetes.io/master-
+#   when: inventory_hostname in groups['master-initial']
+#   with_items: groups['masters']
+
+# - name: Label masters
+#   become_user: "{{k8s_user}}"
+#   shell: |
+#     kubectl label node k8s-node-8 node-role.kubernetes.io/master-
+#   when: inventory_hostname in groups['master-initial']
+
+
+# - name: Label workers
+
+
+
+
+
+
+# - name: Debug node labels
+#   debug:
+#     msg:
+
+
