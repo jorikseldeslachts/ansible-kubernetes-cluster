@@ -89,7 +89,7 @@
 - name: Join nodes to cockpit dashboard
   template:
     src: cockpit-multiple-server.conf.j2
-    dest: /etc/cockpit/machines.d/99-webui.json
+    dest: /etc/cockpit/machines.d/66-webui-custom.json
     owner: root
     group: root
     mode: 0644
