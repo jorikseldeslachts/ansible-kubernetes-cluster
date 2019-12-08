@@ -4,7 +4,7 @@
   become_user: "{{k8s_user}}"
   shell: "kubectl label node {{item.0}} {{item.1}}-"
   with_nested: 
-    - "{{groups['masters']}}"
+    - "{{hostvars}}"
     - [
       "node-role.kubernetes.io/master", 
       "node-role.kubernetes.io/worker"
