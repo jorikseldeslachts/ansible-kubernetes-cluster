@@ -83,8 +83,9 @@
 # Ingress 
 - name: Include Nginx ingress tasks
   include: nginx_ingress.yml
-  when: install_nginx_ingress |bool
-
+  when: 
+    - inventory_hostname in groups['masters']
+    - install_nginx_ingress |bool
 
 
 # Debug
