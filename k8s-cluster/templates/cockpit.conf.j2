@@ -1,8 +1,8 @@
 [WebService]
 {%if "master" in group_names %}
-LoginTitle = "Galaxy Kubernetes master {{inventory_hostname}}"
+LoginTitle = "Galaxy Kubernetes master {{inventory_hostname}} ({{group_names}})"
 {%elif "worker" in group_names %}
-LoginTitle = "Galaxy Kubernetes worker {{inventory_hostname}}"
+LoginTitle = "Galaxy Kubernetes worker {{inventory_hostname}} ({{group_names}})"
 {%else%}
-LoginTitle = "Galaxy member (No Kubernetes)"
+LoginTitle = "Galaxy member (No Kubernetes) ({{group_names}})"
 {%endif%}
