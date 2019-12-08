@@ -80,6 +80,13 @@
 #   when: install_cockpit |bool
 
 
+# Ingress 
+- name: Include Nginx ingress tasks
+  include: nginx_ingress.yml
+  when: install_nginx_ingress |bool
+
+
+
 # Debug
 - name: Get node status
   become_user: "{{k8s_user}}"
@@ -93,6 +100,10 @@
       - "Kubernetes installation complete"
       - "{{ get_nodes.stdout_lines }}"
   when: inventory_hostname in groups['master-initial']
+
+
+
+
 
 
 # print status messages:

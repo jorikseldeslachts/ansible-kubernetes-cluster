@@ -1,0 +1,35 @@
+
+- name: Create ingress config directory
+  file:
+    path: "{{k8s_ingress_config_path}}"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0555
+
+- name: Download ingress yaml file
+  get_url:
+    url: "{{k8s_ingress_file_url}}"
+    dest: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
+
+- name: Apply Nginx ingress plugin
+  become: yes
+  become_user: "{{k8s_user}}"
+  shell: |
+    kubectl apply -f {{k8s_ingress_config_path}}/nginx-ingress-config.yml
+  args:
+    chdir: "/home/{{k8s_user}}/"
+    creates: pod_network_setup.txt
+  register: kubectl_output
+
+- name: Kubectl output
+  debug:
+    msg: 
+      - "{{ kubectl_output.stdout_lines }}"
+
+- name: Nginx ingress installed
+  debug: 
+    msg:
+      - "replicas: {{k8s_ingress_replicas}}"
+
+# kubectl get pods -n ingress-nginx
