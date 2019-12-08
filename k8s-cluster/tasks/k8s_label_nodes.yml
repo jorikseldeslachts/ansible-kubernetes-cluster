@@ -18,7 +18,7 @@
 
 
 # Set new role labels
-- name: Set master label on masters
+- name: Set master role label on masters
   become_user: "{{k8s_user}}"
   shell: "kubectl label node {{item.0}} {{item.1}}"
   with_nested: 
@@ -27,7 +27,7 @@
   when: inventory_hostname in groups['master-initial']
   
 
-- name: Set worker label on workers
+- name: Set worker role label on workers
   become_user: "{{k8s_user}}"
   shell: "kubectl label node {{item.0}}  {{item.1}}"
   with_nested: 
