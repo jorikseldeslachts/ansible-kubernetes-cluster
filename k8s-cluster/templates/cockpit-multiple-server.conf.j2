@@ -22,8 +22,8 @@
     "visible" : true,
     "color" : "rgb({{ 256 | random }}, {{ 256 | random }}, {{ 256 | random }})",
     "address" : "{{item.hostname}}",
-    "label" : "{{item.hostname}}.{{item.domain}}",
-    "user" : "{{k8s_user}}"
+    "label" : "{{item.hostname}}",
+    "user" : "root"
   },
 {%endfor%}
 }

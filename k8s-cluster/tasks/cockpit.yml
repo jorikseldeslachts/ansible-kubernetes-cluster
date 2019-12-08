@@ -76,19 +76,19 @@
 
 
 
-###################### Masters ######################
-# tasks:
-# - name: Join nodes to cockpit dashboard
-#   copy:
-#     src: cockpit-multiple-server.conf.j2
-#     dest: /etc/cockpit/machines.d/99-webui.json
-#     owner: root
-#     group: root
-#     mode: 0644
+###################### All ######################
+tasks:
+- name: Join nodes to cockpit dashboard
+  copy:
+    src: cockpit-multiple-server.conf.j2
+    dest: /etc/cockpit/machines.d/99-webui.json
+    owner: root
+    group: root
+    mode: 0644
 
-# - name: Restart Cockpit service
-#   systemd:
-#     state: restarted
-#     enabled: yes
-#     name: cockpit.socket
+- name: Restart Cockpit service
+  systemd:
+    state: restarted
+    enabled: yes
+    name: cockpit.socket
     
