@@ -17,9 +17,6 @@
   become_user: "{{k8s_user}}"
   shell: |
     kubectl apply -f {{k8s_ingress_config_path}}/nginx-ingress-config.yml
-  args:
-    chdir: "/home/{{k8s_user}}/"
-    creates: pod_network_setup.txt
   register: kubectl_output
 
 - name: Kubectl output
