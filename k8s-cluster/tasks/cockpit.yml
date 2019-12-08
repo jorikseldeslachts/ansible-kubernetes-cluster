@@ -20,6 +20,12 @@
       - trousers
       - wpa_supplicant
 
+- name: Start & Enable NetworkManager service
+  systemd:
+    name: NetworkManager
+    state: restarted
+    enabled: yes
+
 - name: Install Cockpit main components
   yum:
     name: "{{ cockpit_components }}"
