@@ -93,9 +93,9 @@
   when: inventory_hostname in groups['master-initial']
 
 
-print status messages:
-- docker status/info
-- kubectl
-kubens
-reinit van masters/joins tegengaan van nodes die al gejoined zijn
-enkel joinen als nog geen deel
+# print status messages:
+# - docker status/info
+# - kubectl
+# kubens
+# reinit van masters/joins tegengaan van nodes die al gejoined zijn
+# enkel joinen als nog geen deel
