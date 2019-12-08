@@ -5,7 +5,7 @@
 
 - name: Create CNI config directory
   file:
-    path: "/etc/kubernetes/cni"
+    path: "{{k8s_cni_config_path}}"
     state: directory
     owner: "{{k8s_user}}"
     group: "{{k8s_user}}"
