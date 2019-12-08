@@ -2,10 +2,13 @@
 
 - name: Remove master & worker labels from all nodes
   become_user: "{{k8s_user}}"
-  shell: "kubectl label node {{item.0}} node-role.kubernetes.io/{{item.1}}-"
+  shell: "kubectl label node {{item.0}} {{item.1}}-"
   with_nested: 
     - "{{groups['masters']}}"
-    - ["master", "worker"]
+    - [
+      "node-role.kubernetes.io/master", 
+      "node-role.kubernetes.io/worker"
+      ]
   when: inventory_hostname in groups['master-initial']
 
 
