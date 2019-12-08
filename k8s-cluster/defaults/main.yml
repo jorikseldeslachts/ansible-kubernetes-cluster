@@ -30,7 +30,7 @@ k8s_cni_config_path: /etc/kubernetes/cni
 # ingress
 k8s_ingress_file_url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml
 k8s_ingress_config_path: /etc/kubernetes/ingress
-k8s_ingress_replicas: 1
+k8s_ingress_replicas: 3
 
 
 # docker vars
