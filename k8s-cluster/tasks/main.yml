@@ -2,8 +2,7 @@
 # Debug
 - name: Starting Kubernetes installation
   debug: 
-    msg: 
-      - "{{inventory_hostname}}: {{group_names}}"
+    msg: "{{group_names}}"
 
 
 # Preparation
