@@ -1,5 +1,6 @@
 # labeling for all nodes is done through a master
 
+# Remove old role labels
 - name: Remove master & worker labels from all nodes
   become_user: "{{k8s_user}}"
   shell: "kubectl label node {{item.0}} {{item.1}}-"
@@ -12,11 +13,12 @@
   when: inventory_hostname in groups['master-initial']
 
 
+# Set new role labels
 - name: Set master label on masters
   become_user: "{{k8s_user}}"
   shell: "kubectl label node {{item}} node-role.kubernetes.io/master=master"
-  with_items: 
-    - "{{groups['masters']}}"
+  with_nested: 
+    - "{{ groups['masters'] }}"
   when: inventory_hostname in groups['master-initial']
   
 
@@ -28,18 +30,19 @@
   when: inventory_hostname in groups['master-initial']
 
 
+# Debug current labels
+- name: Get all labels on each node
+  become_user: "{{k8s_user}}"
+  shell: |
+    kubectl get node {{item.0}} \
+      -o custom-columns=LABELHEADER:.metadata.labels | grep -v LABELHEADER
+  with_items: 
+    - "{{hostvars}}"
+  register: node_labels
+  when: inventory_hostname in groups['master-initial']
 
-
-
-# - name: Label workers
-
-
-
-
-
-
-# - name: Debug node labels
-#   debug:
-#     msg:
+- name: Debug node labels
+  debug:
+    msg: "{{node_labels}}"
 
 
