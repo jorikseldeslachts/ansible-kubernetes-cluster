@@ -36,20 +36,20 @@
   when: inventory_hostname in groups['master-initial']
 
 
-# Debug current labels
-- name: Get all labels on each node
-  become_user: "{{k8s_user}}"
-  shell: "kubectl get node {{item}} -o custom-columns=LABELHEADER:.metadata.labels | grep -v LABELHEADER"
-  with_items: 
-    - "{{ansible_play_hosts}}"
-  register: node_labels
-  when: inventory_hostname in groups['master-initial']
+# # Debug current labels
+# - name: Get all labels on each node
+#   become_user: "{{k8s_user}}"
+#   shell: "kubectl get node {{item}} -o custom-columns=LABELHEADER:.metadata.labels | grep -v LABELHEADER"
+#   with_items: 
+#     - "{{ansible_play_hosts}}"
+#   register: node_labels
+#   when: inventory_hostname in groups['master-initial']
 
-- name: Debug node labels
-  debug:
-    msg: "{{item.stdout_lines | items2dict }}"
-  with_items:
-    - "{{node_labels.results}}"
-  when: inventory_hostname in groups['master-initial']
+# - name: Debug node labels
+#   debug:
+#     msg: "{{item.stdout_lines | items2dict }}"
+#   with_items:
+#     - "{{node_labels.results}}"
+#   when: inventory_hostname in groups['master-initial']
 
 
