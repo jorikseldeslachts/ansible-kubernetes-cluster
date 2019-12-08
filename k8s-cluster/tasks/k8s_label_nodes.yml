@@ -1,33 +1,31 @@
 # labeling for all nodes is done through a master
 
-- name: test
-  debug:
-    msg: "master: {{item}}"
-  with_items: 
+- name: Remove master & worker labels from all nodes
+  become_user: "{{k8s_user}}"
+  shell: "kubectl label node {{item.0}} node-role.kubernetes.io/{{item.1}}-"
+  with_nested: 
     - "{{groups['masters']}}"
+    - ["master", "worker"]
   when: inventory_hostname in groups['master-initial']
+
+
+# - name: Set master label on masters
+#   become_user: "{{k8s_user}}"
+#   shell: "kubectl label node {{item}} node-role.kubernetes.io/master=master"
+#   with_items: 
+#     - "{{groups['masters']}}"
+#   when: inventory_hostname in groups['master-initial']
   
 
-- name: test
-  debug:
-    msg: "worker: {{item}}"
-  with_items: 
-    - "{{groups['workers']}}"
-  when: inventory_hostname in groups['master-initial']
-
-
-# - name: Label masters
+# - name: Set worker label on masters
 #   become_user: "{{k8s_user}}"
-#   shell: |
-#     kubectl label node k8s-node-8 node-role.kubernetes.io/master-
+#   shell: "kubectl label node {{item}} node-role.kubernetes.io/worker=worker"
+#   with_items: 
+#     - "{{groups['workers']}}"
 #   when: inventory_hostname in groups['master-initial']
-#   with_items: groups['masters']
 
-# - name: Label masters
-#   become_user: "{{k8s_user}}"
-#   shell: |
-#     kubectl label node k8s-node-8 node-role.kubernetes.io/master-
-#   when: inventory_hostname in groups['master-initial']
+
+
 
 
 # - name: Label workers
