@@ -6,33 +6,33 @@
       - "{{inventory_hostname}}: {{group_names}}"
 
 
-# # Preparation
-# - name: Install some handy packages
-#   yum: 
-#     name: "{{ extra_handy_packages }}"
-#     state: present
+# Preparation
+- name: Install some handy packages
+  yum: 
+    name: "{{ extra_handy_packages }}"
+    state: present
 
-# - name: Update hostfile with all node ip's
-#   lineinfile:
-#     path: /etc/hosts
-#     line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
-#   with_items:
-#     - "{{hostfile_entries}}"
+- name: Update hostfile with all node ip's
+  lineinfile:
+    path: /etc/hosts
+    line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
+  with_items:
+    - "{{hostfile_entries}}"
 
-# - name: Update node hostnames
-#   hostname:
-#     name: "{{inventory_hostname}}"
-
-
-# # Docker
-# - name: Include Docker installation tasks
-#   include: docker.yml
-#   when: install_docker |bool
+- name: Update node hostnames
+  hostname:
+    name: "{{inventory_hostname}}"
 
 
-# # Firewalld
-# - name: Include Firewalld configuration tasks
-#   include: firewalld.yml
+# Docker
+- name: Include Docker installation tasks
+  include: docker.yml
+  when: install_docker |bool
+
+
+# Firewalld
+- name: Include Firewalld configuration tasks
+  include: firewalld.yml
 
 
 # K8s dependencies
@@ -41,41 +41,39 @@
   when: install_docker |bool
 
 
-# # Masters setup
-# - name: Include init tasks for first initial master
-#   include: k8s_init_first_master.yml
-#   when: inventory_hostname in groups['master-initial']
+# Masters setup
+- name: Include init tasks for first initial master
+  include: k8s_init_first_master.yml
+  when: inventory_hostname in groups['master-initial']
 
-# - name: Include tasks for Flannel CNI plugin
-#   include: flannel_cni.yml
-#   when: 
-#     - inventory_hostname in groups['masters']
-#     - k8s_cni_plugin |lower == 'flannel'
+- name: Include tasks for Flannel CNI plugin
+  include: flannel_cni.yml
+  when: 
+    - inventory_hostname in groups['masters']
+    - k8s_cni_plugin |lower == 'flannel'
 
-# - name: Include HA masters init tasks
-#   include: k8s_join_ha_master.yml
-#   when: 
-#     - k8s_ha_masters |bool
+- name: Include HA masters init tasks
+  include: k8s_join_ha_master.yml
+  when: 
+    - k8s_ha_masters |bool
 
-# - name: Include installation of tools kubens & kubectx on all master nodes
-#   include: k8s_kubectx_kubens.yml
-#   when: 
-#     - inventory_hostname in groups['masters']
-#     - install_kubectx_kubens |bool
+- name: Include installation of tools kubens & kubectx on all master nodes
+  include: k8s_kubectx_kubens.yml
+  when: 
+    - inventory_hostname in groups['masters']
+    - install_kubectx_kubens |bool
 
 
-# # workers setup
-# - name: Include worker node tasks
-#   include: k8s_join_workers.yml
-#   # when: inventory_hostname in groups['workers'] # MUST KEEP ALL ACTIVE --> Otherwise master token commands won't work!
+# workers setup
+- name: Include worker node tasks
+  include: k8s_join_workers.yml
+  # when: inventory_hostname in groups['workers'] # MUST KEEP ALL ACTIVE --> Otherwise master token commands won't work!
 
 
 # Cockpit
 - name: Include Cockpit installation tasks
   include: cockpit.yml
   when: install_cockpit |bool
-
-
 
 
 # Debug
