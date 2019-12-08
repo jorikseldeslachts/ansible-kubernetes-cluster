@@ -87,18 +87,3 @@
     group: "{{k8s_user}}"
     remote_src: yes
   when: inventory_hostname in groups['master-ha']
-
-
-########################### all mastes ###############################
-
-# Get node status
-- name: Get node status
-  become_user: "{{k8s_user}}"
-  shell: kubectl get nodes
-  register: get_nodes
-  when: inventory_hostname in groups['master-initial']
-
-- name: Debug get nodes
-  debug:
-    msg: "{{ get_nodes.stdout_lines }}"
-  when: inventory_hostname in groups['master-initial']
