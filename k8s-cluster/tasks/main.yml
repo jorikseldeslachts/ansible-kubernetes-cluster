@@ -56,11 +56,11 @@
 #   when: 
 #     - k8s_ha_masters |bool
 
-- name: Include installation of tools kubens & kubectx on all master nodes
-  include: k8s_kubectx_kubens.yml
-  when: 
-    - inventory_hostname in groups['masters']
-    - install_kubectx_kubens |bool
+# - name: Include installation of tools kubens & kubectx on all master nodes
+#   include: k8s_kubectx_kubens.yml
+#   when: 
+#     - inventory_hostname in groups['masters']
+#     - install_kubectx_kubens |bool
 
 
 # # workers setup
@@ -69,9 +69,9 @@
 #   # when: inventory_hostname in groups['workers'] # MUST KEEP ALL ACTIVE --> Otherwise master token commands won't work!
 
 
-# ensure nodes are labeled correctly
-- name: Include label tasks
-  include: k8s_label_nodes.yml
+# # ensure nodes are labeled correctly
+# - name: Include label tasks
+#   include: k8s_label_nodes.yml
 
 
 # # Cockpit
