@@ -77,6 +77,15 @@
 
 
 ###################### All ######################
+- name: Configure cockpit.conf
+  template:
+    src: cockpit.conf.j2
+    dest: /etc/cockpit/cockpit.conf
+    owner: root
+    group: root
+    mode: 0644
+
+
 - name: Join nodes to cockpit dashboard
   template:
     src: cockpit-multiple-server.conf.j2
