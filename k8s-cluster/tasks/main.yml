@@ -83,8 +83,7 @@
 # Debug
 - name: Get node status
   become_user: "{{k8s_user}}"
-  shell: |
-    kubectl get nodes
+  shell: kubectl get nodes
   register: get_nodes
   when: inventory_hostname in groups['master-initial']
 
