@@ -12,6 +12,12 @@
     url: "{{k8s_ingress_file_url}}"
     dest: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
 
+- name: "Configure Nginx ingress replica amount (replicas: {{k8s_ingress_replicas}})"
+  replace:
+    path: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
+    regexp: "replicas:"
+    replace: "replicas: {{k8s_ingress_replicas}}"
+
 
 ########################### Only apply on first master ###############################
 - name: Apply Nginx ingress plugin
