@@ -13,10 +13,17 @@
     createhome: yes
     home: "/home/{{k8s_user}}"
 
-- name: "Configure prompt colors to blue for {{k8s_user}}"
+- name: "Configure prompt colors to blue for {{k8s_user}} (masters)"
   lineinfile:
     path: "/home/{{k8s_user}}/.bashrc"
-    line: PS1='\[\e[1;34m\]\u\[\e[1;33m\]@\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+    line: PS1='\[\e[1;34m\]\u\[\e[1;33m\]@\[\e[1;36m\]\h(master) \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+  when: inventory_hostname in groups['masters']
+
+- name: "Configure prompt colors to blue for {{k8s_user}} (workers)"
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: PS1='\[\e[1;34m\]\u\[\e[1;33m\]@\[\e[1;36m\]\h(worker) \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+  when: inventory_hostname in groups['workers']
 
 - name: Remove swapfile from /etc/fstab
   mount:
