@@ -1,11 +1,15 @@
 # labeling for all nodes is done through a master
 
+- name: test ansible_play_hosts
+  debug:
+    msg: "{{ansible_play_hosts}}"
+
 # Remove old role labels
 - name: Remove master & worker labels from all nodes
   become_user: "{{k8s_user}}"
   shell: "kubectl label node {{item.0}} {{item.1}}-"
   with_nested: 
-    - "{{hostvars}}"
+    - "{{ansible_play_hosts}}"
     - [
       "node-role.kubernetes.io/master", 
       "node-role.kubernetes.io/worker"
@@ -16,17 +20,19 @@
 # Set new role labels
 - name: Set master label on masters
   become_user: "{{k8s_user}}"
-  shell: "kubectl label node {{item}} node-role.kubernetes.io/master=master"
+  shell: "kubectl label node {{item.0}} {{item.1}}"
   with_nested: 
     - "{{ groups['masters'] }}"
+    - node-role.kubernetes.io/master=master
   when: inventory_hostname in groups['master-initial']
   
 
 - name: Set worker label on workers
   become_user: "{{k8s_user}}"
-  shell: "kubectl label node {{item}} node-role.kubernetes.io/worker=worker"
-  with_items: 
+  shell: "kubectl label node {{item.0}}  {{item.1}}"
+  with_nested: 
     - "{{groups['workers']}}"
+    - node-role.kubernetes.io/worker=worker
   when: inventory_hostname in groups['master-initial']
 
 
@@ -34,10 +40,10 @@
 - name: Get all labels on each node
   become_user: "{{k8s_user}}"
   shell: |
-    kubectl get node {{item.0}} \
+    kubectl get node {{item}} \
       -o custom-columns=LABELHEADER:.metadata.labels | grep -v LABELHEADER
   with_items: 
-    - "{{hostvars}}"
+    - "{{ansible_play_hosts}}"
   register: node_labels
   when: inventory_hostname in groups['master-initial']
 
