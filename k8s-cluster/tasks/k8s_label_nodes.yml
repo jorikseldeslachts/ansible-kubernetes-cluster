@@ -45,8 +45,8 @@
   register: node_labels
   when: inventory_hostname in groups['master-initial']
 
-# - name: Debug node labels
-#   debug:
-#     msg: "{{node_labels}}"
+- name: Debug node labels
+  debug:
+    msg: "{{node_labels}}"
 
 
