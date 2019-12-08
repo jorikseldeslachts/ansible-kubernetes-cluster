@@ -3,7 +3,8 @@
 - name: test
   debug:
     msg: "{{item}}"
-  with_items: groups['masters']
+  with_items: 
+    - "{{groups['masters']}}"
 
 
 # - name: Label masters
