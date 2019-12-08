@@ -63,16 +63,16 @@
 #     - install_kubectx_kubens |bool
 
 
-# workers setup
-- name: Include worker node tasks
-  include: k8s_join_workers.yml
-  # when: inventory_hostname in groups['workers'] # MUST KEEP ALL ACTIVE --> Otherwise master token commands won't work!
+# # workers setup
+# - name: Include worker node tasks
+#   include: k8s_join_workers.yml
+#   # when: inventory_hostname in groups['workers'] # MUST KEEP ALL ACTIVE --> Otherwise master token commands won't work!
 
 
-# # Cockpit
-# # - name: Include Cockpit installation tasks
-# #   include: cockpit.yml
-# #   when: install_cockpit |bool
+# Cockpit
+- name: Include Cockpit installation tasks
+  include: cockpit.yml
+  when: install_cockpit |bool
 
 
 
