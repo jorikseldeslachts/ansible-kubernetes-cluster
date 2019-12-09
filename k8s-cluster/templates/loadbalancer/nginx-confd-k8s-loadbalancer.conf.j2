@@ -46,7 +46,7 @@ server {
 
     # logging
     access_log  /var/log/nginx/{{lb_k8s_api_cert_domain}}/access.log   main;
-    error_log   /var/log/nginx/{{lb_k8s_api_cert_domain}}/error.log    error;;
+    error_log   /var/log/nginx/{{lb_k8s_api_cert_domain}}/error.log    error;
 
     # ACL
     include /etc/nginx/k8s-api.acl;
@@ -80,7 +80,7 @@ server {
 
     # logging
     access_log  /var/log/nginx/{{domain}}/access.log   main;
-    error_log   /var/log/nginx/{{domain}}/error.log    error;;
+    error_log   /var/log/nginx/{{domain}}/error.log    error;
 
     location / {
 {%if lb_galaxy_acl %}
