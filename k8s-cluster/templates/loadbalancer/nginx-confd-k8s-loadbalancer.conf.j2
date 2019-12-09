@@ -26,6 +26,7 @@ server {
         return 301 https://$host$request_uri;
     }
 }
+
 {%endfor%}
 
 
@@ -96,4 +97,5 @@ server {
         proxy_pass http://k8s_nodes_http;
     }
 }
+
 {%endfor%}
