@@ -48,7 +48,7 @@ lb_galaxy_acl: False
 lb_listen_domains: 
   - milkywaygalaxy.be
   - jorsel.be
-  - ellievision.be
+  # - ellievision.be
 lb_k8s_api_url: k8s.milkywaygalaxy.be
 lb_k8s_api_cert_domain: milkywaygalaxy.be
 lb_k8s_api_port: 6443
