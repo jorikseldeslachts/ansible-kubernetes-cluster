@@ -6,7 +6,7 @@ upstream k8s_nodes_http {
 
     # weight 3 means 3 times as much traffic
 {%for node in groups['k8s-nodes'] %}
-    server {{node}}:{{k8s_ingress_nodeport_http}}
+    server {{node}}:{{k8s_ingress_nodeport_http}};
 {%endfor%}
 }
 
