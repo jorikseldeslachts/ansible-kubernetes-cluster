@@ -85,7 +85,7 @@
 ###################### All ######################
 - name: Configure cockpit.conf
   template:
-    src: cockpit.conf.j2
+    src: cockpit/cockpit.conf.j2
     dest: /etc/cockpit/cockpit.conf
     owner: root
     group: root
@@ -94,7 +94,7 @@
 
 - name: Join nodes to cockpit dashboard
   template:
-    src: cockpit-multiple-server.conf.j2
+    src: cockpit/cockpit-multiple-server.conf.j2
     dest: /etc/cockpit/machines.d/66-webui-custom.json
     owner: root
     group: root

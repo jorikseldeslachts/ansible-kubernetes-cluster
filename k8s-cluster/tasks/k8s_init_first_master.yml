@@ -22,7 +22,7 @@
 
 - name: Copy custom kubeadm-config.yml
   template:
-    src: kubeadm-config.yml.j2
+    src: k8s/kubeadm-config.yml.j2
     dest: "{{k8s_kubeadm_config_path}}/kubeadm-config.yml"
 
 # this cidr has to be the same as in the CNI config!! otherwise coredns pods won't start!

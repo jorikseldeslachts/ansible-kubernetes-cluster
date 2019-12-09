@@ -53,7 +53,7 @@
 
 - name: Copy daemon.json template
   template:
-    src: daemon.json.j2
+    src: docker/daemon.json.j2
     dest: /etc/docker/daemon.json
     mode: 0644
   
