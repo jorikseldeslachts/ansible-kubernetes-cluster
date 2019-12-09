@@ -1,11 +1,18 @@
 
-########################### loadbalancer ###############################
+############################ kubernetes ################################
 
 # Debug
-- name: Starting loadbalancer installation
+- name: Starting Kubernetes installation
   debug: 
-    msg: "{{ansible_host}}"
-  when: inventory_hostname in groups['loadbalancer']
+    msg: "{{group_names}}"
+  when: inventory_hostname in groups['k8s-nodes']
+
+- name: Update hostfile with all node ip's
+  lineinfile:
+    path: /etc/hosts
+    line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
+  with_items:
+    - "{{hostfile_entries}}"
 
 # Loadbalancer 
 - name: Setup Nginx Loadbalancer VM
@@ -15,27 +22,12 @@
     - inventory_hostname in groups['loadbalancer']
 
 
-############################ kubernetes ################################
-
-# Debug
-- name: Starting Kubernetes installation
-  debug: 
-    msg: "{{group_names}}"
-  when: inventory_hostname in groups['k8s-nodes']
-
-
 # # Preparation
 # - name: Install some handy packages
 #   yum: 
 #     name: "{{ extra_handy_packages }}"
 #     state: present
 
-# - name: Update hostfile with all node ip's
-#   lineinfile:
-#     path: /etc/hosts
-#     line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
-#   with_items:
-#     - "{{hostfile_entries}}"
 
 # - name: Update node hostnames
 #   hostname:
