@@ -21,6 +21,7 @@
 - name: Starting Kubernetes installation
   debug: 
     msg: "{{group_names}}"
+  when: inventory_hostname in groups['k8s-nodes']
 
 
 # # Preparation
