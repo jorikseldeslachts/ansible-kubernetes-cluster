@@ -50,6 +50,8 @@ lb_listen_domains:
   - jorsel.be
   - ellievision.be
 lb_k8s_api_url: k8s.milkywaygalaxy.be
+lb_k8s_api_cert_domain: milkywaygalaxy.be
+lb_k8s_api_port: 6443
 # lb_k8s_api_allowd_paths:
   # - /
 
