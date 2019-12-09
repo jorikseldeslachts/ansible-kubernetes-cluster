@@ -9,7 +9,7 @@
 
 # Loadbalancer 
 - name: Setup Nginx Loadbalancer VM
-  include: nginx_ingress.yml
+  include: install_loadbalancer.yml
   when: 
     - install_loadbalancer |bool
     - inventory_hostname in groups['loadbalancer']
