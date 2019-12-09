@@ -1,10 +1,11 @@
 
 # What to install
+install_loadbalancer: True
 install_kubectx_kubens: True
 install_docker: True
-install_prometheus: True
-install_grafana: True
-install_k8s_dashboard: True
+# install_prometheus: True
+# install_grafana: True
+# install_k8s_dashboard: True
 install_nginx_ingress: True
 install_cockpit: True
 
@@ -31,7 +32,8 @@ k8s_cni_config_path: /etc/kubernetes/cni
 k8s_ingress_file_url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml
 k8s_ingress_config_path: /etc/kubernetes/ingress
 k8s_ingress_replicas: 3
-
+k8s_ingress_nodeport_http: 30080
+k8s_ingress_nodeport_https: 30443
 
 # docker vars
 docker_version: 18.09.9
@@ -39,6 +41,17 @@ docker_remove_old_docker_packages: True
 docker_repository_url: https://download.docker.com/linux/centos/docker-ce.repo
 docker_cgroup_driver: systemd
 docker_storage_driver: overlay2
+
+# loadbalancer
+lb_ssl_ciphers: EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+lb_galaxy_acl: False
+lb_listen_domains: 
+  - milkywaygalaxy.be
+  - jorsel.be
+  - ellievision.be
+lb_k8s_api_url: k8s.milkywaygalaxy.be
+# lb_k8s_api_allowd_paths:
+  # - /
 
 # extra vars
 extra_handy_packages:

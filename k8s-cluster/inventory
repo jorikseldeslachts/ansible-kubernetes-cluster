@@ -1,6 +1,10 @@
 # split masters in initial setup + additional HA masters
 # Initial should only contain one master, all the rest belongs in the [master-ha] section
 
+[k8s-nodes:children]
+masters
+workers
+
 [masters:children]
 master-initial
 master-ha
@@ -15,3 +19,5 @@ k8s-node-7 ansible_host=10.66.66.7 ansible_user=root
 [workers]
 k8s-node-8 ansible_host=10.66.66.8 ansible_user=root
 
+[loadbalancer]
+kubegate ansible_host=10.66.66.1 ansible_user=root

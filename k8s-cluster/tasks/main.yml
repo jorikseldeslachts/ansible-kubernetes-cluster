@@ -1,8 +1,26 @@
 
-# # Debug
-# - name: Starting Kubernetes installation
-#   debug: 
-#     msg: "{{group_names}}"
+########################### loadbalancer ###############################
+
+# Debug
+- name: Starting loadbalancer installation
+  debug: 
+    msg: "{{ansible_host}}"
+  when: inventory_hostname in groups['loadbalancer']
+
+# Loadbalancer 
+- name: Setup Nginx Loadbalancer VM
+  include: nginx_ingress.yml
+  when: 
+    - install_loadbalancer |bool
+    - inventory_hostname in groups['loadbalancer']
+
+
+############################ kubernetes ################################
+
+# Debug
+- name: Starting Kubernetes installation
+  debug: 
+    msg: "{{group_names}}"
 
 
 # # Preparation
@@ -80,27 +98,27 @@
 #   when: install_cockpit |bool
 
 
-# Ingress 
-- name: Include Nginx ingress tasks
-  include: nginx_ingress.yml
-  when: 
-    - inventory_hostname in groups['masters']
-    - install_nginx_ingress |bool
+# # Ingress 
+# - name: Include Nginx ingress tasks
+#   include: nginx_ingress.yml
+#   when: 
+#     - inventory_hostname in groups['masters']
+#     - install_nginx_ingress |bool
 
 
-# Debug
-- name: Get node status
-  become_user: "{{k8s_user}}"
-  shell: kubectl get nodes
-  register: get_nodes
-  when: inventory_hostname in groups['master-initial']
+# # Debug
+# - name: Get node status
+#   become_user: "{{k8s_user}}"
+#   shell: kubectl get nodes
+#   register: get_nodes
+#   when: inventory_hostname in groups['master-initial']
 
-- name: Kubernetes installation complete
-  debug: 
-    msg: 
-      - "Kubernetes installation complete"
-      - "{{ get_nodes.stdout_lines }}"
-  when: inventory_hostname in groups['master-initial']
+# - name: Kubernetes installation complete
+#   debug: 
+#     msg: 
+#       - "Kubernetes installation complete"
+#       - "{{ get_nodes.stdout_lines }}"
+#   when: inventory_hostname in groups['master-initial']
 
 
 
