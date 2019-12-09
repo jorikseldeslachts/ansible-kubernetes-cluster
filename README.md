@@ -1,5 +1,29 @@
 # Kubernetes with Ansible
 
+# TODO
+
+- [x] install nginx ingress
+  - [ ] Daemonset on each node
+- [ ] install test project
+- [ ] make /DATA dir
+- [ ] storage??
+- [x] SET HOSTNAMES IN HOSTFILE!!!! THAT IS WHAT MADE NETWORK FUCKEDUP
+- [x] get nodes : register + debug
+- [x] print if cni1 is aangemaakt
+- [ ] -kubernetes dashboard!
+- [x] k8s .bashrc
+- [x] blue colors
+- [x] bash completion get added every rerun ">>" --> replace with lineinfile
+- [ ] k9s
+- [ ] octant
+- [ ] Loadbalander setup
+  - [ ] Nginx.conf
+  - [ ] ladbalander.conf
+  - [ ] expose API
+
+
+---
+
 ## Setup om KVM
 
 - [KVM cheat sheet](https://www.techotopia.com/index.php/Installing_a_KVM_Guest_OS_from_the_Command-line_(virt-install))
@@ -208,19 +232,3 @@ virsh attach-interface \
 
 ---
 
-# TODO
-
-<!-- - install tools: wget htop nano vim tree bridge-utils -->
-- install nginx ingress
-- install test project
-<!-- - install kubectx/kubens -->
-- make /DATA dir
-- storage??
-- SET HOSTNAMES IN HOSTFILE!!!! THAT IS WHAT MADE NETWORK FUCKEDUP
-<!-- - masquerading: register + print debug -->
-- get nodes : register + debug
-- print if cni1 is aangemaakt
-- -kubernetes dashboard!
-- k8s .bashrc
-    - blue colors
-    - bash completion get added every rerun ">>" --> replace with lineinfile
