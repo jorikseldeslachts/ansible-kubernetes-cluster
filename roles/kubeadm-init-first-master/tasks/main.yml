@@ -1,0 +1,63 @@
+
+# cluster config
+- name: Create kubeadm config path
+  file:
+    path: "{{k8s_kubeadm_config_path}}"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0755
+
+- name: Copy custom kubeadm-config.yml
+  template:
+    src: kubeadm-config.yml.j2
+    dest: "{{k8s_kubeadm_config_path}}/kubeadm-config.yml"
+
+
+# init cluster
+#     this cidr has to be the same as in the CNI config!! 
+#     otherwise coredns pods won't start!
+- name: Initialize the cluster without HA config
+  shell: |
+    kubeadm init \
+      --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml >> cluster_initialized.txt
+  args:
+    chdir: "/home/{{k8s_user}}/"
+    creates: cluster_initialized.txt
+  when: not k8s_ha_masters |bool
+
+- name: "Initialize the cluster with HA config: {{k8s_kubeadm_config_path}}/kubeadm-config.yml"
+  shell: |
+    kubeadm init \
+      --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml \
+      --upload-certs >> cluster_initialized.txt
+  args:
+    chdir: "/home/{{k8s_user}}/"
+    creates: cluster_initialized.txt
+  when: k8s_ha_masters |bool
+
+
+# copy init conf
+- name: Create .kube directory
+  file:
+    path: "/home/{{k8s_user}}/.kube"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0755
+
+- name: Copy admin.conf to .kube folder
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "/home/{{k8s_user}}/.kube/config"
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    remote_src: yes
+
+
+# taint master
+# - name: Allow running pods on the master node
+#   become: yes
+#   become_user: "{{k8s_user}}"
+#   shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+#   when: "{{k8s_pods_scheduled_on_master}}"

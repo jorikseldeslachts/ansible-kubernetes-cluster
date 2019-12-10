@@ -1,0 +1,41 @@
+apiServer:
+  certSANs:
+  - localhost
+  - 127.0.0.1
+  - 10.66.66.1
+  - 10.66.66.5
+  - k8s-node-5
+  - k8s-node-5.milkywaygalaxy.be
+  - 10.66.66.6
+  - k8s-node-6
+  - k8s-node-6.milkywaygalaxy.be
+  - 10.66.66.7
+  - k8s-node-7
+  - k8s-node-7.milkywaygalaxy.be
+  - 10.66.66.8
+  - k8s-node-8
+  - k8s-node-8.milkywaygalaxy.be
+  - k8s
+  - k8s.milkywaygalaxy.be
+  - 148.251.246.29
+  extraArgs:
+    authorization-mode: Node,RBAC
+  timeoutForControlPlane: 4m0s
+apiVersion: kubeadm.k8s.io/v1beta2
+certificatesDir: /etc/kubernetes/pki
+clusterName: kubernetes
+controlPlaneEndpoint: 10.66.66.1:6443
+controllerManager: {}
+dns:
+  type: CoreDNS
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+imageRepository: k8s.gcr.io
+kind: ClusterConfiguration
+kubernetesVersion: v1.16.3
+networking:
+  dnsDomain: cluster.local
+  podSubnet: 10.88.0.0/16
+  serviceSubnet: 10.99.0.0/16
+scheduler: {}

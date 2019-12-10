@@ -1,0 +1,21 @@
+- import_playbook: preparation.yml
+- import_playbook: ntpd
+- import_playbook: docker
+- import_playbook: firewalld
+- import_playbook: k8s-dependencies.yml
+- import_playbook: kubeadm-init-first-master
+- import_playbook: kubeadm-add-master
+- import_playbook: kubeadm-add-worker
+- import_playbook: k8s-label-nodes
+
+
+
+
+- import_playbook: cleanup-vms
+
+- import_playbook: kubeadm
+
+- import_playbook: smoke-test
+
+
+

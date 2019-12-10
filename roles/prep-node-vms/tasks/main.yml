@@ -1,0 +1,16 @@
+
+- name: Update node hostnames
+  hostname:
+    name: "{{inventory_hostname}}"
+    
+- name: Update hostfile with all node ip's
+  lineinfile:
+    path: /etc/hosts
+    line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
+  with_items:
+    - "{{hostfile_entries}}"
+
+- name: Install some handy packages
+  yum: 
+    name: "{{ extra_handy_packages }}"
+    state: present

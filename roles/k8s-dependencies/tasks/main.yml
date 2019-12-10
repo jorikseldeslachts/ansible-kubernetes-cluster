@@ -1,0 +1,196 @@
+
+# preflight checks / requirements
+- name: Disable SELinux on reboot
+  selinux:
+    state: disabled
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Ensure net.bridge.bridge-nf-call-ip6tables is set to 1 (IPv6)
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: "1"
+    state: present
+
+- name: Ensure net.bridge.bridge-nf-call-iptables is set to 1 (IPv4)
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: "1"
+    state: present
+
+
+# k8s user
+- name: "Create a {{k8s_user}} user"
+  user:
+    name: "{{k8s_user}}"
+    password: "{{k8s_user_password}}"
+    comment: "Kubernetes Admin"
+    update_password: on_create
+    state: present
+    shell: /bin/bash
+    system: no
+    createhome: yes
+    home: "/home/{{k8s_user}}"
+
+- name: "Add user {{k8s_user}} to Docker group"
+  user:
+    name: "{{ k8s_user }}"
+    groups: "docker,{{ k8s_user }}"
+    append: yes
+
+
+# prompt colors
+- name: "Configure prompt colors to blue for {{k8s_user}} user (masters)"
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: PS1='\[\e[1;34m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]master\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+  when: inventory_hostname in groups['masters']
+
+- name: "Configure prompt colors to blue for {{k8s_user}} user (workers)"
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: PS1='\[\e[1;34m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]worker\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+  when: inventory_hostname in groups['workers']
+
+- name: "Configure prompt colors to blue for root user (masters)"
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: PS1='\[\e[1;31m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]master\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+  when: inventory_hostname in groups['masters']
+
+- name: "Configure prompt colors to blue for root user (workers)"
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: PS1='\[\e[1;31m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]worker\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+  when: inventory_hostname in groups['workers']
+
+
+# add repo
+- name: Add Kubernetes YUM repository
+  yum_repository:
+    name: Kubernetes
+    description: Kubernetes YUM repository
+    baseurl: "{{k8s_packages_repository_url}}"
+    gpgkey: 
+      - https://packages.cloud.google.com/yum/doc/yum-key.gpg
+      - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    gpgcheck: yes
+
+
+# install k8s packages / tools
+- name: Install kubeadm
+  yum:
+    name: kubeadm # kubeadm-1.14.0
+    state: present
+    update_cache: yes
+
+- name: Install kubelet
+  yum:
+    name: kubelet # kubelet-1.14.0
+    state: present
+    update_cache: yes
+
+- name: Start kubelet
+  service:
+    name: kubelet
+    enabled: yes
+    state: started
+
+
+# docker driver
+- name: Detect docker's cgroup-driver
+  shell: |
+    docker info 2>/dev/null |grep -i cgroup | cut -d":" -f2 | tr -d " "
+  register: docker_cgroup_driver
+
+- name: "Docker debug driver"
+  debug:
+    msg: "{{ docker_cgroup_driver.stdout }}"
+
+# - name: Replace crgroup-driver
+#   replace:
+#     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+#     regexp: "--cgroup-driver=(systemd|cgroupfs)"
+#     replace: "--cgroup-driver={{docker_cgroup_driver.stdout}}"
+#     backup: no
+
+# - name: Replace cadvisor-port
+#   replace:
+#     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+#     regexp: "cadvisor-port=0"
+#     replace: "cadvisor-port={{k8s_cadvisor_port}}"
+#     backup: no
+
+###################### Master only ###################### 
+
+- name: Install kubectl
+  yum:
+    name: kubectl # kubectl-1.14.0
+    state: present
+    allow_downgrade: yes
+  when: inventory_hostname in groups['masters']
+  
+- name: Create alias k for kubectl
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: "alias k=kubectl"
+  when: inventory_hostname in groups['masters']
+
+- name: Install basic bash completion
+  yum: 
+    name: bash-completion
+    state: present
+  when: inventory_hostname in groups['masters']
+
+- name: "Kubectl bash completion: source the completion script in /home/{{k8s_user}}/.bashrc file"
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: "source <(kubectl completion bash)"
+  when: inventory_hostname in groups['masters']
+  
+- name: "Kubectl bash completion: add the completion script to /etc/bash_completion.d"
+  shell: |
+    kubectl completion bash > /etc/bash_completion.d/kubectl
+  when: inventory_hostname in groups['masters']
+
+- name: Extend bash completion to also work for alias k
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: "complete -F __start_kubectl k"
+  when: inventory_hostname in groups['masters']
+
+- name: Pull kubeadm init images beforehand
+  shell: kubeadm config images pull
+  
+
+###################### optional TODO ###################### 
+# kubelet_workers_eviction_hard=memory.available<10%
+# kubelet_masters_eviction_hard=memory.available<10%
+# - set_fact:
+#    eviction_hard: "{{ kubelet_masters_eviction_hard }} "
+#   when: inventory_hostname in groups["k8s-masters"]
+
+# - set_fact:
+#    eviction_hard: "{{ kubelet_workers_eviction_hard }} "
+#   when: inventory_hostname in groups["k8s-workers"]
+
+# - name: change pause container to private registry and add eviction hard
+#   lineinfile:
+#     path: /etc/systemd/system/kubelet.service.d/20-pod-infra-image.conf
+#     create: yes
+#     state: present
+#     line: |
+#        [Service]
+#        Environment="KUBELET_EXTRA_ARGS=--pod-infra-container-image={{kubepause_container_image}} --eviction-hard={{eviction_hard}}"
+
+
