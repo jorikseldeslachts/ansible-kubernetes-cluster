@@ -2,26 +2,26 @@
 # https://octetz.com/posts/ha-control-plane-k8s-kubeadm
 
 
-########################### master-initial ###############################
+########################### main master ###############################
 
-# First create token on initial master
-- name: Create join token on initial master
+# First create token on main master
+- name: Create join token on main master
   shell: |
     kubeadm token create \
       --ttl 10h \
       --description ansible_join_token_{{lookup('pipe','date +%Y%m%d%H%M%S')}} \
       --print-join-command
   register: kubeadm_token_create_result
-  when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname == master_main
 
 
-# Upload certs on initial master
-- name: Upload certs on initial master
+# Upload certs on main master
+- name: Upload certs on main master
   shell: |
     kubeadm init phase upload-certs \
       --upload-certs | grep -v upload-certs
   register: kubeadm_init_phase_result
-  when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname == master_main
   
 
 ########################### master-ha ###############################
@@ -29,16 +29,22 @@
 # vars
 - name: Register vars on HA masters
   set_fact:
-    master_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'].stdout }}"
-    master_upload_certs: "{{ hostvars[groups['master-initial'][0]]['kubeadm_init_phase_result'].stdout }}"
-  when: inventory_hostname in groups['master-ha']
+    # master_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'].stdout }}"
+    # master_upload_certs: "{{ hostvars[groups['master-initial'][0]]['kubeadm_init_phase_result'].stdout }}"
+    master_join_command: "{{ hostvars[master_main]['kubeadm_token_create_result'].stdout }}"
+    master_upload_certs: "{{ hostvars[master_main]['kubeadm_init_phase_result'].stdout }}"
+  when: 
+    - inventory_hostname in groups['masters']
+    - inventory_hostname != master_main
 
-- name: Debug vars on first HA master
+- name: Debug vars on HA masters
   debug:
     msg:
       - "master_join_command: {{master_join_command}}"
       - "master_upload_certs: {{master_upload_certs}}"
-  when: inventory_hostname in groups['master-ha']
+  when: 
+    - inventory_hostname in groups['masters']
+    - inventory_hostname != master_main
 
 
 # full join command
@@ -46,18 +52,24 @@
   set_fact:
     full_join_command: |
       {{master_join_command}} --certificate-key {{master_upload_certs}} --control-plane --v={{k8s_api_debug_level}}
-  when: inventory_hostname in groups['master-ha']
+  when: 
+    - inventory_hostname in groups['masters']
+    - inventory_hostname != master_main
 
 - name: Debug master join command
   debug:
     msg: "{{full_join_command}}"
-  when: inventory_hostname in groups['master-ha']
+  when: 
+    - inventory_hostname in groups['masters']
+    - inventory_hostname != master_main
 
 
 # join master to cluster
-- name: Pull kubeadm images beforehand
-  shell: kubeadm config images pull
-  when: inventory_hostname in groups['master-ha']
+# - name: Pull kubeadm images beforehand
+#   shell: kubeadm config images pull
+#   when: 
+#     - inventory_hostname in groups['masters']
+#     - inventory_hostname != master_main]
 
 - name: Join HA masters to the cluster
   shell: |
@@ -66,7 +78,9 @@
     executable: /bin/bash
     chdir: "/home/{{k8s_user}}/"
     creates: master_node_joined.txt
-  when: inventory_hostname in groups['master-ha']
+  when: 
+    - inventory_hostname in groups['masters']
+    - inventory_hostname != master_main
 
 
 # kube config + join
@@ -77,7 +91,9 @@
     owner: "{{k8s_user}}"
     group: "{{k8s_user}}"
     mode: 0755
-  when: inventory_hostname in groups['master-ha']
+  when: 
+    - inventory_hostname in groups['masters']
+    - inventory_hostname != master_main
 
 - name: Copy admin.conf to .kube folder
   copy:
@@ -86,4 +102,6 @@
     owner: "{{k8s_user}}"
     group: "{{k8s_user}}"
     remote_src: yes
-  when: inventory_hostname in groups['master-ha']
+  when: 
+    - inventory_hostname in groups['masters']
+    - inventory_hostname != master_main

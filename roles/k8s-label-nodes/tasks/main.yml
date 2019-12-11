@@ -14,7 +14,7 @@
       "node-role.kubernetes.io/master", 
       "node-role.kubernetes.io/worker"
       ]
-  when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname == master_main
 
 
 # Set new role labels
@@ -25,7 +25,7 @@
   with_nested: 
     - "{{ groups['masters'] }}"
     - node-role.kubernetes.io/master=master
-  when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname == master_main
   
 
 - name: Set worker role label on workers
@@ -35,7 +35,7 @@
   with_nested: 
     - "{{groups['workers']}}"
     - node-role.kubernetes.io/worker=worker
-  when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname == master_main
 
 
 # # Debug current labels
@@ -44,13 +44,13 @@
 #   with_items: 
 #     - "{{ansible_play_hosts}}"
 #   register: node_labels
-#   when: inventory_hostname in groups['master-initial']
+#   when: inventory_hostname == master_main
 
 # - name: Debug node labels
 #   debug:
 #     msg: "{{item.stdout_lines | items2dict }}"
 #   with_items:
 #     - "{{node_labels.results}}"
-#   when: inventory_hostname in groups['master-initial']
+#   when: inventory_hostname == master_main
 
 

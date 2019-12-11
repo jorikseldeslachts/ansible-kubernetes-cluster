@@ -3,14 +3,14 @@
 - name: Get node status
   shell: kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config get nodes
   register: get_nodes
-  when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname == master_main
 
 - name: Kubernetes installation complete
   debug: 
     msg: 
       - "Kubernetes installation complete"
       - "{{ get_nodes.stdout_lines }}"
-  when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname == master_main
 
 
 

@@ -5,6 +5,6 @@
     - { role: kubectx_kubens, when: install_kubectx_kubens |bool }
     # - { role: kubeadm-init-first-master,  when: "groups['k8s-masters'][0] == inventory_hostname"}
     # - { role: kubeadm-add-master,         when: "groups['k8s-masters'][0] != inventory_hostname" }
-    - { role: kubeadm-init-first-master,  when: "groups['master-initial'][0] == inventory_hostname"}
-    - { role: kubeadm-add-master,         when: "inventory_hostname in groups['master-a']" }
+    - { role: kubeadm-init-first-master,  when: "inventory_hostname == master_main"}
+    - { role: kubeadm-add-master,         when: "inventory_hostname != master_main" }
     - flannel

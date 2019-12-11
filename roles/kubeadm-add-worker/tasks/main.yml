@@ -1,5 +1,5 @@
 
-########################### master-initial ###############################
+########################### main master ###############################
 
 # First create token on master
 - name: Create join token on master
@@ -9,7 +9,7 @@
       --description ansible_join_token_{{lookup('pipe','date +%Y%m%d%H%M%S')}} \
       --print-join-command
   register: kubeadm_token_create_result
-  when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname == master_main
 
 
 ###################### Workers ######################
@@ -17,7 +17,7 @@
 # vars
 - name: Register vars on workers
   set_fact:
-    worker_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'].stdout }}"
+    worker_join_command: "{{ hostvars[main_master]['kubeadm_token_create_result'].stdout }}"
   when: inventory_hostname in groups['workers']
 
 
