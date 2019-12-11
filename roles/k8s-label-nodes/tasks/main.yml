@@ -7,7 +7,7 @@
 - name: Remove master & worker labels from all nodes
   shell: |
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      label node {{item.0}} {{item.1}}-"
+      label node {{item.0}} {{item.1}}-
   with_nested: 
     - "{{ansible_play_hosts}}"
     - [
