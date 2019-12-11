@@ -1,4 +1,0 @@
-- hosts: masters[0]
-  become: yes
-  roles:
-    - kubeadm-init-first-master

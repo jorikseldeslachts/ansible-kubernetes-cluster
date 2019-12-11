@@ -1,0 +1,7 @@
+- hosts: new-masters
+  become: yes
+  roles:
+    - { role: kubectx_kubens, 
+        when: install_kubectx_kubens |bool }
+    - { role: kubectx_kubens, when: install_kubectx_kubens |bool }
+    - kubeadm-add-master

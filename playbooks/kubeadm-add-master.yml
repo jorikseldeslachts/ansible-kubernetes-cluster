@@ -1,4 +1,0 @@
-- hosts: masters
-  become: yes
-  roles:
-    - kubeadm-add-master
