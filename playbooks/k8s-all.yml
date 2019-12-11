@@ -30,7 +30,7 @@
 - import_playbook: cockpit.yml
 
 # test
-- { import_playbook: smoke-test, when: deploy_test_app |bool }
+- { import_playbook: test-run.yml, when: deploy_test_app |bool }
 
 
 

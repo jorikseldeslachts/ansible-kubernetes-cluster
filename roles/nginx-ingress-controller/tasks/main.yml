@@ -1,0 +1,42 @@
+
+- name: Create ingress config directory
+  file:
+    path: "{{k8s_ingress_config_path}}"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0555
+
+- name: Download ingress yaml file
+  get_url:
+    url: "{{k8s_ingress_file_url}}"
+    dest: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
+
+- name: "Configure Nginx ingress replica amount (replicas: {{k8s_ingress_replicas}})"
+  replace:
+    path: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
+    regexp: 'replicas(.+)'
+    replace: "replicas: {{k8s_ingress_replicas}}"
+
+
+########################### main_master ###############################
+- name: Apply Nginx ingress plugin
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      apply -f {{k8s_ingress_config_path}}/nginx-ingress-config.yml
+  register: kubectl_output
+  when: inventory_hostname == main_master
+
+- name: Kubectl output
+  debug:
+    msg: 
+      - "{{ kubectl_output.stdout_lines }}"
+  when: inventory_hostname == main_master
+
+- name: Nginx ingress installed
+  debug: 
+    msg:
+      - "replicas: {{k8s_ingress_replicas}}"
+  when: inventory_hostname == main_master
+
+# kubectl get pods -n ingress-nginx

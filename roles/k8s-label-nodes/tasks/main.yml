@@ -31,7 +31,7 @@
 - name: Set worker role label on workers
   shell: |
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      label node {{item.0}} {{item.1}}"
+      label node {{item.0}} {{item.1}}
   with_nested: 
     - "{{groups['workers']}}"
     - node-role.kubernetes.io/worker=worker
