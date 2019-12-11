@@ -1,6 +1,6 @@
 
 # What to install
-reinit_vms_completely: False
+reinstall_vms_completely: False
 install_loadbalancer: True
 install_kubectx_kubens: True
 install_docker: True
