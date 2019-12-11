@@ -3,14 +3,14 @@
     - debug:
         msg: "Starting full Kubernetes cluster installation on nodes: {{item}}"
       with_items: 
-        - groups['k8s-nodes']
+        - groups['k8s-nodes'][0]
     
-    - name: "Register main master that will be user to get all the info from"
+    - name: "Register main master that will be used to get all the info from"
       set_fact:
         main_master: groups['masters'][0]
 
     - debug: 
-        msg: "Ready to start importing other playbooks"
+        msg: "Ready to start importing other playbooks. main-master: {{main_master}}"
 
 # - { import_playbook: cleanup-vms,  when: reinit_vms_completely |bool }
 # - import_playbook: nginx-k8s-lb.yml
