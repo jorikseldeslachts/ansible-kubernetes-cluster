@@ -4,7 +4,7 @@
         msg: "Starting full Kubernetes cluster installation on nodes: {{item}}"
       with_items: 
         - groups['k8s-nodes']
-      when: "inventory_hostname == {{groups['k8s-nodes'][0]}}"
+      when: "inventory_hostname == groups['masters'][0]"
     
     - name: "Register main master that will be used to get all the info from"
       set_fact:
@@ -12,7 +12,7 @@
 
     - debug: 
         msg: "Ready to start importing other playbooks. main-master: {{main_master}}"
-      when: "inventory_hostname == {{groups['k8s-nodes'][0]}}"
+      when: "inventory_hostname == groups['masters'][0]"
 
 # - { import_playbook: cleanup-vms,  when: reinit_vms_completely |bool }
 # - import_playbook: nginx-k8s-lb.yml
