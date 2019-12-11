@@ -7,7 +7,7 @@
         - "{{ groups['k8s-nodes'] }}"
       when: "inventory_hostname == groups['masters'][0]"
     
-    - name: "Register main master that will be used to get all the info from"
+    - name: "Register main master that will be used to get all the data from"
       set_fact:
         main_master: "{{ groups['masters'][0] }}"
 
