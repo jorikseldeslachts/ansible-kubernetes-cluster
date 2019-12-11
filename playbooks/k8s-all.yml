@@ -20,7 +20,7 @@
 # - import_playbook: nginx-k8s-lb.yml
 
 - import_playbook: prep-node-vms.yml
-- import_playbook: ntpd.yml
+# - import_playbook: ntpd.yml   BROKEN on sync time
 - import_playbook: docker.yml
 - import_playbook: firewalld.yml
 
