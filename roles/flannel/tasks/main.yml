@@ -23,10 +23,9 @@
     replace: "{{k8s_cni_pod_cidr}}"
 
 - name: Apply Flannel CNI plugin
-  become: yes
-  become_user: "{{k8s_user}}"
   shell: |
-    kubectl apply -f {{k8s_cni_config_path}}/flannel-cni-config.yml |tee pod_network_setup.txt
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      apply -f {{k8s_cni_config_path}}/flannel-cni-config.yml |tee pod_network_setup.txt
   args:
     chdir: "/home/{{k8s_user}}/"
     creates: pod_network_setup.txt
@@ -45,7 +44,9 @@
 
 # Test and wait fo flannel pods to come up
 - name: Wait for flannel pods to get ready
-  shell: "kubectl get pods -n kube-system | grep -i flannel"
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      get pods -n kube-system | grep -i flannel
   register: result
   until: 
     - result.stdout.find("Terminating") == -1

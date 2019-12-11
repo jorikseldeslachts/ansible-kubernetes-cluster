@@ -5,8 +5,9 @@
 
 # Remove old role labels
 - name: Remove master & worker labels from all nodes
-  become_user: "{{k8s_user}}"
-  shell: "kubectl label node {{item.0}} {{item.1}}-"
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      label node {{item.0}} {{item.1}}-"
   with_nested: 
     - "{{ansible_play_hosts}}"
     - [
@@ -18,8 +19,9 @@
 
 # Set new role labels
 - name: Set master role label on masters
-  become_user: "{{k8s_user}}"
-  shell: "kubectl label node {{item.0}} {{item.1}}"
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      label node {{item.0}} {{item.1}}
   with_nested: 
     - "{{ groups['masters'] }}"
     - node-role.kubernetes.io/master=master
@@ -27,8 +29,9 @@
   
 
 - name: Set worker role label on workers
-  become_user: "{{k8s_user}}"
-  shell: "kubectl label node {{item.0}} {{item.1}}"
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      label node {{item.0}} {{item.1}}"
   with_nested: 
     - "{{groups['workers']}}"
     - node-role.kubernetes.io/worker=worker
@@ -37,7 +40,6 @@
 
 # # Debug current labels
 # - name: Get all labels on each node
-#   become_user: "{{k8s_user}}"
 #   shell: "kubectl get node {{item}} -o custom-columns=LABELHEADER:.metadata.labels | grep -v LABELHEADER"
 #   with_items: 
 #     - "{{ansible_play_hosts}}"

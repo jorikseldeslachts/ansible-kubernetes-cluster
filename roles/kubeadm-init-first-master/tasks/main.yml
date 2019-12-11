@@ -58,6 +58,5 @@
 # taint master
 # - name: Allow running pods on the master node
 #   become: yes
-#   become_user: "{{k8s_user}}"
 #   shell: kubectl taint nodes --all node-role.kubernetes.io/master-
 #   when: "{{k8s_pods_scheduled_on_master}}"

@@ -19,25 +19,24 @@
     replace: "replicas: {{k8s_ingress_replicas}}"
 
 
-########################### Only apply on first master ###############################
+########################### main_master ###############################
 - name: Apply Nginx ingress plugin
-  become: yes
-  become_user: "{{k8s_user}}"
   shell: |
-    kubectl apply -f {{k8s_ingress_config_path}}/nginx-ingress-config.yml
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      apply -f {{k8s_ingress_config_path}}/nginx-ingress-config.yml
   register: kubectl_output
-  when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname == main_master
 
 - name: Kubectl output
   debug:
     msg: 
       - "{{ kubectl_output.stdout_lines }}"
-  when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname == main_master
 
 - name: Nginx ingress installed
   debug: 
     msg:
       - "replicas: {{k8s_ingress_replicas}}"
-  when: inventory_hostname in groups['master-initial']
+  when: inventory_hostname == main_master
 
 # kubectl get pods -n ingress-nginx

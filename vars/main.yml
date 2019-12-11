@@ -1,5 +1,6 @@
 
 # What to install
+reinit_vms_completely: False
 install_loadbalancer: True
 install_kubectx_kubens: True
 install_docker: True
@@ -8,6 +9,7 @@ install_docker: True
 # install_k8s_dashboard: True
 install_nginx_ingress: True
 install_cockpit: True
+deploy_test_app: True
 
 # k8s vars
 k8s_loadbalancer_ip: 10.66.66.1 # zie nginx extra config

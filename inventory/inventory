@@ -1,18 +1,10 @@
-# split masters in initial setup + additional HA masters
-# Initial should only contain one master, all the rest belongs in the [master-ha] section
 
 [k8s-nodes:children]
 masters
 workers
 
-[masters:children]
-master-initial
-master-ha
-
-[master-initial]
+[masters]
 k8s-node-5 ansible_host=10.66.66.5 ansible_user=root
-
-[master-ha]
 k8s-node-6 ansible_host=10.66.66.6 ansible_user=root
 k8s-node-7 ansible_host=10.66.66.7 ansible_user=root
 
