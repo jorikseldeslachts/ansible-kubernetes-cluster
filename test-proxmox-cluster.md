@@ -102,6 +102,7 @@ ansible-playbook -i k8s-cluster/inventory -u jorik --ask-become-pass k8s-playboo
 
 ```sh
 # syntax check
+export ANSIBLE_CONFIG=./ansible.cfg
 ansible-playbook -i inventories/inventory-full-install playbooks/k8s-all.yml --syntax-check
 
 
