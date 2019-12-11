@@ -1,0 +1,27 @@
+######################################################################
+#
+# Minimal requirements:
+#
+#   * At least one master must be specified in [masters] section
+#     First master in this section will be used as main master
+#     so there is no need to specify more then one master
+#
+# WARNING:
+#   
+#   * All workers specified will be reinitialised / reinstalled
+#     Work will be lost and pods will have to be able to move
+#     Be aware of the resource impact of other nodes that have
+#     to take the load from this worker!!!
+#     Pods will have a slight downtime!!!
+#       
+######################################################################
+
+[k8s-nodes:children]
+masters
+workers
+
+[masters]
+k8s-node-5 ansible_host=10.66.66.5 ansible_user=root
+
+[workers]
+k8s-node-8 ansible_host=10.66.66.8 ansible_user=root

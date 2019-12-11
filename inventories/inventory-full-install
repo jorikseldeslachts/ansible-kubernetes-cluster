@@ -1,3 +1,15 @@
+######################################################################
+#
+# Minimal requirements:
+#
+#   * At least one master needed
+#     (First master will become main master)
+#
+#   * Workers optional
+#
+#   * Loadbalancer otional unless 'install_loadbalancer' specified
+#
+######################################################################
 
 [k8s-nodes:children]
 masters
