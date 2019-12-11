@@ -3,12 +3,12 @@
     - debug:
         msg: "Starting full Kubernetes cluster installation on nodes: {{item}}"
       with_items: 
-        - groups['k8s-nodes']
+        - "{{ groups['k8s-nodes'] }}"
       when: "inventory_hostname == groups['masters'][0]"
     
     - name: "Register main master that will be used to get all the info from"
       set_fact:
-        main_master: groups['masters'][0]
+        main_master: "{{ groups['masters'][0] }}"
 
     - debug: 
         msg: "Ready to start importing other playbooks. main-master: {{main_master}}"
