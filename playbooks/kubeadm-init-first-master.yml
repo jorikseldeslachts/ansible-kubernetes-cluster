@@ -2,5 +2,3 @@
   become: yes
   roles:
     - kubeadm-init-first-master
-
-test
