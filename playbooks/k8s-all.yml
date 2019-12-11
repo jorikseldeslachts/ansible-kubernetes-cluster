@@ -1,7 +1,8 @@
 - hosts: k8s-nodes
   tasks:
-    - debug:
-        msg: "Starting full Kubernetes cluster installation on nodes: {{item}}"
+    - name: "Starting full Kubernetes cluster installation on nodes:"
+      debug:
+        msg: "{{item}}"
       with_items: 
         - "{{ groups['k8s-nodes'] }}"
       when: "inventory_hostname == groups['masters'][0]"
@@ -13,7 +14,7 @@
     - name: "Ready to start importing other playbooks"
       debug: 
         msg: "main-master: {{main_master}}"
-      when: "inventory_hostname == main_mastert"
+      when: "inventory_hostname == main_master"
 
 # - { import_playbook: cleanup-vms,  when: reinit_vms_completely |bool }
 # - import_playbook: nginx-k8s-lb.yml
