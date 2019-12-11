@@ -2,9 +2,15 @@
   become: yes
   roles:
     - k8s-dependencies
-    - { role: kubectx_kubens, when: install_kubectx_kubens |bool }
+    - { role: kubectx_kubens, 
+        when: install_kubectx_kubens |bool }
+    - { role: kubeadm-init-first-master,  
+        when: "inventory_hostname == master_main" }
+    - { role: kubeadm-add-master, 
+        when: "k8s_ha_masters |bool && inventory_hostname != master_main" }
+    - flannel
+
+
+
     # - { role: kubeadm-init-first-master,  when: "groups['k8s-masters'][0] == inventory_hostname"}
     # - { role: kubeadm-add-master,         when: "groups['k8s-masters'][0] != inventory_hostname" }
-    - { role: kubeadm-init-first-master,  when: "inventory_hostname == master_main"}
-    - { role: kubeadm-add-master,         when: "inventory_hostname != master_main" }
-    - flannel

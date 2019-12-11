@@ -12,18 +12,24 @@
     - debug: 
         msg: "Ready to start importing other playbooks"
 
-- { import_playbook: cleanup-vms,  when: reinit_vms_completely |bool }
+# - { import_playbook: cleanup-vms,  when: reinit_vms_completely |bool }
+# - import_playbook: nginx-k8s-lb.yml
+
 - import_playbook: prep-node-vms.yml
 - import_playbook: ntpd.yml
 - import_playbook: docker.yml
 - import_playbook: firewalld.yml
 - import_playbook: k8s-dependencies.yml.yml
-- import_playbook: kubeadm-init-first-master.yml
-- import_playbook: kubeadm-add-master.yml
+- import_playbook: masters.yml
+# - import_playbook: kubeadm-init-first-master.yml
+# - import_playbook: kubeadm-add-master.yml
 - import_playbook: kubeadm-add-worker.yml
 - import_playbook: k8s-label-nodes.yml
 - import_playbook: nginx-ingress-controller.yml
 - import_playbook: k8s-cluster-info.yml
+- import_playbook: cockpit.yml
+
+# test
 - { import_playbook: smoke-test, when: deploy_test_app |bool }
 
 
