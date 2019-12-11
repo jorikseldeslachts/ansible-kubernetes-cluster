@@ -2,12 +2,24 @@
 #
 # Minimal requirements:
 #
-#   * At least one master needed
-#     (First master will become main master)
+#   * At least one or more master needed in [masters] section.
+#     The first master in this section will become the main master.
 #
 #   * Workers optional
 #
-#   * Loadbalancer otional unless 'install_loadbalancer' specified
+#   * Loadbalancer only needed when the 'install_loadbalancer'
+#     option is specified. If specified the new masters will
+#     be added to loadbalancer round-robin upstream pool
+#
+# WARNING:
+#   
+#   * !!! NOT IDEMPOTENT !!!
+#     All nodes specified will be reinitialised / reinstalled
+#     Work and created resource objects will be lost!!!
+#    
+#   * If you want to reinstall the whole cluster make sure
+#     you specify the 'reinstall_vms_completely' option.
+#     This way the VM's will be cleaned up before reinstallation
 #
 ######################################################################
 
