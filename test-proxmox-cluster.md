@@ -103,7 +103,7 @@ ansible-playbook -i k8s-cluster/inventory -u jorik --ask-become-pass k8s-playboo
 ```sh
 # full install
 git pull origin feature/split_in_seperate_roles; \
-ansible-playbook -i inventories/inventory-full-install -u jorik --ask-become-pass k8s-all.yml
+ansible-playbook -i inventories/inventory-full-install -u jorik --ask-become-pass playbooks/k8s-all.yml
 
 # add master
 # git pull origin feature/split_in_seperate_roles; \
