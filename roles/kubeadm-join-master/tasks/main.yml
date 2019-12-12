@@ -1,13 +1,6 @@
 # https://itnext.io/on-premise-ha-kubernetes-cluster-15e41f18bd12
 # https://octetz.com/posts/ha-control-plane-k8s-kubeadm
 
-
-#####TEST
-- name: TEST
-  debug:
-    msg: "{{main_master}}"
-
-
 ########################### main master ###############################
 
 # First create token on main master
