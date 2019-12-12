@@ -1,4 +1,4 @@
-- hosts: main_master
+- hosts: "{{ main_master }}"
   become: yes
   roles:
     - kubeadm-init-first-master
