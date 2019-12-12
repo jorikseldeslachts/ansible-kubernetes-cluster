@@ -3,7 +3,7 @@
 - name: Wait for nodes to get ready
   shell: kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config get nodes
   register: get_nodes
-  when: inventory_hostname == master_main
+  when: inventory_hostname == main_master
   until: 
     - get_nodes.stdout.find("NotReady") == -1
   retries: 20
@@ -15,7 +15,7 @@
     msg: 
       - "Kubernetes installation complete"
       - "{{ get_nodes.stdout_lines }}"
-  when: inventory_hostname == master_main
+  when: inventory_hostname == main_master
 
 
 

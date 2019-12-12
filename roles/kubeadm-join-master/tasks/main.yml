@@ -12,7 +12,7 @@
       --description ansible_join_token_{{lookup('pipe','date +%Y%m%d%H%M%S')}} \
       --print-join-command
   register: kubeadm_token_create_result
-  when: inventory_hostname == master_main
+  when: inventory_hostname == main_master
 
 
 # Upload certs on main master
@@ -21,7 +21,7 @@
     kubeadm init phase upload-certs \
       --upload-certs | grep -v upload-certs
   register: kubeadm_init_phase_result
-  when: inventory_hostname == master_main
+  when: inventory_hostname == main_master
   
 
 ########################### master-ha ###############################
@@ -31,11 +31,11 @@
   set_fact:
     # master_join_command: "{{ hostvars[groups['master-initial'][0]]['kubeadm_token_create_result'].stdout }}"
     # master_upload_certs: "{{ hostvars[groups['master-initial'][0]]['kubeadm_init_phase_result'].stdout }}"
-    master_join_command: "{{ hostvars[master_main]['kubeadm_token_create_result'].stdout }}"
-    master_upload_certs: "{{ hostvars[master_main]['kubeadm_init_phase_result'].stdout }}"
+    master_join_command: "{{ hostvars[main_master]['kubeadm_token_create_result'].stdout }}"
+    master_upload_certs: "{{ hostvars[main_master]['kubeadm_init_phase_result'].stdout }}"
   when: 
     - inventory_hostname in groups['masters']
-    - inventory_hostname != master_main
+    - inventory_hostname != main_master
 
 - name: Debug vars on HA masters
   debug:
@@ -44,7 +44,7 @@
       - "master_upload_certs: {{master_upload_certs}}"
   when: 
     - inventory_hostname in groups['masters']
-    - inventory_hostname != master_main
+    - inventory_hostname != main_master
 
 
 # full join command
@@ -54,14 +54,14 @@
       {{master_join_command}} --certificate-key {{master_upload_certs}} --control-plane --v={{k8s_api_debug_level}}
   when: 
     - inventory_hostname in groups['masters']
-    - inventory_hostname != master_main
+    - inventory_hostname != main_master
 
 - name: Debug master join command
   debug:
     msg: "{{full_join_command}}"
   when: 
     - inventory_hostname in groups['masters']
-    - inventory_hostname != master_main
+    - inventory_hostname != main_master
 
 
 # join master to cluster
@@ -69,7 +69,7 @@
 #   shell: kubeadm config images pull
 #   when: 
 #     - inventory_hostname in groups['masters']
-#     - inventory_hostname != master_main]
+#     - inventory_hostname != main_master]
 
 - name: Join HA masters to the cluster
   shell: |
@@ -80,7 +80,7 @@
     creates: master_node_joined.txt
   when: 
     - inventory_hostname in groups['masters']
-    - inventory_hostname != master_main
+    - inventory_hostname != main_master
 
 
 # kube config + join
@@ -93,7 +93,7 @@
     mode: 0755
   when: 
     - inventory_hostname in groups['masters']
-    - inventory_hostname != master_main
+    - inventory_hostname != main_master
 
 - name: Copy admin.conf to .kube folder
   copy:
@@ -104,4 +104,4 @@
     remote_src: yes
   when: 
     - inventory_hostname in groups['masters']
-    - inventory_hostname != master_main
+    - inventory_hostname != main_master
