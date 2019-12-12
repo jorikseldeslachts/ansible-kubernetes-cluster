@@ -22,7 +22,7 @@
 
 
 # full join command
-if needed (--ignore-preflight-errors all)
+# if needed (--ignore-preflight-errors all)
 - name: Register worker join command
   set_fact:
     full_join_command: |
