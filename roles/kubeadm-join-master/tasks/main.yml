@@ -28,7 +28,8 @@
     kubeadm init phase upload-certs \
       --upload-certs | grep -v upload-certs
   register: kubeadm_init_phase_result
-  when: inventory_hostname == main_master
+  # when: inventory_hostname == main_master
+  delegate_to: "{{main_master}}"
   
 
 ########################### master-ha ###############################
