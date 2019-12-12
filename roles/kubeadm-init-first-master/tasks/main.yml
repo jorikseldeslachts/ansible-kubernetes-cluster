@@ -17,7 +17,7 @@
 # init cluster
 #     this cidr has to be the same as in the CNI config!! 
 #     otherwise coredns pods won't start!
-- name: Initialize the cluster
+- name: "Initialize the cluster {{'with' if k8s_ha_masters |bool else 'without'}} --upload-certs flag"
   shell: |
     kubeadm init \
       --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml \
