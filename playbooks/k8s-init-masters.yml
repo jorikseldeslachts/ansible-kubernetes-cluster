@@ -2,7 +2,7 @@
   become: yes
   tasks:
     - debug:
-        msg: "{{main_master}}"
+        msg: "trlala: {{main_master}}"
   roles:
     - kubeadm-init-first-master
 
