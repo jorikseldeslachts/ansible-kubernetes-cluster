@@ -34,6 +34,21 @@
 
 ########################### master-ha ###############################
 
+# cluster config
+- name: Create kubeadm config path
+  file:
+    path: "{{k8s_kubeadm_config_path}}"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0755
+
+- name: Copy custom kubeadm-config.yml
+  template:
+    src: kubeadm-config.yml.j2
+    dest: "{{k8s_kubeadm_config_path}}/kubeadm-config.yml"
+
+
 # vars
 - name: Register vars on HA masters
   set_fact:
@@ -91,7 +106,7 @@
     - inventory_hostname != main_master
 
 
-# kube config + join
+# copy init conf
 - name: Create .kube directory
   file:
     path: "/home/{{k8s_user}}/.kube"
@@ -99,9 +114,6 @@
     owner: "{{k8s_user}}"
     group: "{{k8s_user}}"
     mode: 0755
-  when: 
-    - inventory_hostname in groups['masters']
-    - inventory_hostname != main_master
 
 - name: Copy admin.conf to .kube folder
   copy:
@@ -110,6 +122,3 @@
     owner: "{{k8s_user}}"
     group: "{{k8s_user}}"
     remote_src: yes
-  when: 
-    - inventory_hostname in groups['masters']
-    - inventory_hostname != main_master
