@@ -31,7 +31,9 @@
 
 - name: Debug worker join command
   debug:
-    msg: "{{full_join_command}}"
+    msg: 
+      - "Disabled"
+      # - "{{full_join_command}}"
   when: inventory_hostname in groups['workers']
 
 
