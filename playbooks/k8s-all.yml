@@ -4,8 +4,9 @@
       debug:
         msg: 
           - "Nodes: {{ groups['k8s-nodes'] }}"
-          - "Masters: {{ groups['masters'] }}"
+          - "Masters: "
           - "Workers: {{ groups['workers'] }}"
+          - "Main-Master: {{ groups['masters'] }}[0]"
       when: "inventory_hostname == groups['masters'][0]"
     
     - name: "Register main master that will be used to get all the data from"
