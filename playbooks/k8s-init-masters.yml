@@ -1,5 +1,8 @@
-- hosts: main_master
+- hosts: masters
   become: yes
+  tasks:
+    - debug:
+        msg: "{{main_master}}"
   roles:
     - kubeadm-init-first-master
 
