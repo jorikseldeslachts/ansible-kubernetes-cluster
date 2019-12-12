@@ -51,11 +51,11 @@
 
 
 # full join command
-# - name: Register HA master join command
-#   set_fact:
-#     full_join_command: |
-#       {{master_join_command}} --certificate-key {{master_upload_certs}} --control-plane --v={{k8s_api_debug_level}}
-#   when: inventory_hostname != main_master
+- name: Register HA master join command
+  set_fact:
+    full_join_command: |
+      {{master_join_command}} --certificate-key {{master_upload_certs}} --control-plane --v={{k8s_api_debug_level}}
+  when: inventory_hostname != main_master
 
 - name: Debug master join command
   debug:
@@ -67,9 +67,7 @@
 
 # join master to cluster
 - name: Join HA masters to the cluster
-  # shell: "{{full_join_command}}"
-  shell: |
-    {{master_join_command}} --certificate-key {{master_upload_certs}} --control-plane --v={{k8s_api_debug_level}}
+  shell: "{{full_join_command}}"
   when: inventory_hostname != main_master
 
 
