@@ -2,9 +2,7 @@
   tasks:
     - name: "Starting full Kubernetes cluster installation on nodes:"
       debug:
-        msg: "{{item}}"
-      with_items: 
-        - "{{ groups['k8s-nodes'] }}"
+        msg: "{{ groups['k8s-nodes'] }}"
       when: "inventory_hostname == groups['masters'][0]"
     
     - name: "Register main master that will be used to get all the data from"
