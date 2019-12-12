@@ -21,7 +21,7 @@
   shell: |
     kubeadm init \
       --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml \
-      {{'--upload-certs' if k8s_ha_masters |bool}} >> cluster_initialized.txt
+      {{'--upload-certs' if k8s_ha_masters |bool else ''}} >> cluster_initialized.txt
   args:
     chdir: "/home/{{k8s_user}}/"
     creates: cluster_initialized.txt
