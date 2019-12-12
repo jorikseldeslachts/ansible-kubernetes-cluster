@@ -1,14 +1,7 @@
-- hosts: masters:&{{main_master}}
-  become: yes
-  tasks:
-    - debug:
-        msg: "trlala: {{main_master}}"
-  roles:
-    - kubeadm-init-first-master
-
 - hosts: masters
   become: yes
   roles:
+    - { role: kubeadm-init-first-master, when: "inventory_hostname == main_master" }
     - { role: kubeadm-join-master, when: "inventory_hostname != main_master and k8s_ha_masters |bool" }
     - { role: kubectx_kubens, when: "install_kubectx_kubens |bool" }
     - flannel
