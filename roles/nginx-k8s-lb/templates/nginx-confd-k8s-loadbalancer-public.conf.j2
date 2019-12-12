@@ -4,9 +4,11 @@ upstream k8s_nodes_http {
     # proxy to the upstream with the least amount of connections
     least_conn;
 
-    # weight 3 means 3 times as much traffic
+    # max_fails=1 means if 1 attempt failed, node is marked inactive
+    # fail_timeout=30s checks inactive nodes every 30 seconds and
+    # if they respond they get marked active again
 {%for node in groups['k8s-nodes'] %}
-    server {{node}}:{{k8s_ingress_nodeport_http}};
+    server {{node}}:{{k8s_ingress_nodeport_http}} max_fails=1 fail_timeout=60s;
 {%endfor%}
 }
 
