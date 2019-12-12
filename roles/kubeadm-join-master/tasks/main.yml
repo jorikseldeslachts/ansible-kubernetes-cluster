@@ -18,7 +18,7 @@
       --description ansible_join_token_{{lookup('pipe','date +%Y%m%d%H%M%S')}} \
       --print-join-command
   register: kubeadm_token_create_result
-  when: inventory_hostname == main_master
+  when: "inventory_hostname == main_master"
 
 
 # Upload certs on main master
