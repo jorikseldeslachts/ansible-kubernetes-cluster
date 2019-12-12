@@ -2,6 +2,6 @@
   become: yes
   roles:
     - { role: kubeadm-init-first-master, when: "inventory_hostname == main_master" }
-    - { role: kubeadm-join-master, when: "inventory_hostname != main_master and k8s_ha_masters |bool" }
+    - { role: kubeadm-join-master, when: "k8s_ha_masters |bool" }
     - { role: kubectx_kubens, when: "install_kubectx_kubens |bool" }
     - flannel
