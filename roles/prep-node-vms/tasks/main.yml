@@ -12,5 +12,7 @@
 
 - name: Install some handy packages
   yum: 
-    name: "{{ extra_handy_packages }}"
+    name: "{{item}}"
     state: present
+  with_items:
+   - "{{ extra_handy_packages }}"
