@@ -19,7 +19,7 @@
       --print-join-command
   register: kubeadm_token_create_result
   # when: inventory_hostname == main_master
-  delegate_to: main_master
+  delegate_to: "{{main_master}}"
 
 
 # Upload certs on main master
