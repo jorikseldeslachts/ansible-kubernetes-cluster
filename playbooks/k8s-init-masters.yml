@@ -1,7 +1,6 @@
 - hosts: masters
   become: yes
   roles:
-    - k8s-dependencies
     - { role: kubeadm-init-first-master, when: "inventory_hostname == main_master" }
     - { role: kubeadm-join-master, when: "inventory_hostname != main_master && k8s_ha_masters |bool " }
     - { role: kubectx_kubens, when: install_kubectx_kubens |bool }
