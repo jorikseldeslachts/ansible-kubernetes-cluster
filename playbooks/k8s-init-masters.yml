@@ -3,6 +3,6 @@
   roles:
     - k8s-dependencies
     - { role: kubeadm-init-first-master, when: "inventory_hostname == master_main" }
-    # - { role: kubeadm-join-master, when: "inventory_hostname != master_main && k8s_ha_masters |bool " }
+    - { role: kubeadm-join-master, when: "inventory_hostname != master_main && k8s_ha_masters |bool " }
     - { role: kubectx_kubens, when: install_kubectx_kubens |bool }
     - flannel
