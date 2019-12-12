@@ -1,4 +1,4 @@
-- hosts: masters
+- hosts: masters:&{{main_master}}
   become: yes
   tasks:
     - debug:
