@@ -64,13 +64,13 @@
 
 - name: "Configure prompt for root user (masters)"
   lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
+    path: "/root/.bashrc"
     line: PS1='\[\e[1;31m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]master\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
   when: inventory_hostname in groups['masters']
 
 - name: "Configure prompt for root user (workers)"
   lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
+    path: "/root/.bashrc"
     line: PS1='\[\e[1;31m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]worker\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
   when: inventory_hostname in groups['workers']
 
