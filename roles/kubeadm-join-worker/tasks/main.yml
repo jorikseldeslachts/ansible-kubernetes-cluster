@@ -2,7 +2,7 @@
 ########################### main master ###############################
 
 # First create token on master
-- name: Create join token on master
+- name: Create join token on main master
   shell: |
     kubeadm token create \
       --ttl 10h \
