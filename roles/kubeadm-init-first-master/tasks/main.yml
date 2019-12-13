@@ -4,9 +4,10 @@
 #     otherwise coredns pods won't start!
 - name: "Initialize the cluster {{'with' if k8s_ha_masters |bool else 'without'}} --upload-certs flag"
   shell: |
-    kubeadm init {{'--upload-certs' if k8s_ha_masters |bool else ''}} \
-      --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml \
-      --ignore-preflight-errors=all
+    kubeadm init \
+      {{'--upload-certs' if k8s_ha_masters |bool else ''}} \
+      {{'--ignore-preflight-errors=all' if k8s_ignore_preflight_errors |bool else ''}} \
+      --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml      
 
 # copy init conf
 - name: Create .kube directory

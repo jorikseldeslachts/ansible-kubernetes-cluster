@@ -26,7 +26,7 @@
 - name: Register worker join command
   set_fact:
     full_join_command: |
-      {{worker_join_command}} --v={{k8s_api_debug_level}}
+      {{worker_join_command}} {{'--ignore-preflight-errors=all' if k8s_ignore_preflight_errors |bool else ''}} --v={{k8s_api_debug_level}}
   when: inventory_hostname in groups['workers']
 
 - name: Debug worker join command
