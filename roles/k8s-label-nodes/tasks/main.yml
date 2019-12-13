@@ -12,7 +12,8 @@
     - "{{ansible_play_hosts}}"
     - [
       "node-role.kubernetes.io/master", 
-      "node-role.kubernetes.io/worker"
+      "node-role.kubernetes.io/worker",
+      "node-role.kubernetes.io/infra"
       ]
   when: inventory_hostname == main_master
 
@@ -26,7 +27,7 @@
     - "{{ groups['masters'] }}"
     - [ 
       "node-role.kubernetes.io/master=master", 
-      "node-role.kubernetes.io/role=infra"
+      "node-role.kubernetes.io/infra=infra"
       ]
   when: inventory_hostname == main_master
   
