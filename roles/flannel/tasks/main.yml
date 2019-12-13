@@ -58,8 +58,6 @@
       kube-flannel-ds-ppc64le \
       kube-flannel-ds-s390x
   register: kubectl_output
-  with_items:
-
   when: inventory_hostname == main_master
 
 - name: Kubectl output
