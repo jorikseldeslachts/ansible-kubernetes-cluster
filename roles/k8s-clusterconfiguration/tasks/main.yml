@@ -15,5 +15,5 @@
 
 - name: SHOULD APPLY NEW CLUSTERCONFIGURATION !!!
   debug:
-    msg: "NOT YET IMPLEMENTED"
+    msg: "NOT YET IMPLEMENTED YET"
     
