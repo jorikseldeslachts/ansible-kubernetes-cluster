@@ -5,7 +5,7 @@
   register: check_ready_state
 
 - debug:
-    msg: "Readystate: {{check_ready_state.stdout}}"
+    msg: "Readystate: {{check_ready_state.stdout_lines}}"
 
 
 # init cluster
