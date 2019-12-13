@@ -27,8 +27,8 @@
 - name: Replace original daemonset names
   replace:
     path: "{{k8s_cni_config_path}}/flannel-cni-config.yml"
-    regexp: "- name: kube-flannel-ds"
-    replace: "- name: flannel-cni"
+    regexp: "name: kube-flannel-ds"
+    replace: "name: flannel-cni"
 
 
 ########################### main-master ###############################
