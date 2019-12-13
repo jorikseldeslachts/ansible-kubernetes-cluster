@@ -24,7 +24,10 @@
       label node {{item.0}} {{item.1}}
   with_nested: 
     - "{{ groups['masters'] }}"
-    - [ node-role.kubernetes.io/master=master, node-role.kubernetes.io/role=infra]
+    - [ 
+      "node-role.kubernetes.io/master=master", 
+      "node-role.kubernetes.io/role=infra"
+      ]
   when: inventory_hostname == main_master
   
 
