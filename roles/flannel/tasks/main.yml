@@ -24,14 +24,16 @@
     regexp: "{{original_flannel_pod_cidr}}"
     replace: "{{k8s_cni_pod_cidr}}"
 
-- name: Replace original daemonset names
+- name: Replace original DaemonSet names
   replace:
     path: "{{k8s_cni_config_path}}/flannel-cni-config.yml"
-    regexp: "name: kube-flannel-ds"
+    regexp: "name: kube-flannel-ds-amd64"
     replace: "name: flannel-cni"
 
 
 ########################### main-master ###############################
+
+# apply CNI
 - name: Apply Flannel CNI plugin
   shell: |
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
@@ -45,6 +47,29 @@
       - "{{ kubectl_output.stdout_lines }}"
   when: inventory_hostname == main_master
 
+
+# clean up extra unused DaemonSets
+- name: Clean up extra unused DaemonSets
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      delete \
+      kube-flannel-ds-arm64 \
+      kube-flannel-ds-arm \
+      kube-flannel-ds-ppc64le \
+      kube-flannel-ds-s390x
+  register: kubectl_output
+  with_items:
+
+  when: inventory_hostname == main_master
+
+- name: Kubectl output
+  debug:
+    msg: 
+      - "{{ kubectl_output.stdout_lines }}"
+  when: inventory_hostname == main_master
+
+
+# print status
 - name: Flannel installed pod CIDR
   debug: 
     msg:
