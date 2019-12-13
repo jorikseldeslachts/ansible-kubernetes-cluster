@@ -25,15 +25,13 @@
 # - import_playbook: ntpd.yml   BROKEN on sync time
 - import_playbook: docker.yml
 - import_playbook: firewalld.yml
-
 - import_playbook: k8s-dependencies.yml
 - import_playbook: k8s-init-masters.yml
 - import_playbook: k8s-init-workers.yml
-
 - import_playbook: k8s-label-nodes.yml
 - { import_playbook: nginx-ingress-controller.yml, when: "inventory_hostname in groups['masters']" }
-- import_playbook: k8s-cluster-info.yml
 - import_playbook: cockpit.yml
+- import_playbook: k8s-cluster-info.yml
 
 # test
 - { import_playbook: test-run.yml, when: deploy_test_app |bool }
