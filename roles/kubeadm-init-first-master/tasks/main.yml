@@ -7,8 +7,6 @@
     kubeadm init {{'--upload-certs' if k8s_ha_masters |bool else ''}} \
       --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml \
       --ignore-preflight-errors=all
-  when: "'refused' in {{check_ready_state.stdout_lines |lower}} or 'noready' in {{check_ready_state.stdout_lines |lower}}"
-
 
 # copy init conf
 - name: Create .kube directory
