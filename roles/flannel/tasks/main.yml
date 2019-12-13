@@ -52,7 +52,7 @@
 - name: Clean up extra unused DaemonSets
   shell: |
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      delete \
+      delete daemonset \
       kube-flannel-ds-arm64 \
       kube-flannel-ds-arm \
       kube-flannel-ds-ppc64le \
