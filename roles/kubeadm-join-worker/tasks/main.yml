@@ -14,10 +14,6 @@
 
 ###################### Workers ######################
 
-- name: TEST
-  debug:
-    msg: "{{ hostvars[main_master]['kubeadm_token_create_result'].stdout }}"
-
 # vars
 - name: Register vars on workers
   set_fact:
