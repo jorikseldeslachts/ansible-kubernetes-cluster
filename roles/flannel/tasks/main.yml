@@ -27,6 +27,7 @@
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
       apply -f {{k8s_cni_config_path}}/flannel-cni-config.yml
   register: kubectl_output
+  when: inventory_hostname == main_master
 
 - name: Kubectl output
   debug:
