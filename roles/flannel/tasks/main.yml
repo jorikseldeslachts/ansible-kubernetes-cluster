@@ -22,6 +22,12 @@
     regexp: "{{original_flannel_pod_cidr}}"
     replace: "{{k8s_cni_pod_cidr}}"
 
+- name: Replace original container names
+  replace:
+    path: "{{k8s_cni_config_path}}/flannel-cni-config.yml"
+    regexp: "- name: kube-flannel"
+    replace: "- name: flannel-cni"
+
 - name: Apply Flannel CNI plugin
   shell: |
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
