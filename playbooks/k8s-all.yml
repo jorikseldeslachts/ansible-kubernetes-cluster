@@ -4,7 +4,7 @@
       debug:
         msg: 
           - "Nodes: {{ groups['k8s-nodes'] }}"
-          - "Masters: "
+          - "Masters: {{ groups['masters'] }}"
           - "Workers: {{ groups['workers'] }}"
           - "Main-Master: {{ groups['masters'] }}[0]"
       when: "inventory_hostname == groups['masters'][0]"
