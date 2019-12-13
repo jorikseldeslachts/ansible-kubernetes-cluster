@@ -1,6 +1,6 @@
 
 - name: Check if master is in Ready state already
-  shell: "k get node k8s-node-5 --no-headers | awk '{print $2;}'"
+  shell: "k get node k8s-node-5 --no-headers"
   register: check_ready_state
 
 - debug:
