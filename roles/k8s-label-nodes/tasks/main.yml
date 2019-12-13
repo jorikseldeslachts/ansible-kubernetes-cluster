@@ -25,12 +25,17 @@
       label node {{item.0}} {{item.1}}
   with_nested: 
     - "{{ groups['masters'] }}"
-    - [ 
-      "node-role.kubernetes.io/master=true", 
-      "node-role.kubernetes.io/infra=true"
-      ]
+    - "node-role.kubernetes.io/master=true", 
   when: inventory_hostname == main_master
   
+- name: Set infra role label on masters
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      label node {{item.0}} {{item.1}}
+  with_nested: 
+    - "{{ groups['masters'] }}"
+    - "node-role.kubernetes.io/infra=true"
+  when: inventory_hostname == main_master
 
 - name: Set worker role label on workers
   shell: |
