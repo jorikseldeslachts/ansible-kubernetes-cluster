@@ -1,3 +1,5 @@
+
+########################### all masters ###############################
 # Replace the CIDR
 - name: "Register original pod cidr"
   set_fact:
@@ -28,6 +30,8 @@
     regexp: "- name: kube-flannel-ds"
     replace: "- name: flannel-cni"
 
+
+########################### main-master ###############################
 - name: Apply Flannel CNI plugin
   shell: |
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
@@ -39,11 +43,14 @@
   debug:
     msg: 
       - "{{ kubectl_output.stdout_lines }}"
+  when: inventory_hostname == main_master
 
 - name: Flannel installed pod CIDR
   debug: 
     msg:
       - "Configured pod CIDR to {{k8s_cni_pod_cidr}} instead of original {{original_flannel_pod_cidr}}"
+      - "Replaced DaemonSet names with: flannel-cni"
+  when: inventory_hostname == main_master
 
 
 # Test and wait fo flannel pods to come up
