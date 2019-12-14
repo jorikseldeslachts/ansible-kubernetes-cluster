@@ -43,7 +43,7 @@
     {{worker_join_command}}
   register: join_result
   until: 
-    - join_result.stdout.find("unexpected EOF") == -1
+    - join_result.stderr_lines.find("unexpected EOF") == -1
   retries: 10
   delay: 3
   when: inventory_hostname in groups['workers']
