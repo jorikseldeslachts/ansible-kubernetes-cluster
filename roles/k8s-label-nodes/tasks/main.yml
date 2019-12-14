@@ -1,7 +1,3 @@
-# # labeling for all nodes is done through a master
-# - name: test ansible_play_hosts
-#   debug:
-#     msg: "{{ansible_play_hosts}}"
 
 # Remove old role labels
 - name: Remove master & worker labels from all nodes
