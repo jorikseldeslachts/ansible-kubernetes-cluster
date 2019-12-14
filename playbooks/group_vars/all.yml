@@ -12,6 +12,7 @@ install_cockpit: True
 deploy_test_app: True
 
 # k8s vars
+k8s_version_major: 1.16.4
 k8s_loadbalancer_ip: 10.66.66.1 # zie nginx extra config
 k8s_ha_masters: True
 k8s_pods_scheduled_on_master: True
