@@ -41,4 +41,9 @@
 - name: Join worker to the cluster
   shell: |
     {{worker_join_command}}
+  register: join_result
+  until: 
+    - join_result.stdout.find("unexpected EOF") == -1
+  retries: 10
+  delay: 3
   when: inventory_hostname in groups['workers']

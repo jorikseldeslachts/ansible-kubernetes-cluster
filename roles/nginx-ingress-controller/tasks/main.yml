@@ -25,6 +25,10 @@
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
       apply -f {{k8s_ingress_config_path}}/nginx-ingress-config.yml
   register: kubectl_output
+  until: 
+    - kubectl_output.stdout.find("unexpected EOF") == -1
+  retries: 10
+  delay: 3
   when: inventory_hostname == main_master
 
 - name: Kubectl output
