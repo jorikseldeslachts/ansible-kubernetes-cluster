@@ -88,13 +88,13 @@
 
 
 # install k8s packages / tools
-- name: Install kubeadm
+- name: "Install kubeadm-{{k8s_version_major}}-0"
   yum:
     name: "kubeadm-{{k8s_version_major}}-0" # kubeadm-1.14.2-0
     state: present
     update_cache: yes
 
-- name: Install kubelet
+- name: "Install kubelet-{{k8s_version_major}}-0"
   yum:
     name: "kubelet-{{k8s_version_major}}-0" # kubelet-1.14.2-0
     state: present
@@ -133,7 +133,7 @@
 
 ###################### Master only ###################### 
 
-- name: Install kubectl
+- name: "Install kubectl-{{k8s_version_major}}-0"
   yum:
     name: "kubectl-{{k8s_version_major}}-0" # kubectl-1.14.2-0
     state: present
