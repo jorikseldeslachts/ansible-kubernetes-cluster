@@ -53,8 +53,8 @@
 - name: Debug master join command
   debug:
     msg: 
-      - "Disabled"
-      # - "{{full_join_command}}"
+      # - "Disabled"
+      - "{{full_join_command}}"
   when: inventory_hostname != main_master
 
 
