@@ -39,8 +39,7 @@
 
 # join worker to cluster  
 - name: Join worker to the cluster
-  shell: |
-    {{worker_join_command}}
+  shell: "{{worker_join_command}} >> /dev/null"
   register: join_result
   until: 
     - join_result.stdout.find("unexpected EOF") == -1
