@@ -104,13 +104,12 @@
     yum list installed |awk '{print $1 "-" $2}' \
       |egrep -i "kubelet|kubeadm|kubectl" |sed -e "s/.x86_64//"
   register: yum_result
-  until: yum_result.stdout.find({{ item }}-{{k8s_version_major}}-0) != -1
-  retries: 20
-  delay: 10
-  with_items:
-    - kubeadm
-    - kubectl
-    - kubelet
+  until: 
+    - yum_result.stdout.find("kubeadm-{{k8s_version_major}}-0") != -1
+    - yum_result.stdout.find("kubectl-{{k8s_version_major}}-0") != -1
+    - yum_result.stdout.find("kubelet-{{k8s_version_major}}-0") != -1
+  retries: 3
+  delay: 5
 
 
 - name: Start kubelet
