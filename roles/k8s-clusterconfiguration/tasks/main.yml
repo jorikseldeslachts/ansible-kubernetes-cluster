@@ -13,7 +13,7 @@
     src: kubeadm-config.yml.j2
     dest: "{{k8s_kubeadm_config_path}}/kubeadm-config.yml"
 
-- name: SHOULD APPLY NEW CLUSTERCONFIGURATION !!!
+- name: SHOULD APPLY NEW CLUSTERCONFIGURATION WHEN ADDING NEW MASTERS!!!
   debug:
-    msg: "NOT YET IMPLEMENTED YET"
+    msg: "NOT YET IMPLEMENTED"
     
