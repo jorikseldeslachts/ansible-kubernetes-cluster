@@ -58,6 +58,12 @@
   when: inventory_hostname != main_master
 
 
+- name: FAIL FOR TEST
+  fail:
+    msg: "Manual join for testing"
+  when: 1 == 1
+
+
 # join master to cluster
 - name: Join HA masters to the cluster and keep retrying if API server returns "unexpected EOF"
   shell: "{{full_join_command}}"
