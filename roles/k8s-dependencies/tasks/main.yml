@@ -98,6 +98,7 @@
   with_items:
     - kubelet
     - kubeadm
+    - kubectl
 
 - name: "Check installed versions, should be version: {{k8s_version_major}}"
   shell: |
@@ -107,6 +108,7 @@
   until: 
     - yum_result.stdout.find("kubeadm-{{k8s_version_major}}-0") != -1
     - yum_result.stdout.find("kubelet-{{k8s_version_major}}-0") != -1
+    - yum_result.stdout.find("kubectl-{{k8s_version_major}}-0") != -1
   retries: 3
   delay: 5
 
@@ -147,15 +149,6 @@
 
 ###################### Master only ###################### 
 
-- name: "Install kubectl-{{k8s_version_major}}-0"
-  yum:
-    name: "kubectl-{{k8s_version_major}}-0" # kubectl-1.14.2-0
-    state: present
-    update_cache: yes
-    allow_downgrade: yes
-    
-  when: inventory_hostname in groups['masters']
-  
 - name: Create alias k for kubectl
   lineinfile:
     path: "/home/{{k8s_user}}/.bashrc"
