@@ -24,7 +24,7 @@ k8s_kubectx_repository_url: https://github.com/ahmetb/kubectx
 k8s_cadvisor_port: 4194
 k8s_api_debug_level: "2"
 k8s_kubeadm_config_path: /etc/kubernetes/kubeadm
-k8s_ignore_preflight_errors: True
+k8s_ignore_preflight_errors: False
 
 # CNI
 k8s_cni_plugin: flannel
