@@ -59,7 +59,7 @@
 
 
 # join master to cluster
-- name: Join HA masters to the cluster (Keeps retrying if API server gives "unexpected EOF")
+- name: Join HA masters to the cluster and keep retrying if API server returns "unexpected EOF"
   shell: "{{full_join_command}}"
   register: join_result
   until: join_result.stdout.find("unexpected EOF") == -1
