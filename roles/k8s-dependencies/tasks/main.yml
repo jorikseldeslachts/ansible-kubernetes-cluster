@@ -94,6 +94,7 @@
     name: "{{item}}-{{k8s_version_major}}-0"
     state: present
     update_cache: yes
+    allow_downgrade: yes
   with_items:
     - kubelet
     - kubeadm
@@ -135,7 +136,9 @@
   yum:
     name: "kubectl-{{k8s_version_major}}-0" # kubectl-1.14.2-0
     state: present
+    update_cache: yes
     allow_downgrade: yes
+    
   when: inventory_hostname in groups['masters']
   
 - name: Create alias k for kubectl
