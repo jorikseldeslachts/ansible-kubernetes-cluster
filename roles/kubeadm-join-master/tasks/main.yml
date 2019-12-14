@@ -65,9 +65,11 @@
 # join master to cluster
 - name: Join HA masters to the cluster and keep retrying if API server returns "unexpected EOF"
   shell: |
-    {{full_join_command}}
+    {{full_join_command}} >> master_node_joined.txt
   args:
     executable: /bin/bash
+    chdir: "/home/{{k8s_user}}/"
+    creates: master_node_joined.txt
   register: join_result
   until: 
     - join_result.stdout.find("40s passed") == -1
