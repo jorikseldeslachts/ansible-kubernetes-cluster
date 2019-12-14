@@ -70,6 +70,7 @@
   until: kubectl_output.stdout.find("kube-flannel-ds-") == -1
   retries: 20
   delay: 3
+  ignore_errors: yes
   when: inventory_hostname == main_master
 
 - name: Kubectl output
