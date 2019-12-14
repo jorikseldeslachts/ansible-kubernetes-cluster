@@ -89,7 +89,7 @@
 
 # install k8s packages / tools
  # kubeadm-1.14.2-0
-- name: "Install Kubernetes packages. Kubernetes version: {{k8s_version_major}}"
+- name: Install Kubernetes packages
   yum:
     name: "{{item}}-{{k8s_version_major}}-0"
     state: present
