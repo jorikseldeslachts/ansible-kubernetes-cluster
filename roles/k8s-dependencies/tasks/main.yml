@@ -110,6 +110,9 @@
   retries: 3
   delay: 5
 
+- name: Debug installed versions
+  debug:
+    msg: "{{yum_result.stdout_lines}}"
 
 - name: Start kubelet
   service:
