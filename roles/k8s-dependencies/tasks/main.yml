@@ -99,6 +99,20 @@
     - kubelet
     - kubeadm
 
+- name: "Check installed versions, should be version: {{k8s_version_major}}"
+  shell: |
+    yum list installed |awk '{print $1 "-" $2}' \
+      |egrep -i "kubelet|kubeadm|kubectl" |sed -e "s/.x86_64//"
+  register: yum_result
+  until: yum_result.stdout.find({{ item }}-{{k8s_version_major}}-0) != -1
+  retries: 20
+  delay: 10
+  with_items:
+    - kubeadm
+    - kubectl
+    - kubelet
+
+
 - name: Start kubelet
   service:
     name: kubelet
