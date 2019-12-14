@@ -56,10 +56,10 @@
   when: inventory_hostname != main_master
 
 
-- name: FAIL FOR TEST
-  fail:
-    msg: "Manual join for testing"
-  when: 1 == 1
+# - name: FAIL FOR TEST
+#   fail:
+#     msg: "Manual join for testing"
+#   when: 1 == 1
 
 
 # join master to cluster
