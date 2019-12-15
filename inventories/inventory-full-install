@@ -11,6 +11,9 @@
 #     option is specified. If specified the new masters will
 #     be added to loadbalancer round-robin upstream pool
 #
+#   * Make sure to also fill in the variables and especially the
+#     section 'hostfile_entries' in 'playbooks/group_vars/all.yml'
+#
 # WARNING:
 #   
 #   * !!! NOT IDEMPOTENT !!!

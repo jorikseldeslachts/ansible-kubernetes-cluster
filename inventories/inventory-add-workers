@@ -8,6 +8,9 @@
 #
 #   * One or more entries in the [new-workers] section
 #     These are the only VM's that will be touched!
+#
+#   * Make sure to also fill in the variables and especially the
+#     section 'hostfile_entries' in 'playbooks/group_vars/all.yml'
 #       
 ######################################################################
 
