@@ -14,8 +14,8 @@ apiServer:
   - 127.0.0.1
   - {{lb_k8s_public_ip}}
   - {{lb_k8s_api_url}}
-{%for node in hostvars[groups['k8s-nodes']] %}
-  - {{node.ansible_host}}
-  - {{node.inventory_hostname}}
-  - {{node.inventory_hostname}}.{{node.domain}}
+{%for node in groups['k8s-nodes'] %}
+  - {{hostvars[node]['ansible_host']}}
+  - {{hostvars[node]['inventory_hostname']}}
+  - {{hostvars[node]['inventory_hostname']}}.{{hostvars[node]['domain']}}
 {%endfor%}
