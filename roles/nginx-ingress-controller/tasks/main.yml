@@ -7,16 +7,22 @@
     group: "{{k8s_user}}"
     mode: 0555
 
-- name: Download ingress yaml file
-  get_url:
-    url: "{{k8s_ingress_file_url}}"
-    dest: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
+# - name: Download ingress yaml file
+#   get_url:
+#     url: "{{k8s_ingress_file_url}}"
+#     dest: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
 
-- name: "Configure Nginx ingress replica amount (replicas: {{k8s_ingress_replicas}})"
-  replace:
-    path: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
-    regexp: 'replicas(.+)'
-    replace: "replicas: {{k8s_ingress_replicas}}"
+# - name: "Configure Nginx ingress replica amount (replicas: {{k8s_ingress_replicas}})"
+#   replace:
+#     path: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
+#     regexp: 'replicas(.+)'
+#     replace: "replicas: {{k8s_ingress_replicas}}"
+
+- name: Test custom nginx ingress controller module
+  nginx_ingress_controller:
+    git_url: "{{k8s_ingress_file_url}}"
+    node_selector: "node-role.kubernetes.io/infra=true"
+    destination: "{{k8s_ingress_config_path}}/custom-nginx-ingress-config.yml"
 
 
 ########################### main_master ###############################
