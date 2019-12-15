@@ -27,7 +27,7 @@
 # - import_playbook: k8s-dependencies.yml
 # - import_playbook: k8s-init-masters.yml
 # - import_playbook: k8s-init-workers.yml
-- import_playbook: k8s-label-nodes.yml
+# - import_playbook: k8s-label-nodes.yml
 - { import_playbook: nginx-ingress-controller.yml, when: "inventory_hostname in groups['masters']" }
 # - import_playbook: cockpit.yml
 - import_playbook: k8s-cluster-info.yml
