@@ -29,8 +29,9 @@
 
 - name: Pip install requirements
   pip:
-    chdir: ../../library
-    requirements: requirements.txt
+    # chdir: ../../library
+    # requirements: requirements.txt
+    name: requests
 
 - name: Test custom nginx ingress controller module
   nginx_ingress_controller:
