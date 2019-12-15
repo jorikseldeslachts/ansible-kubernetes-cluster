@@ -45,8 +45,9 @@
 - name: Set NoSchedule taint on nodes
   shell: |
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      taint node {{inventory_hostname}} {{item}}{{'' if noschedule |bool else '-'}}
-  with_items: 
+      taint node {{item.0}} {{item.1}}{{'' if noschedule |bool else '-'}}
+  with_nested: 
+    - "{{groups['k8s-nodes']}}"
     - "node-role.kubernetes.io/master:NoSchedule"
   ignore_errors: yes
   when: inventory_hostname == main_master
