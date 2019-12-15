@@ -39,8 +39,17 @@
       label node {{item.0}} {{item.1}}
   with_nested: 
     - "{{groups['workers']}}"
-    - node-role.kubernetes.io/worker=true
+    - "node-role.kubernetes.io/worker=true"
   when: inventory_hostname == main_master
+
+- name: Set NoSchedule taint on nodes
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      taint node {{inventory_hostname}} {{item}}{{'-' if noschedule |bool else ''}}
+  with_items: 
+    - "node-role.kubernetes.io/master:NoSchedule"
+  when: inventory_hostname == main_master
+
 
 
 # # Debug current labels
