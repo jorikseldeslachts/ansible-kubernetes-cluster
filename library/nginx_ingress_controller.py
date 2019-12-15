@@ -1,10 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+####!/usr/bin/python
 
-# ANSIBLE_METADATA = {
-#     'metadata_version': '1.1',
-#     'status': ['preview'],
-#     'supported_by': 'community'
-# }
+ANSIBLE_METADATA = {
+    'metadata_version': '1.1',
+    'status': ['preview'],
+    'supported_by': 'community'
+}
 
 DOCUMENTATION = '''
 ---
@@ -15,8 +16,7 @@ short_description: Module for Kubernetes/Nginx-ingress as DaemonSet
 version_added: "2.8"
 
 description:
-    - "This module transforms the kubernetes/nginx-ingress ingress-controller" + \
-        " to a DaemonSet that runs on al nodes with a specified nodeselector"
+    - "This module transforms the kubernetes/nginx-ingress ingress-controller to a DaemonSet that runs on al nodes with a specified nodeselector"
 
 options:
     git_url:
@@ -50,13 +50,13 @@ EXAMPLES = '''
     destination: /etc/kubernetes/
 '''
 
-# RETURN = '''
-# original_message:
-#     description: The original name param that was passed in
-#     type: str
-# message:
-#     description: The output message that the sample module generates
-# '''
+RETURN = '''
+original_message:
+    description: The original name param that was passed in
+    type: str
+message:
+    description: The output message that the sample module generates
+'''
 
 from ansible.module_utils.basic import AnsibleModule
 import requests
