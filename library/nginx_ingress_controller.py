@@ -1,5 +1,11 @@
 #!/usr/bin/python
 
+# https://blog.toast38coza.me/custom-ansible-module-hello-world/
+
+
+
+
+
 # ANSIBLE_METADATA = {
 #     'metadata_version': '1.1',
 #     'status': ['preview'],
@@ -198,9 +204,25 @@ from ansible.module_utils.basic import *
 
 def main():
 
-	module = AnsibleModule(argument_spec={})
-	response = {"hello": "world"}
-	module.exit_json(changed=False, meta=response)
+    arguments = {
+        "git_url": {
+            "type": "str",
+            "required": True
+        },
+        "node_selector": {
+            "type": "str",
+            "required": False,
+            "default": None
+        },
+        "destination" : {
+            "type": "str",
+            "required": True
+        }
+    }
+
+    module = AnsibleModule(argument_spec=arguments)
+    response = {"hello": "world"}
+    module.exit_json(changed=False, meta=response)
 
 
 if __name__ == '__main__':
