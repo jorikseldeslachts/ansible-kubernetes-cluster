@@ -6,9 +6,9 @@
 - name: Update hostfile with all node ip's
   lineinfile:
     path: /etc/hosts
-    line: '{{item.ip}}   {{item.hostname}} {{item.hostname}}.{{item.domain}}'
+    line: '{{item.ansible_host}}   {{item.inventory_hostname}} {{item.inventory_hostname}}.{{item.domain}}'
   with_items:
-    - "{{hostfile_entries}}"
+    - "{{ hostvars[groups['k8s-nodes']] }}"
 
 - name: Install some handy packages
   yum: 

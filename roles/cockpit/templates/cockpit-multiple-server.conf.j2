@@ -1,10 +1,10 @@
 {
-{%for item in hostfile_entries %}
+{%for item in hostvars[groups['k8s-nodes'] %}
   "{{item.hostname}}" : {
     "visible" : true,
     "color" : "rgb({{ 256 | random }}, {{ 256 | random }}, {{ 256 | random }})",
-    "address" : "{{item.hostname}}",
-    "label" : "{{item.hostname}}",
+    "address" : "{{item.inventory_hostname}}",
+    "label" : "{{item.domain}}",
     "user" : "root"
   },
 {%endfor%}

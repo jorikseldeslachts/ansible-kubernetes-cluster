@@ -11,9 +11,6 @@
 #     option is specified. If specified the new masters will
 #     be added to loadbalancer round-robin upstream pool
 #
-#   * Make sure to also fill in the variables and especially the
-#     section 'hostfile_entries' in 'playbooks/group_vars/all.yml'
-#
 # WARNING:
 #   
 #   * !!! NOT IDEMPOTENT !!!
@@ -26,17 +23,28 @@
 #
 ######################################################################
 
+
+################################ hosts ###############################
 [k8s-nodes:children]
 masters
 workers
 
 [masters]
-k8s-node-5 ansible_host=10.66.66.5 ansible_user=root
-k8s-node-6 ansible_host=10.66.66.6 ansible_user=root
-k8s-node-7 ansible_host=10.66.66.7 ansible_user=root
+k8s-node-5 ansible_host=10.66.66.5
+k8s-node-6 ansible_host=10.66.66.6
+k8s-node-7 ansible_host=10.66.66.7
 
 [workers]
-k8s-node-8 ansible_host=10.66.66.8 ansible_user=root
+k8s-node-8 ansible_host=10.66.66.8
 
 [loadbalancer]
-kubegate ansible_host=10.66.66.1 ansible_user=root
+kubegate ansible_host=10.66.66.1 
+
+
+################################ vars ################################
+[all:vars]
+ansible_user=root
+domain=milkywaygalaxy.be
+
+[k8s-nodes:vars]
+noschedule=False
