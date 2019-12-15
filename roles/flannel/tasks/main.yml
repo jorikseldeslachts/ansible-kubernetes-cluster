@@ -43,6 +43,7 @@
     - kubectl_output.stdout.find("unexpected EOF") == -1
   retries: 10
   delay: 3
+  ignore_errors: yes
   when: inventory_hostname == main_master
 
 - name: Kubectl output
@@ -50,8 +51,6 @@
     msg: 
       - "{{ kubectl_output.stdout_lines }}"
   when: inventory_hostname == main_master
-
-
 
 # then clean up extra unused DaemonSets
 - name: Wait 20 seconds for DaemonSets to deploy
