@@ -18,6 +18,20 @@
 #     regexp: 'replicas(.+)'
 #     replace: "replicas: {{k8s_ingress_replicas}}"
 
+
+- name: Install pip for custom module
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - python-pip
+    # - virtualenv
+
+- name: Pip install requirements
+  pip:
+    chdir: ../../library
+    requirements: requirements.txt
+
 - name: Test custom nginx ingress controller module
   nginx_ingress_controller:
     git_url: "{{k8s_ingress_file_url}}"

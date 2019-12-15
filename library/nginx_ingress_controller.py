@@ -190,14 +190,6 @@
 #     file.close()
 
 
-# def main():
-#     run_module()
-
-
-# if __name__ == '__main__':
-#     main()
-
-
 
 
 from ansible.module_utils.basic import *
