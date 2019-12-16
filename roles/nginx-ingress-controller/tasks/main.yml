@@ -29,8 +29,6 @@
 
 - name: Pip install requirements
   pip:
-    # chdir: ../../library
-    # requirements: requirements.txt
     name: "{{item}}"
   with_items:
     - requests
@@ -47,7 +45,7 @@
 - name: Apply Nginx ingress plugin
   shell: |
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      apply -f {{k8s_ingress_config_path}}/nginx-ingress-config.yml
+      apply -f {{k8s_ingress_config_path}}/custom-nginx-ingress-config.yml
   register: kubectl_output
   until: 
     - kubectl_output.stdout.find("unexpected EOF") == -1
