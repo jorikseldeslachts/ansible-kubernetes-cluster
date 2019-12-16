@@ -65,6 +65,7 @@
 from ansible.module_utils.basic import *
 import requests
 import yaml
+import sys
 
 
 def main():
@@ -103,10 +104,12 @@ def main():
 
 def download_original(url):
     try:
+        print("Downloading {0}".format(url))
         response = requests.get(url)
         return response.content.decode()
     except Exception as e:
         print("Error downloading the original yaml content")
+        sys.exit(1)
 
 
 def create_custom_yaml_content(original_content, node_selector):
@@ -117,19 +120,25 @@ def create_custom_yaml_content(original_content, node_selector):
     end_result = ""
 
     # loop over items
+    print("Looping over items in original file")
     for item in yaml_content:
         if item is not None:
             resource = yaml.load(item, Loader=yaml.FullLoader)
             
-            if resource['kind'].lower() == 'deployment':            
+            if resource['kind'].lower() == 'deployment':
+                print("Found Deployment, turning it into a DaemonSet")
+
                 # change to daemonset
+                print("Changing type to Daemonset")
                 resource['kind'] = "DaemonSet"
                 
                 # delete replicas
+                print("Deleting replicas section")
                 del resource['spec']['replicas']
                 
                 # change nodeselector
                 if node_selector is not None:
+                    print("Updating nodeselector to match: {0}".format(node_selector))
                     resource['spec']['template']['spec']['nodeSelector'] = {
                         node_selector.split('=')[0]: node_selector.split('=')[1]
                     }
@@ -148,6 +157,7 @@ def append_result(var_to_append, resource):
 
 
 def write_file(destination, content):
+    print("Writing new content to file {0}".format(destination))
     file = open(destination, "w")
     file.write(content)
     file.close()
