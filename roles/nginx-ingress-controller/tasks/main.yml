@@ -31,7 +31,10 @@
   pip:
     # chdir: ../../library
     # requirements: requirements.txt
-    name: requests
+    name: "{{item}}"
+  with_items:
+    - requests
+    - pyyaml
 
 - name: Test custom nginx ingress controller module
   nginx_ingress_controller:
