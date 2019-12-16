@@ -89,13 +89,13 @@ def main():
     module = AnsibleModule(argument_spec=module_args)
 
     # download original yaml config
-    original_yaml = download_original(module_args['git_url'])
+    original_yaml = download_original(module.params['git_url'])
 
     # create custom config
-    custom_yaml = create_custom_yaml_content(original_yaml, module_args['node_selector'])
+    custom_yaml = create_custom_yaml_content(original_yaml, module.params['node_selector'])
 
     # put file on destination
-    write_file(module_args['destination'], custom_yaml)
+    write_file(module.params['destination'], custom_yaml)
 
     # return result
     response = {"Status": "Nginx Ingress Controller deployed as DaemonSet"}
@@ -109,7 +109,7 @@ def download_original(url):
         return response.content.decode()
     except Exception as e:
         print("Error downloading the original yaml content")
-        sys.exit(1)
+        module.fail_json(msg="Oopsie")
 
 
 def create_custom_yaml_content(original_content, node_selector):
