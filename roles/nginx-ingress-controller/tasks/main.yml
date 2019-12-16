@@ -65,7 +65,7 @@
     msg: 
       - "{{ item.stdout_lines }}"
   with_items:
-    - "{{kubectl_output}}"
+    - "{{kubectl_output.results}}"
   when: inventory_hostname == main_master
 
 - name: Nginx ingress installed
