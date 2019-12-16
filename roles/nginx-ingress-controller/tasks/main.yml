@@ -42,7 +42,7 @@
 - name: Configure Service for Ingress Controller
   template:
     src: main.yml.j2
-    dest: destination: "{{k8s_ingress_config_path}}/custom-nginx-ingress-service.yml"
+    dest: "{{k8s_ingress_config_path}}/custom-nginx-ingress-service.yml"
 
 
 ########################### main_master ###############################
