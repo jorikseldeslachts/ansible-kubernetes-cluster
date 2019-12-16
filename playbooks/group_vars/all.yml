@@ -35,7 +35,9 @@ k8s_cni_config_path: /etc/kubernetes/cni
 # ingress
 k8s_ingress_file_url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml
 k8s_ingress_config_path: /etc/kubernetes/ingress
-k8s_ingress_replicas: 3
+# k8s_ingress_replicas: 3
+k8s_ingress_namespace: ingress-nginx
+k8s_ingress_service_type: NodePort
 k8s_ingress_nodeport_http: 30080
 k8s_ingress_nodeport_https: 30443
 

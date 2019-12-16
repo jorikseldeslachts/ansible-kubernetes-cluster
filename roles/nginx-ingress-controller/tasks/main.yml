@@ -33,19 +33,27 @@
     - requests
     - pyyaml
 
-- name: Transform nginx ingress controller into DaemonSet with custom module
+- name: Download and transform nginx ingress controller into DaemonSet
   nginx_ingress_controller:
     git_url: "{{k8s_ingress_file_url}}"
     node_selector: "node-role.kubernetes.io/infra=true"
     destination: "{{k8s_ingress_config_path}}/custom-nginx-ingress-config.yml"
 
+- name: Configure Service for Ingress Controller
+  template:
+    src: main.yml.j2
+    dest: destination: "{{k8s_ingress_config_path}}/custom-nginx-ingress-service.yml"
+
 
 ########################### main_master ###############################
-- name: Apply Nginx ingress plugin
+- name: Apply Nginx Ingress Controller and Service
   shell: |
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      apply -f {{k8s_ingress_config_path}}/custom-nginx-ingress-config.yml
+      apply -f {{k8s_ingress_config_path}}/custom-nginx-ingress-{{item}}.yml
   register: kubectl_output
+  with_items:
+    - "config"
+    - "service"
   until: 
     - kubectl_output.stdout.find("unexpected EOF") == -1
   retries: 10
