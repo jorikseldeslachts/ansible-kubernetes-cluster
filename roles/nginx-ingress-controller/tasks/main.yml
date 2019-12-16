@@ -60,16 +60,22 @@
   delay: 3
   when: inventory_hostname == main_master
 
+# - name: Kubectl output
+#   debug:
+#     msg: 
+#       - "{{ item.stdout_lines }}"
+#   with_items:
+#     - "{{kubectl_output.results}}"
+#   when: inventory_hostname == main_master
+
 - name: Kubectl output
   debug:
-    msg: 
-      - "{{ item.stdout_lines }}"
-  with_items:
-    - "{{kubectl_output.results}}"
+    msg: "{{kubectl_output.results}}"
   when: inventory_hostname == main_master
 
-- name: Nginx ingress installed
-  debug: 
-    msg:
-      - "replicas: {{k8s_ingress_replicas}}"
-  when: inventory_hostname == main_master
+
+# - name: Nginx ingress installed
+#   debug: 
+#     msg:
+#       - "replicas: {{k8s_ingress_replicas}}"
+#   when: inventory_hostname == main_master
