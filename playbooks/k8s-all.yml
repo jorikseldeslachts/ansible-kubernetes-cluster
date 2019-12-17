@@ -33,4 +33,4 @@
 - import_playbook: k8s-cluster-info.yml
 
 # test
-# - { import_playbook: test-run.yml, when: deploy_test_app |bool }
+- { import_playbook: test-run.yml, when: deploy_test_app |bool }
