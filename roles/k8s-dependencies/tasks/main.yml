@@ -208,7 +208,9 @@
 
 - name: Pull kubeadm init images beforehand
   shell: kubeadm config images pull
-  when: inventory_hostname in groups['masters']  
+  when: 
+    - inventory_hostname in groups['masters']
+    - "{{k8s_pre_pull_images}}"
 
 ###################### optional TODO ###################### 
 # kubelet_workers_eviction_hard=memory.available<10%
