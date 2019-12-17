@@ -34,7 +34,6 @@
   yum:
     name: "{{item}}"
     state: latest
-    extra_args: --upgrade
   with_items:
     - python-pip
 
