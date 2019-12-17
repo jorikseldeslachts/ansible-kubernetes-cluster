@@ -41,9 +41,9 @@
   pip:
     name: "{{item}}"
   with_items:
-    - openshift
     - pyyaml
     - requests
+    - openshift
 
 
 # k8s user
