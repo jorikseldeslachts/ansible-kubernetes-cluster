@@ -40,6 +40,12 @@
 - name: Upgrade pip
   shell: pip install --upgrade pip
 
+- name: Python requirements
+  python_requirements_facts:
+    dependencies:
+      - openshift
+      - requests
+
 - name: Pip install needed pip packages
   pip:
     name: "{{item}}"
