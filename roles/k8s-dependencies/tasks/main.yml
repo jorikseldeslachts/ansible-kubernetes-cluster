@@ -43,17 +43,18 @@
 - name: Python requirements
   python_requirements_facts:
     dependencies:
-      - openshift
+      - pyyaml
       - requests
+      - openshift
 
-- name: Pip install needed pip packages
-  pip:
-    name: "{{item}}"
-    extra_args: --upgrade
-  with_items:
-    - pyyaml
-    - requests
-    - openshift
+# - name: Pip install needed pip packages
+#   pip:
+#     name: "{{item}}"
+#     extra_args: --upgrade
+#   with_items:
+#     - pyyaml
+#     - requests
+#     - openshift
 
 
 # k8s user
