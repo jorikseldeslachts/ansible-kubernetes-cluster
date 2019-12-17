@@ -33,7 +33,8 @@
 - name: Install pip for k8s module
   yum:
     name: "{{item}}"
-    state: present
+    state: latest
+    extra_args: --upgrade
   with_items:
     - python-pip
 
