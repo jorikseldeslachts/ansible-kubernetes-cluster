@@ -53,7 +53,7 @@ docker_storage_driver: overlay2
 test_app_coffee_replicas: 6
 test_app_tea_replicas: 9
 test_app_url: test-2.jorsel.be
-# test_app_path: /DATA/
+test_app_path: /DATA/
 
 # loadbalancer
 lb_ssl_ciphers: EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
