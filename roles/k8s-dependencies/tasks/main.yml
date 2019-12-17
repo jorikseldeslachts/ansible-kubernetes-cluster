@@ -40,8 +40,8 @@
 - name: Pip install needed pip packages
   pip:
     name: "{{item}}"
-    extra_args: --upgrade
   with_items:
+    - pip>=18.1
     - pyyaml
     - requests
     - openshift
