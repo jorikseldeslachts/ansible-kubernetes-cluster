@@ -1,3 +1,13 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app: test-app
+    test: "true"
+  name: {{test_app_namespace}}
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
