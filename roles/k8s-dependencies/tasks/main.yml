@@ -29,6 +29,23 @@
     state: present
 
 
+# Install pip / requiremets
+- name: Install pip for k8s module
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - python-pip
+
+- name: Pip install 'k8s' Ansible module (based on oc)
+  pip:
+    name: "{{item}}"
+  with_items:
+    - openshift
+    - pyyaml
+    - requests
+
+
 # k8s user
 - name: "Create a {{k8s_user}} user"
   user:
