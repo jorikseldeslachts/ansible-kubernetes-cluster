@@ -37,7 +37,7 @@
   with_items:
     - python-pip
 
-- name: Pip install 'k8s' Ansible module (based on oc)
+- name: Pip install needed pip packages
   pip:
     name: "{{item}}"
     extra_args: --upgrade
