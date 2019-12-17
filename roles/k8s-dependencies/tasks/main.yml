@@ -40,6 +40,7 @@
 - name: Pip install 'k8s' Ansible module (based on oc)
   pip:
     name: "{{item}}"
+  extra_args: --upgrade
   with_items:
     - pyyaml
     - requests
