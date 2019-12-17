@@ -3,33 +3,46 @@
     msg: 
       - "Coffee replicas: {{test_app_coffee_replicas}}"
       - "Tea replicas: {{test_app_tea_replicas}}"
-
+  when: inventory_hostname == main_master
 
 # Configre
-# - name: Creating test app directory
-#   file:
-#     path: "{{test_app_path}}/cafe-app/"
-#     state: directory
+- name: Creating test app directory
+  file:
+    path: "{{test_app_path}}/cafe-app/"
+    state: directory
+  when: inventory_hostname in groups['masters']
 
-# - name: Copying app configuration files
-#   template:
-#     src: "{{item}}.j2"
-#     dest: "{{test_app_path}}/cafe-app/{{item}}"
-#   with_items:
-#    - cafe-app.yml
-#    - cafe-ingress.yml
+- name: Copying app configuration files
+  template:
+    src: "{{item}}.j2"
+    dest: "{{test_app_path}}/cafe-app/{{item}}"
+  with_items:
+   - cafe-app.yml
+   - cafe-ingress.yml
+  when: inventory_hostname in groups['masters']
 
 
 # Apply
+# - name: Applying app
+#   k8s:
+#     state: present
+#     kubeconfig: "/home/{{k8s_user}}/.kube/config"
+#     definition: "{{ lookup('template', 'cafe-app.yml.j2') }}"
+
+# - name: Applying ingress object for app
+#   k8s:
+#     state: present
+#     kubeconfig: "/home/{{k8s_user}}/.kube/config"
+#     definition: "{{ lookup('template', 'cafe-ingress.yml.j2') }}"
+
 - name: Applying app
-  k8s:
-    state: present
-    kubeconfig: "/home/{{k8s_user}}/.kube/config"
-    definition: "{{ lookup('template', 'cafe-app.yml.j2') }}"
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      apply -f {{test_app_path}}/cafe-app/cafe-app.yml
+  when: inventory_hostname == main_master
 
 - name: Applying ingress object for app
-  k8s:
-    state: present
-    kubeconfig: "/home/{{k8s_user}}/.kube/config"
-    definition: "{{ lookup('template', 'cafe-ingress.yml.j2') }}"
-
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      apply -f {{test_app_path}}/cafe-app/cafe-ingress.yml
+  when: inventory_hostname == main_master
