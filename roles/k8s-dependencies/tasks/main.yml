@@ -41,7 +41,7 @@
   pip:
     name: "{{item}}"
   with_items:
-    - pip>=18.1
+    - pip>=19.3
     - pyyaml
     - requests
     - openshift
