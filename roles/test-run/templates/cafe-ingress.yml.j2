@@ -4,8 +4,6 @@ metadata:
   name: cafe-ingress
   namespace: {{test_app_namespace}}
   annotations:
-    {# prometheus.io/scrape: 'true'
-    prometheus.io/port: '9090' #}
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   # tls:

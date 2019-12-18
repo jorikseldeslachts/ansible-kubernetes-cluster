@@ -2,9 +2,6 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  labels:
-    app: test-app
-    test: "true"
   name: {{test_app_namespace}}
 
 ---
@@ -13,9 +10,6 @@ kind: Deployment
 metadata:
   namespace: {{test_app_namespace}}
   name: coffee
-#   annotations:
-#     prometheus.io/scrape: 'true'
-#     prometheus.io/port: '9090'
 spec:
   replicas: {{test_app_coffee_replicas}}
   selector:
@@ -30,21 +24,17 @@ spec:
     spec:
       containers:
       - name: coffee
-        # image: nginxdemos/hello:plain-text
-        image: nginxdemos/hello
+        image: nginxdemos/hello:plain-text
+        # image: nginxdemos/hello
         ports:
         - containerPort: 80
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: {{test_app_namespace}}
   name: tea
-#   annotations:
-#     prometheus.io/scrape: 'true'
-#     prometheus.io/port: '9090'
 spec:
   replicas: {{test_app_tea_replicas}}
   selector:
@@ -59,21 +49,17 @@ spec:
     spec:
       containers:
       - name: tea
-        # image: nginxdemos/hello:plain-text
-        image: nginxdemos/hello
+        image: nginxdemos/hello:plain-text
+        # image: nginxdemos/hello
         ports:
         - containerPort: 80
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   namespace: {{test_app_namespace}}
   name: tea-svc
-#   annotations:
-#     prometheus.io/scrape: 'true'
-#     prometheus.io/port: '9090'
 spec:
   ports:
   - port: 80
@@ -84,15 +70,11 @@ spec:
     app: tea
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   namespace: {{test_app_namespace}}
   name: coffee-svc
-#   annotations:
-#     prometheus.io/scrape: 'true'
-#     prometheus.io/port: '9090'
 spec:
   ports:
   - port: 80
