@@ -40,9 +40,11 @@
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
       apply -f {{test_app_path}}/cafe-app/cafe-app.yml
   when: inventory_hostname == main_master
+  ignore_errors: yes
 
 - name: Applying ingress object for app
   shell: |
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
       apply -f {{test_app_path}}/cafe-app/cafe-ingress.yml
   when: inventory_hostname == main_master
+  ignore_errors: yes
