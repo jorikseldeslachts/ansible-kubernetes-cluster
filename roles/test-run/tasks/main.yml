@@ -35,16 +35,11 @@
 #     kubeconfig: "/home/{{k8s_user}}/.kube/config"
 #     definition: "{{ lookup('template', 'cafe-ingress.yml.j2') }}"
 
-- name: Applying app
+- name: Deploy app: ingress, services, deployments
   shell: |
     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      apply -f {{test_app_path}}/cafe-app/cafe-app.yml
+      apply -f {{test_app_path}}/cafe-app
   when: inventory_hostname == main_master
   ignore_errors: yes
 
-- name: Applying ingress object for app
-  shell: |
-    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      apply -f {{test_app_path}}/cafe-app/cafe-ingress.yml
-  when: inventory_hostname == main_master
-  ignore_errors: yes
+
