@@ -96,3 +96,38 @@ ansible-playbook k8s-playbook.yml --syntax-check -i k8s-cluster/inventory
 # run playbook on servers
 ansible-playbook -i k8s-cluster/inventory -u jorik --ask-become-pass k8s-playbook.yml 
 ```
+
+
+# Playbook
+
+```sh
+# syntax check
+export ANSIBLE_CONFIG=./ansible.cfg
+ansible-playbook -i inventories/inventory-full-install playbooks/k8s-all.yml --syntax-check
+
+
+# full install
+git pull origin feature/split_in_seperate_roles; \
+ansible-playbook -i inventories/inventory-full-install -u jorik --ask-become-pass playbooks/k8s-all.yml
+
+# add master
+# git pull origin feature/split_in_seperate_roles; \
+# ansible-playbook -i inventories/inventory-add-master -u jorik --ask-become-pass k8s-playbook.yml
+
+
+# add worker
+# git pull origin feature/split_in_seperate_roles; \
+# ansible-playbook -i inventories/inventory-add-worker -u jorik --ask-become-pass k8s-playbook.yml
+
+```
+
+# World Writable Solution!!!!
+
+In WSL:
+
+```sh
+[WARNING] Ansible is being run in a world writable directory (/mnt/d/Documents/projects/kubernetes-cluster-hetzner), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+
+# @@@@@@@@@ FIX @@@@@@@@@
+export ANSIBLE_CONFIG=./ansible.cfg
+```

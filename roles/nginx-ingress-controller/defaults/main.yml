@@ -1,0 +1,4 @@
+k8s_ingress_namespace: ingress-nginx
+k8s_ingress_service_type: NodePort
+k8s_ingress_nodeport_http: 30080
+k8s_ingress_nodeport_https: 30443

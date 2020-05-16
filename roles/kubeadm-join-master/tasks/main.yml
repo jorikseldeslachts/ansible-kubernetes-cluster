@@ -1,0 +1,90 @@
+# https://itnext.io/on-premise-ha-kubernetes-cluster-15e41f18bd12
+# https://octetz.com/posts/ha-control-plane-k8s-kubeadm
+
+########################### main master ###############################
+
+# First create token on main master
+- name: Create join token on main master
+  shell: |
+    kubeadm token create \
+      --ttl 10h \
+      --description ansible_join_token_{{lookup('pipe','date +%Y%m%d%H%M%S')}} \
+      --print-join-command
+  register: kubeadm_token_create_result
+  when: inventory_hostname == main_master
+
+
+# Upload certs on main master
+- name: Upload certs on main master
+  shell: |
+    kubeadm init phase upload-certs \
+      --upload-certs | grep -v upload-certs
+  register: kubeadm_init_phase_result
+  when: inventory_hostname == main_master
+  
+
+########################### master-ha ###############################
+
+# vars
+- name: Register vars on HA masters
+  set_fact:
+    master_join_command: "{{ hostvars[main_master]['kubeadm_token_create_result'].stdout }}"
+    master_upload_certs: "{{ hostvars[main_master]['kubeadm_init_phase_result'].stdout }}"
+  when: inventory_hostname != main_master
+
+- name: Debug vars on HA masters
+  debug:
+    msg:
+      - "Disabled"
+      # - "master_join_command: {{master_join_command}}"
+      # - "master_upload_certs: {{master_upload_certs}}"
+  when: inventory_hostname != main_master
+
+
+# full join command
+- name: Register HA master join command
+  set_fact:
+    full_join_command: |
+      {{master_join_command}} --certificate-key {{master_upload_certs}} --control-plane {{'--ignore-preflight-errors=all' if k8s_ignore_preflight_errors |bool else ''}} --v={{k8s_api_debug_level}}
+  when: inventory_hostname != main_master
+
+- name: Debug master join command
+  debug:
+    msg: 
+      # - "Disabled"
+      - "{{full_join_command}}"
+  when: inventory_hostname != main_master
+
+# join master to cluster
+# NOTE:
+#   Ansible crashes on stderr steam even though join succeeds
+#   --> therefor pipe it to a file or /dev/null
+- name: Join HA masters to the cluster and keep retrying if API server returns "unexpected EOF"
+  shell: "{{full_join_command}} >> /dev/null"
+  register: join_result
+  until: 
+    - join_result.stdout.find("40s passed") == -1
+    - join_result.stdout.find("unexpected EOF") == -1
+    - join_result.stdout.find("Peer URLs already exists") == -1
+  retries: 10
+  delay: 3
+  when: inventory_hostname != main_master
+
+# copy init conf
+- name: Create .kube directory
+  file:
+    path: "/home/{{k8s_user}}/.kube"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0755
+  when: inventory_hostname != main_master
+
+- name: Copy admin.conf to .kube folder
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "/home/{{k8s_user}}/.kube/config"
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    remote_src: yes
+  when: inventory_hostname != main_master

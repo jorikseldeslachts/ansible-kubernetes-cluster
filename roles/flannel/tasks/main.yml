@@ -1,0 +1,103 @@
+
+########################### all masters ###############################
+# Replace the CIDR
+- name: "Register original pod cidr"
+  set_fact:
+    original_flannel_pod_cidr: 10.244.0.0/16
+
+- name: Create CNI config directory
+  file:
+    path: "{{k8s_cni_config_path}}"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0555
+
+- name: Download CNI yaml file
+  get_url:
+    url: "{{k8s_cni_file_url}}"
+    dest: "{{k8s_cni_config_path}}/flannel-cni-config.yml"
+
+- name: Replace original pod CIDR with custom pod CIDR in yaml file
+  replace:
+    path: "{{k8s_cni_config_path}}/flannel-cni-config.yml"
+    regexp: "{{original_flannel_pod_cidr}}"
+    replace: "{{k8s_cni_pod_cidr}}"
+
+- name: Replace original DaemonSet names
+  replace:
+    path: "{{k8s_cni_config_path}}/flannel-cni-config.yml"
+    regexp: "name: kube-flannel-ds-amd64"
+    replace: "name: flannel-cni"
+
+
+########################### main-master ###############################
+
+# apply CNI
+- name: Apply Flannel CNI plugin
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      apply -f {{k8s_cni_config_path}}/flannel-cni-config.yml
+  register: kubectl_output
+  until: 
+    - kubectl_output.stdout.find("unexpected EOF") == -1
+  retries: 10
+  delay: 3
+  ignore_errors: yes
+  when: inventory_hostname == main_master
+
+- name: Kubectl output
+  debug:
+    msg: 
+      - "{{ kubectl_output.stdout_lines }}"
+  when: inventory_hostname == main_master
+
+# then clean up extra unused DaemonSets
+- name: Wait 20 seconds for DaemonSets to deploy
+  wait_for:
+    timeout: 20
+
+- name: Clean up extra unused DaemonSets
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      -n kube-system delete daemonset \
+      kube-flannel-ds-arm64 \
+      kube-flannel-ds-arm \
+      kube-flannel-ds-ppc64le \
+      kube-flannel-ds-s390x
+  register: kubectl_output
+  until: kubectl_output.stdout.find("kube-flannel-ds-") == -1
+  retries: 20
+  delay: 3
+  ignore_errors: yes
+  when: inventory_hostname == main_master
+
+- name: Kubectl output
+  debug:
+    msg: 
+      - "{{ kubectl_output.stdout_lines }}"
+  when: inventory_hostname == main_master
+
+
+# print status
+- name: Flannel installed pod CIDR
+  debug: 
+    msg:
+      - "Configured pod CIDR to {{k8s_cni_pod_cidr}} instead of original {{original_flannel_pod_cidr}}"
+      - "Replaced DaemonSet names with: flannel-cni"
+  when: inventory_hostname == main_master
+
+
+# Test and wait fo flannel pods to come up
+# - name: Wait for flannel pods to get ready
+#   shell: |
+#     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+#       get pods -n kube-system | grep -i flannel
+#   register: result
+#   until: 
+#     - result.stdout.find("Terminating") == -1
+#     - result.stdout.find("PodInitializing") == -1
+#     - result.stdout.find("Pending") == -1
+#     - result.stdout.find("ContainerCreating") == -1
+#   retries: 20
+#   delay: 10

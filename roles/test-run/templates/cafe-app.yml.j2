@@ -1,0 +1,85 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{test_app_namespace}}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{test_app_namespace}}
+  name: coffee
+spec:
+  replicas: {{test_app_coffee_replicas}}
+  selector:
+    matchLabels:
+      app: coffee
+      test: "true"
+  template:
+    metadata:
+      labels:
+        app: coffee
+        test: "true"
+    spec:
+      containers:
+      - name: coffee
+        image: nginxdemos/hello:plain-text
+        # image: nginxdemos/hello
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{test_app_namespace}}
+  name: tea
+spec:
+  replicas: {{test_app_tea_replicas}}
+  selector:
+    matchLabels:
+      app: tea
+      test: "true"
+  template:
+    metadata:
+      labels:
+        test: "true"
+        app: tea
+    spec:
+      containers:
+      - name: tea
+        image: nginxdemos/hello:plain-text
+        # image: nginxdemos/hello
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{test_app_namespace}}
+  name: tea-svc
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: tea
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{test_app_namespace}}
+  name: coffee-svc
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: coffee

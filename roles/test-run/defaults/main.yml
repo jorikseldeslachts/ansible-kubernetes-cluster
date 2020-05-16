@@ -1,0 +1,5 @@
+test_app_coffee_replicas: 3
+test_app_tea_replicas: 2
+# test_app_path: /DATA/
+test_app_namespace: cafe-app
+test_app_url: www.test.local

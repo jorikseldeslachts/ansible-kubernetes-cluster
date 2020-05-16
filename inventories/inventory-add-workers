@@ -1,0 +1,34 @@
+######################################################################
+#
+# Minimal requirements:
+#
+#   * Main master MUST be specified with [main-master]
+#     This should be a working, already installed master
+#     The main master will NOT be reinstalled so it is safe to use!
+#
+#   * One or more entries in the [new-workers] section
+#     These are the only VM's that will be touched!
+#       
+######################################################################
+
+
+################################ hosts ###############################
+
+[k8s-nodes:children]
+main-master
+new-workers
+
+[main-master]
+k8s-node-5 ansible_host=10.66.66.5
+
+[new-workers]
+k8s-node-8 ansible_host=10.66.66.8
+
+
+################################ vars ################################
+[all:vars]
+ansible_user=root
+domain=milkywaygalaxy.be
+
+[k8s-nodes:vars]
+noschedule=False
