@@ -10,6 +10,12 @@
   with_items:
     - "{{ groups['k8s-nodes'] }}"
 
+- name: Install NFS client tools
+  yum: 
+    name: nfs-utils
+    state: present
+  when: install_nfs_client |bool
+
 - name: Install some handy packages
   yum: 
     name: "{{item}}"
