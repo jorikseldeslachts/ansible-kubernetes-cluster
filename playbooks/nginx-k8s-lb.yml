@@ -1,0 +1,4 @@
+- hosts: loadbalancer
+  become: yes
+  roles:
+    - k8s-nginx-lb

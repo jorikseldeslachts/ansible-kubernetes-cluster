@@ -1,0 +1,48 @@
+
+########################### main master ###############################
+
+# First create token on master
+- name: Create join token on main master
+  shell: |
+    kubeadm token create \
+      --ttl 10h \
+      --description ansible_join_token_{{lookup('pipe','date +%Y%m%d%H%M%S')}} \
+      --print-join-command
+  register: kubeadm_token_create_result
+  when: inventory_hostname == main_master
+
+
+###################### Workers ######################
+
+# vars
+- name: Register vars on workers
+  set_fact:
+    worker_join_command: "{{ hostvars[main_master]['kubeadm_token_create_result'].stdout }}"
+  when: inventory_hostname in groups['workers']
+
+
+# full join command
+# if needed (--ignore-preflight-errors all)
+- name: Register worker join command
+  set_fact:
+    full_join_command: |
+      {{worker_join_command}} {{'--ignore-preflight-errors=all' if k8s_ignore_preflight_errors |bool else ''}} --v={{k8s_api_debug_level}}
+  when: inventory_hostname in groups['workers']
+
+- name: Debug worker join command
+  debug:
+    msg: 
+      - "Disabled"
+      # - "{{full_join_command}}"
+  when: inventory_hostname in groups['workers']
+
+
+# join worker to cluster  
+- name: Join worker to the cluster
+  shell: "{{worker_join_command}} >> /dev/null"
+  register: join_result
+  until: 
+    - join_result.stdout.find("unexpected EOF") == -1
+  retries: 10
+  delay: 3
+  when: inventory_hostname in groups['workers']

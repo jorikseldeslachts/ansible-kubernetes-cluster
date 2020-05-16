@@ -1,0 +1,11 @@
+{
+{%for node in groups['k8s-nodes'] %}
+  "{{hostvars[node]['inventory_hostname']}}" : {
+    "visible" : true,
+    "color" : "rgb({{ 256 | random }}, {{ 256 | random }}, {{ 256 | random }})",
+    "address" : "{{hostvars[node]['inventory_hostname']}}",
+    "label" : "{{hostvars[node]['inventory_hostname']}}.{{hostvars[node]['domain']}}",
+    "user" : "root"
+  },
+{%endfor%}
+}

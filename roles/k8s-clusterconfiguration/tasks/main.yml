@@ -1,0 +1,19 @@
+
+# cluster config
+- name: Create kubeadm config path
+  file:
+    path: "{{k8s_kubeadm_config_path}}"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0755
+
+- name: Copy custom kubeadm-config.yml
+  template:
+    src: kubeadm-config.yml.j2
+    dest: "{{k8s_kubeadm_config_path}}/kubeadm-config.yml"
+
+- name: SHOULD APPLY NEW CLUSTERCONFIGURATION WHEN ADDING NEW MASTERS!!!
+  debug:
+    msg: "NOT YET IMPLEMENTED"
+    

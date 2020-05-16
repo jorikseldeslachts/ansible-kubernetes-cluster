@@ -1,0 +1,72 @@
+
+# Remove old role labels
+- name: Remove master & worker labels from all nodes
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      label node {{item.0}} {{item.1}}-
+  with_nested: 
+    - "{{ansible_play_hosts}}"
+    - [
+      "node-role.kubernetes.io/master", 
+      "node-role.kubernetes.io/worker",
+      "node-role.kubernetes.io/infra"
+      ]
+  when: inventory_hostname == main_master
+
+
+# Set new role labels
+- name: Set master role label on masters
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      label node {{item.0}} {{item.1}}
+  with_nested: 
+    - "{{ groups['masters'] }}"
+    - "node-role.kubernetes.io/master=true"
+  when: inventory_hostname == main_master
+  
+- name: Set infra role label on masters
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      label node {{item.0}} {{item.1}}
+  with_nested: 
+    - "{{ groups['masters'] }}"
+    - "node-role.kubernetes.io/infra=true"
+  when: inventory_hostname == main_master
+
+- name: Set worker role label on workers
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      label node {{item.0}} {{item.1}}
+  with_nested: 
+    - "{{groups['workers']}}"
+    - "node-role.kubernetes.io/worker=true"
+  when: inventory_hostname == main_master
+
+- name: Set NoSchedule taint on nodes
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      taint node {{item.0}} {{item.1}}{{'' if noschedule |bool else '-'}}
+  with_nested: 
+    - "{{groups['k8s-nodes']}}"
+    - "node-role.kubernetes.io/master:NoSchedule"
+  ignore_errors: yes
+  when: inventory_hostname == main_master
+
+
+
+# # Debug current labels
+# - name: Get all labels on each node
+#   shell: "kubectl get node {{item}} -o custom-columns=LABELHEADER:.metadata.labels | grep -v LABELHEADER"
+#   with_items: 
+#     - "{{ansible_play_hosts}}"
+#   register: node_labels
+#   when: inventory_hostname == main_master
+
+# - name: Debug node labels
+#   debug:
+#     msg: "{{item.stdout_lines | items2dict }}"
+#   with_items:
+#     - "{{node_labels.results}}"
+#   when: inventory_hostname == main_master
+
+

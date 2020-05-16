@@ -22,6 +22,7 @@
   - [ ] expose API
 - [ ] Check to NOT join master/worker if already "ready"
   - [x] k get node k8s-node-5 --no-headers | awk '{ print $1 "," $2 "," $3 }'
+- [ ] ELK: https://www.digitalocean.com/community/tutorials/how-to-set-up-an-elasticsearch-fluentd-and-kibana-efk-logging-stack-on-kubernetes
 
 ---
 

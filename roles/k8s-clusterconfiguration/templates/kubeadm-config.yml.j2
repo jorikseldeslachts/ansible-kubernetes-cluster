@@ -1,0 +1,21 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: stable
+{%if k8s_ha_masters %}
+controlPlaneEndpoint: {{k8s_loadbalancer_ip}}:6443
+{%endif%}
+networking:
+  podSubnet: {{k8s_cni_pod_cidr}}
+  serviceSubnet: {{k8s_service_cidr}}
+  dnsDomain: cluster.local
+apiServer:
+  certSANs:
+  - localhost
+  - 127.0.0.1
+  - {{lb_k8s_public_ip}}
+  - {{lb_k8s_api_url}}
+{%for node in groups['k8s-nodes'] %}
+  - {{hostvars[node]['ansible_host']}}
+  - {{hostvars[node]['inventory_hostname']}}
+  - {{hostvars[node]['inventory_hostname']}}.{{hostvars[node]['domain']}}
+{%endfor%}

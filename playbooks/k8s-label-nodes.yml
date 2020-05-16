@@ -1,0 +1,4 @@
+- hosts: k8s-nodes
+  become: yes
+  roles:
+    - k8s-label-nodes
