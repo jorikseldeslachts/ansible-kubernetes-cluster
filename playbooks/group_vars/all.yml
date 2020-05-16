@@ -15,8 +15,8 @@ install_nfs_client: yes
 # k8s vars
 k8s_version_major: 1.17.0 # 1.16.4
 k8s_loadbalancer_ip: 10.66.66.1 # zie nginx extra config
-k8s_ha_masters: True
-k8s_pods_scheduled_on_master: True
+k8s_ha_masters: yes
+k8s_pods_scheduled_on_master: yes
 k8s_user: k8s
 k8s_user_password: $6$O5Or6GyG$rfAnZ84jbEq.WaX9WOFe0GM2Lpqev8v5z/rCXCSPeKnXInLwHJfUCXtq2g/kj/DcecOT6Iy7vPbYmpYOdCck2.
 k8s_service_cidr: 10.99.0.0/16 # 10.96.0.0/12
@@ -25,8 +25,8 @@ k8s_kubectx_repository_url: https://github.com/ahmetb/kubectx
 k8s_cadvisor_port: 4194
 k8s_api_debug_level: "2"
 k8s_kubeadm_config_path: /etc/kubernetes/kubeadm
-k8s_ignore_preflight_errors: False
-k8s_pre_pull_images: False
+k8s_ignore_preflight_errors: no
+k8s_pre_pull_images: no
 
 # CNI
 k8s_cni_plugin: flannel
@@ -45,7 +45,7 @@ k8s_ingress_nodeport_https: 30443
 
 # docker vars
 docker_version: 18.09.9
-docker_remove_old_docker_packages: True
+docker_remove_old_docker_packages: yes
 docker_repository_url: https://download.docker.com/linux/centos/docker-ce.repo
 docker_cgroup_driver: systemd
 docker_storage_driver: overlay2
