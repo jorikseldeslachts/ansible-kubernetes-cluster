@@ -1,15 +1,16 @@
 
 # What to install
-reinstall_vms_completely: False
-install_loadbalancer: True
-install_kubectx_kubens: True
-install_docker: True
-# install_prometheus: True
-# install_grafana: True
-# install_k8s_dashboard: True
-install_nginx_ingress: True
-install_cockpit: True
-deploy_test_app: True
+reinstall_vms_completely: no
+install_loadbalancer: yes
+install_kubectx_kubens: yes
+install_docker: yes
+# install_prometheus: yes
+# install_grafana: yes
+# install_k8s_dashboard: yes
+install_nginx_ingress: yes
+install_cockpit: yes
+deploy_test_app: yes
+install_nfs_client: yes
 
 # k8s vars
 k8s_version_major: 1.17.0 # 1.16.4
@@ -76,5 +77,4 @@ extra_handy_packages:
   - nano
   - vim
   - tree
-  - bridge-utils
   - git
