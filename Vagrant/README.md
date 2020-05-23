@@ -35,7 +35,7 @@ K8S_NODE_MEMORY=1024
 ### 3) Start virtual machines
 ```sh
 # Start the test environment
-vagrant up --parallel --color --debug --timestamp
+vagrant up --parallel --color --timestamp
 ```
 
 ### 4) Snapshots
@@ -54,7 +54,7 @@ vagrant snapshot restore my-snapshot
 ### 5) Cleanup
 ```sh
 # Destroy all the virtual machines
-vagrant destroy -f
+vagrant destroy --force --parallel --color --timestamp
 ```
 
 
