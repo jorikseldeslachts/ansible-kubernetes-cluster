@@ -1,0 +1,66 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Makes sure the virtual machines get created one by one
+ENV['VAGRANT_NO_PARALLEL'] = 'yes'
+
+Vagrant.configure(2) do |config|
+  # enable .env vars
+  config.env.enable
+
+  # Kubernetes Nodes
+  (1..ENV['K8S_NODE_COUNT']).each do |i|
+    config.vm.define "k8s-node-#{i}" do |node|
+      node.vm.box = "centos/7"
+      node.vm.hostname = "k8s-node-#{i}.ENV['K8S_NODE_DOMAIN']"
+      node.vm.network "private_network", ip: "10.8.8.#{i}"
+      node.vm.provider "virtualbox" do |v|
+        v.name = "k8s-node-#{i}"
+        v.cpus = ENV['K8S_NODE_CPUS']
+        v.memory = ENV['K8S_NODE_MEMORY']
+        # Prevent VirtualBox from interfering with host audio stack
+        v.customize ["modifyvm", :id, "--audio", "none"]
+      end
+    end
+  end
+
+
+
+
+# #   config.vm.provision "shell", path: "bootstrap.sh"
+
+#   # Kubernetes Master Server
+#   config.vm.define "kmaster" do |kmaster|
+#     kmaster.vm.box = "centos/7"
+#     kmaster.vm.hostname = "kmaster.example.com"
+#     kmaster.vm.network "private_network", ip: "172.42.42.100"
+#     kmaster.vm.provider "virtualbox" do |v|
+#       v.name = "kmaster"
+#       v.memory = 2048
+#       v.cpus = 2
+#       # Prevent VirtualBox from interfering with host audio stack
+#       v.customize ["modifyvm", :id, "--audio", "none"]
+#     end
+#     kmaster.vm.provision "shell", path: "bootstrap_kmaster.sh"
+#   end
+
+#   NodeCount = 2
+
+#   # Kubernetes Worker Nodes
+#   (1..NodeCount).each do |i|
+#     config.vm.define "kworker#{i}" do |workernode|
+#       workernode.vm.box = "centos/7"
+#       workernode.vm.hostname = "kworker#{i}.example.com"
+#       workernode.vm.network "private_network", ip: "172.42.42.10#{i}"
+#       workernode.vm.provider "virtualbox" do |v|
+#         v.name = "kworker#{i}"
+#         v.memory = 1024
+#         v.cpus = 1
+#         # Prevent VirtualBox from interfering with host audio stack
+#         v.customize ["modifyvm", :id, "--audio", "none"]
+#       end
+#       workernode.vm.provision "shell", path: "bootstrap_kworker.sh"
+#     end
+#   end
+
+end
