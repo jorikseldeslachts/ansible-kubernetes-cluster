@@ -35,10 +35,23 @@ K8S_NODE_MEMORY=1024
 ### 3) Start virtual machines
 ```sh
 # Start the test environment
-vagrant up
+vagrant up --parallel --color --debug --timestamp
 ```
 
-### 4) Cleanup
+### 4) Snapshots
+It is advised to save a snapshot before running the Ansible playbooks. This way you can simply reverse the snapshot instead of building new virtual machines for every test run.
+```sh
+# Save snapshot
+vagrant snapshot save my-snapshot
+
+# List snapshots
+vagrant snapshot list
+
+# Restore snapshot
+vagrant snapshot restore my-snapshot
+```
+
+### 5) Cleanup
 ```sh
 # Destroy all the virtual machines
 vagrant destroy -f
