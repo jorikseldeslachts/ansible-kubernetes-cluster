@@ -26,6 +26,7 @@ Vagrant.configure(2) do |config|
       node.vm.box = "centos/7"
       node.vm.hostname = "k8s-node-#{i}.#{k8s_node_domain}"
       node.vm.network "private_network", ip: "10.8.8.#{i}"
+      node.vm.provision "shell", path: "bootstrap.sh"
       node.vm.provider "virtualbox" do |vb|
         vb.name = "k8s-node-#{i}"
         vb.cpus = k8s_node_cpus
