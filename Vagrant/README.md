@@ -42,13 +42,13 @@ vagrant up --parallel --color --timestamp
 It is advised to save a snapshot before running the Ansible playbooks. This way you can simply reverse the snapshot instead of building new virtual machines for every test run.
 ```sh
 # Save snapshot
-vagrant snapshot save my-snapshot
+vagrant snapshot save clean-install
 
 # List snapshots
 vagrant snapshot list
 
 # Restore snapshot
-vagrant snapshot restore my-snapshot
+vagrant snapshot restore clean-install
 ```
 
 ### 5) Cleanup
