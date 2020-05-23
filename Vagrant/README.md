@@ -4,7 +4,11 @@ For this setup we make use of a `.env` file to configure environment vars for th
 To be able to use this you have to install a plugin called `vagrant-env` as described [here](https://www.nickhammond.com/configuring-vagrant-virtual-machines-with-env/).
 
 ```sh
+# install
 vagrant plugin install vagrant-env
+
+# check if succesfully installed
+vagrant plugin list
 ```
 
 After that you can configure the following environment variables in [`.env`](./.env):
