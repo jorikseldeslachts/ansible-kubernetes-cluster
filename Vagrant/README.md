@@ -6,39 +6,39 @@ Set up a local test environment to test the Ansible playbooks.
 
 ## Usage
 
-### 1) Install vagrant plugin for env vars
-For this setup we make use of a `.env` file to configure environment vars for the `Vagrantfile`.
-To be able to use this you have to install a plugin called `vagrant-env` as described [here](https://www.nickhammond.com/configuring-vagrant-virtual-machines-with-env/).
-
-```sh
-# Install
-vagrant plugin install vagrant-env
-
-# Check if successfully installed
-vagrant plugin list
+### 1) Configure servers
+You can configure the desired servers in the [`vagrant_servers.yaml`](./vagrant_servers.yaml) file. It is just simple `yaml` format that will be loaded into the [`Vagrantfile`](./Vagrantfile). The file can be configured as follow:
+```yaml
+---
+debug: true
+servers:
+  - name: server-1
+    box: geerlingguy/centos7
+    box_version: 1.2.21
+    ip: 192.168.1.11
+    cpus: 1
+    memory: 512
+  - name: server-2
+    box: geerlingguy/centos7
+    box_version: 1.2.21
+    ip: 192.168.1.12
+    cpus: 2
+    memory: 1024
 ```
+Note that the first IPv4 address in the range might be used by the router so avoid using that.
+When `debug` is set to `true` the [`vagrant_servers.yaml`](./vagrant_servers.yaml) will print out the server configuration when using the `vagrant` command.
 
-### 2) Configure environment variables
-After that you can configure the following environment variables in [`.env`](./.env):
-```sh
-# Amount of virtual machines to spin up
-K8S_NODE_COUNT=3
-
-# The domain name used for the hostnames
-K8S_NODE_DOMAIN=galaxy.local
-
-# Memory and CPU resources
-K8S_NODE_CPUS=1
-K8S_NODE_MEMORY=1024
-```
-
-### 3) Start virtual machines
+### 2) Start virtual machines
 ```sh
 # Start the test environment
 vagrant up --parallel --color --timestamp
+
+# Check
+vagrant status
+vagrant global-status
 ```
 
-### 4) Snapshots
+### 3) Snapshots
 It is advised to save a snapshot before running the Ansible playbooks. This way you can simply reverse the snapshot instead of building new virtual machines for every test run.
 ```sh
 # Save snapshot
@@ -51,7 +51,7 @@ vagrant snapshot list
 vagrant snapshot restore clean-install
 ```
 
-### 5) Cleanup
+### 4) Cleanup
 ```sh
 # Destroy all the virtual machines
 vagrant destroy --force --parallel --color --timestamp
