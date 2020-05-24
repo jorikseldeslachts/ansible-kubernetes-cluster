@@ -1,42 +1,54 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Makes sure the virtual machines get created one by one
-ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 
-Vagrant.configure(2) do |config|
+# import server config
+require 'yaml'
+config = YAML.load_file('vagrant_servers.yaml')
+servers = config['servers']
+
+# debug servers
+if config['debug']
+  puts "Configured servers:\n\n"
+  servers.each do |item|
+    item.each do |key, value|
+      puts key.to_s +  ":" + value.to_s
+    end
+    puts "\n"
+  end
+end
+
+# start vagrant config
+Vagrant.configure("2") do |config|
+
   # enable .env vars
   config.env.enable
 
-  # Get vars from env vars
-  k8s_node_count = ENV['K8S_NODE_COUNT'].to_i
-  k8s_node_domain = ENV['K8S_NODE_DOMAIN']
-  k8s_node_cpus = ENV['K8S_NODE_CPUS'].to_i
-  k8s_node_memory = ENV['K8S_NODE_MEMORY'].to_i
+  # loop servers in config
+  servers.each do |server|
+      config.vm.define server['name'] do |node|
 
-  # Debug
-  puts "\nCurrent VM count: #{k8s_node_count} \
-        \nResources per VM: \
-        \n - CPU: #{k8s_node_cpus} \
-        \n - Memory: #{k8s_node_memory} MB\n\n"
+          # configure base box
+          node.vm.box = server['box']
+          node.vm.box_version = server[:box_version]
 
-  # Kubernetes Nodes
-  (1..k8s_node_count).each do |i|
-    config.vm.define "k8s-node-#{i}" do |node|
-      node.vm.box = "centos/7"
-      node.vm.hostname = "k8s-node-#{i}.#{k8s_node_domain}"
-      node.vm.network "private_network", ip: "10.8.8.#{i}"
-      node.vm.provision "shell", path: "bootstrap.sh"
-      node.vm.provider "virtualbox" do |vb|
-        vb.name = "k8s-node-#{i}"
-        vb.cpus = k8s_node_cpus
-        vb.memory = k8s_node_memory
-        vb.customize [
-          "modifyvm", :id,
-          "--audio", "none",
-          "--cpuexecutioncap", "50"
-        ]
+          # configure hostname & network
+          node.vm.hostname = server['name']
+          node.vm.network :private_network, ip: server['ip'], netmask: "255.255.255.0"
+
+          # configure virtual machine
+          node.vm.provider "virtualbox" do |vb|
+              vb.name = server[:name]
+              # vb.customize ["modifyvm", :id, "--groups", "/Ballerina Development"]
+              vb.customize ["modifyvm", :id, "--cpus", server['cpus']]
+              vb.customize ["modifyvm", :id, "--memory", server['memory']]
+              vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+              vb.customize ["modifyvm", :id, "--audio", "none"]
+              vb.customize ["modifyvm", :id, "--groups", "/kubernetes-cluster"]
+          end
+
+          # provision virtual machine
+          node.vm.provision "shell", path: "bootstrap.sh"
       end
-    end
   end
 end
