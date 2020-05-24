@@ -40,26 +40,14 @@ echo "blacklist pcspkr" >> /etc/modprobe.d/blacklist.conf
 #############################################################
 # PACKAGE LISTS
 #############################################################
-required_packages=(
-    # "vim"
-    "epel-release"
-    # "unzip"
-    # "wget"
-    # "tree"
-    # "telnet"
-    # "traceroute"
-    "bind-utils"
-    "yum-utils"
-    # "htop"
-    "nfs-utils"
-)
 
 # Install
-for i in "${required_packages[@]}"
-do
-   echo -e "\n ==> Installing package $i ... \n"
-   yum install -y $i
-done
+echo -e "\n ==> Installing packages ... \n"
+yum install -y \
+    epel-release \
+    bind-utils \
+    yum-utils \
+    nfs-utils
 echo " ==> Installing done."
 
 echo " ==> Provisioning script done, ready to start installing Kubernetes."
