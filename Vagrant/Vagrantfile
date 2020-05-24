@@ -26,27 +26,27 @@ Vagrant.configure("2") do |config|
   servers.each do |server|
     config.vm.define server['name'] do |node|
 
-        # configure base box
-        node.vm.box = server['box']
-        node.vm.box_version = server[:box_version]
+      # configure base box
+      node.vm.box = server['box']
+      node.vm.box_version = server[:box_version]
 
-        # configure hostname & network
-        node.vm.hostname = server['name']
-        node.vm.network :private_network, ip: server['ip'], netmask: "255.255.255.0"
+      # configure hostname & network
+      node.vm.hostname = server['name']
+      node.vm.network :private_network, ip: server['ip'], netmask: "255.255.255.0"
 
-        # configure virtual machine
-        node.vm.provider "virtualbox" do |vb|
-            vb.name = server[:name]
-            # vb.customize ["modifyvm", :id, "--groups", "/Ballerina Development"]
-            vb.customize ["modifyvm", :id, "--cpus", server['cpus']]
-            vb.customize ["modifyvm", :id, "--memory", server['memory']]
-            vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
-            vb.customize ["modifyvm", :id, "--audio", "none"]
-            vb.customize ["modifyvm", :id, "--groups", "/kubernetes-cluster"]
-        end
+      # configure virtual machine
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = server[:name]
+        # vb.customize ["modifyvm", :id, "--groups", "/Ballerina Development"]
+        vb.customize ["modifyvm", :id, "--cpus", server['cpus']]
+        vb.customize ["modifyvm", :id, "--memory", server['memory']]
+        vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+        vb.customize ["modifyvm", :id, "--audio", "none"]
+        vb.customize ["modifyvm", :id, "--groups", "/kubernetes-cluster"]
+      end
 
-        # provision virtual machine
-        node.vm.provision "shell", path: "bootstrap.sh"
+      # provision virtual machine
+      node.vm.provision "shell", path: "bootstrap.sh"
     end
   end
 end
