@@ -21,9 +21,6 @@ end
 # start vagrant config
 Vagrant.configure("2") do |config|
 
-  # enable .env vars
-  config.env.enable
-
   # loop servers in config
   servers.each do |server|
       config.vm.define server['name'] do |node|
