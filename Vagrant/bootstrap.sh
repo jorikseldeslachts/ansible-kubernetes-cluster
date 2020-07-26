@@ -5,17 +5,17 @@
 # https://gitlab.com/milkywaygalaxy/kickstart/galaxyos
 
 
-#############################################################
-# SET PASSWORDS FOR SSH AND ANSIBLE
-#############################################################
+# change ssh to no password
 sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 systemctl restart sshd
+
+# add vagrant user to sudoers
 usermod -aG wheel vagrant
 
+# change root password
+sudo echo "vagrant" | sudo passwd root
 
-#############################################################
-# SET PROMPT STYLE COLORS
-#############################################################
+# set prompt colors
 echo " ==> Configuring prompt for user root to red ... "
 cat <<EOT >> /root/.bashrc
 
@@ -27,9 +27,7 @@ RED='\[\e[01;31m\]'
 PS1="\$RED[\u\$BLUE@\$RED\h\$BLUE \w\$RED]\$WHITE\$ "
 EOT
 
-#############################################################
-# CUSTOM ALIASES
-#############################################################
+# set some aliases
 echo " ==> Configuring customg aliases ... "
 cat <<EOT >> /etc/profile
 
@@ -39,18 +37,12 @@ alias ll='ls -lAh --color=auto'
 alias tree='tree -C'
 EOT
 
-#############################################################
-# DISABLE BELL
-#############################################################
+# disable bell
 echo " ==> Disabeling bell sounds ... "
 echo 'set bell-style none' >> ~/.inputrc
 echo "blacklist pcspkr" >> /etc/modprobe.d/blacklist.conf
 
-#############################################################
-# PACKAGE LISTS
-#############################################################
-
-# Install
+# install some packages
 echo -e "\n ==> Installing packages ... \n"
 yum install -y \
     epel-release \
