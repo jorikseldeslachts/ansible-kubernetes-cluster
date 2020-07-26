@@ -34,7 +34,7 @@ done
 ansible-playbook k8s-playbook.yml --syntax-check -i k8s-cluster/inventory
 
 # run playbook on servers
-ansible-playbook -i k8s-cluster/inventory -u jorik --ask-become-pass k8s-playbook.yml 
+ansible-playbook -i k8s-cluster/inventory -u vagrant --ask-become-pass k8s-playbook.yml
 ```
 
 # Playbook
