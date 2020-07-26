@@ -12,11 +12,11 @@
 #     be added to loadbalancer round-robin upstream pool
 #
 # WARNING:
-#   
+#
 #   * !!! NOT IDEMPOTENT !!!
 #     All nodes specified will be reinitialised / reinstalled
 #     Work and created resource objects will be lost!!!
-#    
+#
 #   * If you want to reinstall the whole cluster make sure
 #     you specify the 'reinstall_vms_completely' option.
 #     This way the VM's will be cleaned up before reinstallation
@@ -38,7 +38,7 @@ k8s-node-7 ansible_host=10.66.66.7
 k8s-node-8 ansible_host=10.66.66.8
 
 [loadbalancer]
-kubegate ansible_host=10.66.66.1 
+kubegate ansible_host=10.66.66.1
 
 
 ################################ vars ################################

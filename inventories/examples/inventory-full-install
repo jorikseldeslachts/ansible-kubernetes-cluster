@@ -1,0 +1,50 @@
+######################################################################
+#
+# Minimal requirements:
+#
+#   * At least one or more master needed in [masters] section.
+#     The first master in this section will become the main master.
+#
+#   * Workers optional
+#
+#   * Loadbalancer only needed when the 'install_loadbalancer'
+#     option is specified. If specified the new masters will
+#     be added to loadbalancer round-robin upstream pool
+#
+# WARNING:
+#
+#   * !!! NOT IDEMPOTENT !!!
+#     All nodes specified will be reinitialised / reinstalled
+#     Work and created resource objects will be lost!!!
+#
+#   * If you want to reinstall the whole cluster make sure
+#     you specify the 'reinstall_vms_completely' option.
+#     This way the VM's will be cleaned up before reinstallation
+#
+######################################################################
+
+
+################################ hosts ###############################
+[k8s-nodes:children]
+masters
+workers
+
+[masters]
+k8s-node-5 ansible_host=10.66.66.5
+k8s-node-6 ansible_host=10.66.66.6
+k8s-node-7 ansible_host=10.66.66.7
+
+[workers]
+k8s-node-8 ansible_host=10.66.66.8
+
+[loadbalancer]
+kubegate ansible_host=10.66.66.1
+
+
+################################ vars ################################
+[all:vars]
+ansible_user=root
+domain=milkywaygalaxy.be
+
+[k8s-nodes:vars]
+noschedule=False
