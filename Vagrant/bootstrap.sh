@@ -4,6 +4,15 @@
 # The galaxyos images are custom CentOS7 based images created by:
 # https://gitlab.com/milkywaygalaxy/kickstart/galaxyos
 
+
+#############################################################
+# SET PASSWORDS FOR SSH AND ANSIBLE
+#############################################################
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+systemctl restart sshd
+usermod -aG wheel vagrant
+
+
 #############################################################
 # SET PROMPT STYLE COLORS
 #############################################################
