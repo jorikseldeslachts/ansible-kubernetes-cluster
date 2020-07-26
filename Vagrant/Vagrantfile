@@ -13,7 +13,7 @@ if debug_mode
   puts "\nConfigured servers:\n\n"
   servers.each do |item|
     item.each do |key, value|
-      puts key.to_s +  ":" + value.to_s
+      puts key.to_s +  ": " + value.to_s
     end
     puts "\n"
   end
@@ -45,6 +45,8 @@ Vagrant.configure("2") do |config|
       end
 
       # provision virtual machine
+      node.ssh.username = "vagrant"
+      node.ssh.password = "vagrant"
       node.vm.provision "shell", path: "bootstrap.sh"
     end
   end
