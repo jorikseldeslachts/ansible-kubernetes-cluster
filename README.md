@@ -29,9 +29,39 @@ do
 done
 ```
 
+```sh
+# syntax check
+ansible-playbook k8s-playbook.yml --syntax-check -i k8s-cluster/inventory
+
+# run playbook on servers
+ansible-playbook -i k8s-cluster/inventory -u jorik --ask-become-pass k8s-playbook.yml 
+```
+
+# Playbook
+
+```sh
+# syntax check
+export ANSIBLE_CONFIG=./ansible.cfg
+ansible-playbook -i inventories/inventory-full-install playbooks/k8s-all.yml --syntax-check
 
 
-## Usefukll Kubernetes commands:
+# full install
+git pull origin feature/split_in_seperate_roles; \
+ansible-playbook -i inventories/inventory-full-install -u jorik --ask-become-pass playbooks/k8s-all.yml
+
+# add master
+# git pull origin feature/split_in_seperate_roles; \
+# ansible-playbook -i inventories/inventory-add-master -u jorik --ask-become-pass k8s-playbook.yml
+
+
+# add worker
+# git pull origin feature/split_in_seperate_roles; \
+# ansible-playbook -i inventories/inventory-add-worker -u jorik --ask-become-pass k8s-playbook.yml
+
+```
+
+
+## Useful Kubernetes commands:
 | Explenation | Command |
 | --- | --- |
 | Lists pods on nodes | kubectl get pod -o=custom-columns=NAME:.metadata.name,STATUS:.status.phase,NODE:.spec.nodeName --all-namespaces --sort-by=.spec.nodeName | 
@@ -40,7 +70,15 @@ done
 | | |
 
 
+```
+## Known Issues
+- When running the Ansible playbook using `WSL` you might get the following warning:
+  > [WARNING] Ansible is being run in a world writable directory (/mnt/d/Documents/projects/kubernetes-cluster-hetzner), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
 
+  This can be solved by the following command:
+  ```sh
+  export ANSIBLE_CONFIG=./ansible.cfg
+  ```
 
 
 # TODO
@@ -64,8 +102,6 @@ done
   - [ ] expose API
 - [ ] Check to NOT join master/worker if already "ready"
   - [x] k get node k8s-node-5 --no-headers | awk '{ print $1 "," $2 "," $3 }'
-- [ ] ELK: https://www.digitalocean.com/community/tutorials/how-to-set-up-an-elasticsearch-fluentd-and-kibana-efk-logging-stack-on-kubernetes
-
 
 
 ## Contributors
