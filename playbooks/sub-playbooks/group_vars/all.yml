@@ -46,6 +46,7 @@ k8s_ingress_nodeport_https: 30443
 docker_version: 18.09.9
 docker_remove_old_docker_packages: yes
 docker_repository_url: https://download.docker.com/linux/centos/docker-ce.repo
+docker_containerd_rpm_package_url: https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
 docker_cgroup_driver: systemd
 docker_storage_driver: overlay2
 
