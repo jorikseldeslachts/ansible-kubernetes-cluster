@@ -5,4 +5,5 @@
     - { role: kubeadm-init-first-master, when: "inventory_hostname == main_master" }
     - { role: kubeadm-join-master, when: "k8s_ha_masters |bool" }
     - { role: kubectx_kubens, when: "install_kubectx_kubens |bool" }
-    - flannel
+    - { role: flannel, when: k8s_cni_plugin |lower == "flannel" }
+    # - { role: callico, when: k8s_cni_plugin |lower == "callico" } # TODO in future

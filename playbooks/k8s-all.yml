@@ -2,35 +2,38 @@
   tasks:
     - name: "Starting full Kubernetes cluster installation on nodes:"
       debug:
-        msg: 
+        msg:
           - "Nodes: {{ groups['k8s-nodes'] }}"
           - "Masters: {{ groups['masters'] }}"
           - "Workers: {{ groups['workers'] }}"
           - "Main-Master: {{ groups['masters'][0] }}"
       when: "inventory_hostname == groups['masters'][0]"
-    
+
     - name: "Register main master that will be used to get all the data from"
       set_fact:
         main_master: "{{ groups['masters'][0] }}"
 
     - name: "Ready to start importing other playbooks"
-      debug: 
+      debug:
         msg: "main-master: {{main_master}}"
       when: "inventory_hostname == main_master"
 
-# - { import_playbook: cleanup-vms,  when: reinit_vms_completely |bool }
-# - import_playbook: nginx-k8s-lb.yml
+################################# START #################################
 
-- import_playbook: prep-node-vms.yml
-- import_playbook: docker.yml
-- import_playbook: firewalld.yml
-- import_playbook: k8s-dependencies.yml
-- import_playbook: k8s-init-masters.yml
-- import_playbook: k8s-init-workers.yml
-- import_playbook: k8s-label-nodes.yml
-- { import_playbook: nginx-ingress-controller.yml, when: "inventory_hostname in groups['masters']" }
-- import_playbook: cockpit.yml
-- import_playbook: k8s-cluster-info.yml
+# - { import_playbook: cleanup-vms,  when: reinit_vms_completely |bool }
+# - { import_playbook: nginx-k8s-lb.yml, when: install_loadbalancer |bool }
+
+- import_playbook: sub-playbooks/prep-node-vms.yml
+- { import_playbook: sub-playbooks/cockpit.yml, when: install_cockpit |bool }
+- { import_playbook: sub-playbooks/docker.yml, when: install_docker |bool }
+- import_playbook: sub-playbooks/firewalld.yml
+
+- import_playbook: sub-playbooks/k8s-dependencies.yml
+- import_playbook: sub-playbooks/k8s-init-masters.yml
+- import_playbook: sub-playbooks/k8s-init-workers.yml
+- import_playbook: sub-playbooks/k8s-label-nodes.yml
+- { import_playbook: sub-playbooks/nginx-ingress-controller.yml, when: "inventory_hostname in groups['masters']" }
+- import_playbook: sub-playbooks/k8s-cluster-info.yml
 
 # test
-- { import_playbook: test-run.yml, when: deploy_test_app |bool }
+# - { import_playbook: test-run.yml, when: deploy_test_app |bool }
