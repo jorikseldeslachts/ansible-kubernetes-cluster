@@ -1,5 +1,5 @@
 ---
-debug: true
+debug: false # true
 servers:
   # - name: k8s-nginx-lb
   #   box: geerlingguy/centos8
