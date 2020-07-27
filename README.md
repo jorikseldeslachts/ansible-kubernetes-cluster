@@ -15,8 +15,8 @@
 # copy ssh keys
 for i in {21,22,23,24}
 do
-    ssh-copy-id root@172.16.88.$i
-    ssh-copy-id vagrant@172.16.88.$i
+    sshpass -p "vagrant" ssh-copy-id root@172.16.88.$i
+    sshpass -p "vagrant" ssh-copy-id vagrant@172.16.88.$i
     echo "172.16.88.$i done"
 done
 
