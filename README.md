@@ -31,10 +31,11 @@ done
 
 ```sh
 # syntax check
-ansible-playbook k8s-playbook.yml --syntax-check -i k8s-cluster/inventory
+export ANSIBLE_CONFIG=./ansible.cfg
+ansible-playbook -i inventories/inv-vagrant-full-install -u vagrant --ask-become-pass playbooks/k8s-all.yml --syntax-check
 
 # run playbook on servers
-ansible-playbook -i k8s-cluster/inventory -u vagrant --ask-become-pass k8s-playbook.yml
+ansible-playbook -i inventories/inv-vagrant-full-install -u vagrant --ask-become-pass playbooks/k8s-all.yml --syntax-check
 ```
 
 # Playbook
@@ -47,7 +48,7 @@ ansible-playbook -i inventories/inventory-full-install playbooks/k8s-all.yml --s
 
 # full install
 git pull origin feature/split_in_seperate_roles; \
-ansible-playbook -i inventories/inventory-full-install -u jorik --ask-become-pass playbooks/k8s-all.yml
+ansible-playbook -i inventories/inv-vagrant-full-install -u vagrant --ask-become-pass playbooks/k8s-all.yml --syntax-check
 
 # add master
 # git pull origin feature/split_in_seperate_roles; \
@@ -102,7 +103,8 @@ ansible-playbook -i inventories/inventory-full-install -u jorik --ask-become-pas
   - [ ] expose API
 - [ ] Check to NOT join master/worker if already "ready"
   - [x] k get node k8s-node-5 --no-headers | awk '{ print $1 "," $2 "," $3 }'
-
+- [ ] eviction of pods > 80-90% memory in role "k8s-dependencies"
+- [ ] taint master to allow running pods on the master node in "init-first-master" role
 
 ## Contributors
 - Jorik Seldeslachts (Main Developer)
