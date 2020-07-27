@@ -36,7 +36,8 @@
     - python2-pip
 
 - name: Upgrade pip
-  shell: pip install --upgrade pip
+  # shell: pip install --upgrade pip  # pip on CentOS7
+  shell: pip2 install --upgrade pip   # pip2 on CentOS8
 
 - name: Python requirements
   python_requirements_facts:
@@ -48,11 +49,9 @@
 - name: Pip install needed pip packages
   pip:
     name: "{{item}}"
-    # extra_args: --upgrade
   with_items:
     - pyyaml
     - requests
-    # - openshift
 
 # k8s user
 - name: "Create a {{k8s_user}} user"
@@ -207,7 +206,7 @@
   shell: kubeadm config images pull
   when:
     - inventory_hostname in groups['masters']
-    - "{{k8s_pre_pull_images}}"
+    - "{{ k8s_pre_pull_images |bool }}"
 
 ###################### optional TODO ######################
 # kubelet_workers_eviction_hard=memory.available<10%
