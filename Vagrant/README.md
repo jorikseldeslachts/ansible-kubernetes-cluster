@@ -43,12 +43,14 @@ It is advised to save a snapshot before running the Ansible playbooks. This way 
 ```sh
 # Save snapshot
 vagrant snapshot save clean-install
+vagrant snapshot save ready-for-k8s
 
 # List snapshots
 vagrant snapshot list
 
 # Restore snapshot
 vagrant snapshot restore clean-install
+vagrant snapshot restore ready-for-k8s
 ```
 
 ### 4) Cleanup
