@@ -13,19 +13,19 @@
 ## Ansible
 ```bash
 # copy ssh keys
-for i in {24,25,26}
+for i in {21,22,23,24}
 do
-    ssh-copy-id root@10.66.66.$i
-    ssh-copy-id jorik@10.66.66.$i
-    echo "10.66.66.$i done"
+    ssh-copy-id root@172.16.88.$i
+    ssh-copy-id vagrant@172.16.88.$i
+    echo "172.16.88.$i done"
 done
 
 # remove yum lock if ansible is crashing on a second run
 for i in {24,25,26}
 do
-    ssh root@10.66.66.$i rm -rf /var/run/yum.pid
-    ssh root@10.66.66.$i yum clean all
-    echo "10.66.66.$i done"
+    ssh root@172.16.88.$i rm -rf /var/run/yum.pid
+    ssh root@172.16.88.$i yum clean all
+    echo "172.16.88.$i done"
 done
 ```
 
