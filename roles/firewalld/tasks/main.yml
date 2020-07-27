@@ -1,3 +1,9 @@
+- name: Make sure Firewalld is running for "firewall-cmd" command
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
 # CNI requires masquerading
 - name: Enable IP masquerading
   shell: "firewall-cmd --permanent --add-masquerade"
