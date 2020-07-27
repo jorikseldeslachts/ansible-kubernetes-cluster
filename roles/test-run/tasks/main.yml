@@ -1,6 +1,6 @@
 - name: Deploying test cafe-app
   debug:
-    msg: 
+    msg:
       - "Coffee replicas: {{test_app_coffee_replicas}}"
       - "Tea replicas: {{test_app_tea_replicas}}"
   when: inventory_hostname == main_master
@@ -21,7 +21,6 @@
    - cafe-ingress.yml
   when: inventory_hostname in groups['masters']
 
-
 # Apply
 # - name: Applying app
 #   k8s:
@@ -41,5 +40,3 @@
       apply -f {{test_app_path}}/cafe-app
   when: inventory_hostname == main_master
   ignore_errors: yes
-
-

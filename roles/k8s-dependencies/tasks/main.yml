@@ -1,4 +1,3 @@
-
 # preflight checks / requirements
 - name: Disable SELinux on reboot
   selinux:
@@ -28,7 +27,6 @@
     value: "1"
     state: present
 
-
 # Install pip / requiremets
 - name: Install python pip
   yum:
@@ -55,7 +53,6 @@
     - pyyaml
     - requests
     # - openshift
-
 
 # k8s user
 - name: "Create a {{k8s_user}} user"
@@ -109,14 +106,14 @@
     name: Kubernetes
     description: Kubernetes YUM repository
     baseurl: "{{k8s_packages_repository_url}}"
-    gpgkey: 
+    gpgkey:
       - https://packages.cloud.google.com/yum/doc/yum-key.gpg
       - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
     gpgcheck: yes
 
 
 # install k8s packages / tools
- # kubeadm-1.14.2-0
+# kubeadm-1.14.2-0
 - name: Install Kubernetes packages
   yum:
     name: "{{item}}-{{k8s_version_major}}-0"
@@ -133,7 +130,7 @@
     yum list installed |awk '{print $1 "-" $2}' \
       |egrep -i "kubelet|kubeadm|kubectl" |sed -e "s/.x86_64//"
   register: yum_result
-  until: 
+  until:
     - yum_result.stdout.find("kubeadm-{{k8s_version_major}}-0") != -1
     - yum_result.stdout.find("kubelet-{{k8s_version_major}}-0") != -1
     - yum_result.stdout.find("kubectl-{{k8s_version_major}}-0") != -1
@@ -175,7 +172,7 @@
 #     replace: "cadvisor-port={{k8s_cadvisor_port}}"
 #     backup: no
 
-###################### Master only ###################### 
+###################### Master only ######################
 
 - name: Create alias k for kubectl
   lineinfile:
@@ -184,7 +181,7 @@
   when: inventory_hostname in groups['masters']
 
 - name: Install basic bash completion
-  yum: 
+  yum:
     name: bash-completion
     state: present
   when: inventory_hostname in groups['masters']
@@ -194,7 +191,7 @@
     path: "/home/{{k8s_user}}/.bashrc"
     line: "source <(kubectl completion bash)"
   when: inventory_hostname in groups['masters']
-  
+
 - name: "Kubectl bash completion: add the completion script to /etc/bash_completion.d"
   shell: |
     kubectl completion bash > /etc/bash_completion.d/kubectl
@@ -208,11 +205,11 @@
 
 - name: Pull kubeadm init images beforehand
   shell: kubeadm config images pull
-  when: 
+  when:
     - inventory_hostname in groups['masters']
     - "{{k8s_pre_pull_images}}"
 
-###################### optional TODO ###################### 
+###################### optional TODO ######################
 # kubelet_workers_eviction_hard=memory.available<10%
 # kubelet_masters_eviction_hard=memory.available<10%
 # - set_fact:
@@ -231,5 +228,3 @@
 #     line: |
 #        [Service]
 #        Environment="KUBELET_EXTRA_ARGS=--pod-infra-container-image={{kubepause_container_image}} --eviction-hard={{eviction_hard}}"
-
-

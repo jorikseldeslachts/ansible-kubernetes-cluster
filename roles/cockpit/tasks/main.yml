@@ -1,4 +1,3 @@
-
 ###################### ALL ######################
 - name: Install all Cockpit dependencies
   yum:
@@ -43,7 +42,7 @@
     - cockpit-doc                 # Cockpit deployment and developer guide
     - cockpit-dashboard           # Cockpit remote servers and dashboard
     - cockpit-packagekit          # Cockpit user interface for package updates
-    - cockpit-storaged            # Cockpit user interface for storage, using 
+    - cockpit-storaged            # Cockpit user interface for storage, using
     - cockpit-networkmanager      # Cockpit user interface for networking, using NetworkManager
     - cockpit-kdump               # Cockpit user interface for kernel crash dumping
     - cockpit-docker              # Cockpit user interface for Docker containers
@@ -53,7 +52,7 @@
 
     #   - cockpit-selinux            # Cockpit SELinux package
     #   - cockpit-machines           # Cockpit user interface for virtual machines
-    #   - cockpit-machines-ovirt          
+    #   - cockpit-machines-ovirt
     #   - cockpit-sosreport          # Cockpit user interface for diagnostic reports
     #   - cockpit-subscriptions      # Cockpit subscription user interface package
     #   - subscription-manager-cockpit
@@ -78,7 +77,6 @@
     enabled: yes
 
 
-
 ###################### All ######################
 - name: Configure cockpit.conf
   template:
@@ -87,7 +85,6 @@
     owner: root
     group: root
     mode: 0644
-
 
 - name: Join nodes to cockpit dashboard
   template:
@@ -102,4 +99,3 @@
     state: restarted
     enabled: yes
     name: cockpit.socket
-    

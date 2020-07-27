@@ -1,5 +1,5 @@
 - name: Remove all old Docker packages
-  yum: 
+  yum:
     name: "{{ item }}"
     state: removed
   with_items:
@@ -27,7 +27,7 @@
   get_url:
     url: "{{docker_repository_url}}"
     dest: /etc/yum.repos.d/docker-ce.repo
-    
+
 - name: Install Docker
   yum:
     name: "{{item}}"
@@ -53,7 +53,7 @@
     src: daemon.json.j2
     dest: /etc/docker/daemon.json
     mode: 0644
-  
+
 - name: Start Docker service
   service:
     name: docker

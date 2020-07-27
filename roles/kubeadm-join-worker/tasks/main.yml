@@ -31,17 +31,17 @@
 
 - name: Debug worker join command
   debug:
-    msg: 
+    msg:
       - "Disabled"
       # - "{{full_join_command}}"
   when: inventory_hostname in groups['workers']
 
 
-# join worker to cluster  
+# join worker to cluster
 - name: Join worker to the cluster
   shell: "{{worker_join_command}} >> /dev/null"
   register: join_result
-  until: 
+  until:
     - join_result.stdout.find("unexpected EOF") == -1
   retries: 10
   delay: 3
