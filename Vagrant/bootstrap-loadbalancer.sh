@@ -4,6 +4,9 @@
 
 
 # open firewall ports
+firewall-cmd --permanent --add-masquerade
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=https
 firewall-cmd --permanent --add-port=80/tcp
 firewall-cmd --permanent --add-port=443/tcp
 firewall-cmd --permanent --add-port=6443/tcp
