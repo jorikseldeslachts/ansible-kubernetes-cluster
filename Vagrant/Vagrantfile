@@ -48,7 +48,9 @@ Vagrant.configure("2") do |config|
       node.ssh.username = "vagrant"
       node.ssh.password = "vagrant"
       node.vm.provision "shell", path: "bootstrap.sh"
-      node.vm.provision "shell", inline: "echo \"export SERVER_TYPE=#{server['type']}\" >> /etc/profile.d/server_type.sh"
+      node.vm.provision "shell", inline: "echo '# CUSTOM ENV VARS' > /etc/profile.d/env_vars.sh"
+      node.vm.provision "shell", inline: "echo \"export SERVER_TYPE=#{server['type']}\" >> /etc/profile.d/env_vars.sh"
+      node.vm.provision "shell", inline: "echo \"export IP_ADDRESS=#{server['ip']}\" >> /etc/profile.d/env_vars.sh"
 
       # configure loadbalancer
       if server['type'] == "loadbalancer"
@@ -60,7 +62,7 @@ Vagrant.configure("2") do |config|
             k8s_masters += item['ip'].to_s + " "
           end
         end
-        node.vm.provision "shell", inline: "echo \"export K8S_MASTERS='#{k8s_masters}'\" >> /etc/profile.d/k8s_masters.sh"
+        node.vm.provision "shell", inline: "echo \"export K8S_MASTERS='#{k8s_masters}'\" >> /etc/profile.d/env_vars.sh"
 
         # run loadbalander bootstrap script
         node.vm.provision "shell", path: "bootstrap-loadbalancer.sh"
