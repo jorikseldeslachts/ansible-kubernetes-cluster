@@ -1,31 +1,36 @@
 ---
 debug: false # true
 servers:
-  # - name: k8s-nginx-lb
-  #   box: geerlingguy/centos8
-  #   box_version: 1.2.21
-  #   ip: 172.16.88.11
-  #   cpus: 1
-  #   memory: 1024
+  - name: k8s-nginx-lb
+    type: loadbalancer
+    box: geerlingguy/centos8
+    box_version: 1.0.5
+    ip: 172.16.88.20
+    cpus: 1
+    memory: 2048
   - name: k8s-node-1
+    type: k8s-master
     box: geerlingguy/centos8
     box_version: 1.0.5
     ip: 172.16.88.21
     cpus: 2
     memory: 2048
   - name: k8s-node-2
+    type: k8s-master
     box: geerlingguy/centos8
     box_version: 1.0.5
     ip: 172.16.88.22
     cpus: 2
     memory: 2048
   - name: k8s-node-3
+    type: k8s-master
     box: geerlingguy/centos8
     box_version: 1.0.5
     ip: 172.16.88.23
     cpus: 2
     memory: 2048
   - name: k8s-node-4
+    type: k8s-worker
     box: geerlingguy/centos8
     box_version: 1.0.5
     ip: 172.16.88.24
