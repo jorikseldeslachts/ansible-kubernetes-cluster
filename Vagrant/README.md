@@ -4,6 +4,39 @@
 Set up a local test environment to test the Ansible playbooks.
 
 
+## Network map
+```sh
+                                              ___________________
+                                             |                   |
+                                             | Host: k8s-node-1  |
+                                       +-----| Type: K8S Master  |-----+
+                                       |     | IP: 172.16.88.21  |     |
+                                       |     |___________________|     |
+                                       |                               |
+             ____________________      |      ___________________      |
+            |                    |     |     |                   |     |
+            | Host: k8s-nginx-lb |     |     | Host: k8s-node-2  |     |
+Laptop -----| Type: Loadbalander |-----+-----| Type: K8S Master  |-----|
+            | IP: 172.16.88.20   |     |     | IP: 172.16.88.22  |     |
+            |____________________|     |     |___________________|     |
+                                       |                               |
+                                       |      ___________________      |
+                                       |     |                   |     |
+                                       |     | Host: k8s-node-3  |     |
+                                       +-----| Type: K8S Master  |-----|
+                                             | IP: 172.16.88.23  |     |
+                                             |___________________|     |
+                                                                       |
+                                              ___________________      |
+                                             |                   |     |
+                                             | Host: k8s-node-4  |     |
+                                             | Type: K8S Worker  |-----+
+                                             | IP: 172.16.88.24  |
+                                             |___________________|
+
+```
+
+
 ## Usage
 
 ### 1) Configure servers
@@ -37,6 +70,11 @@ vagrant up --parallel --color --timestamp
 vagrant status
 vagrant global-status
 ```
+```sh
+# lb logs
+tail -f /var/log/nginx/*/*
+```
+
 
 ### 3) Snapshots
 It is advised to save a snapshot before running the Ansible playbooks. This way you can simply reverse the snapshot instead of building new virtual machines for every test run.
