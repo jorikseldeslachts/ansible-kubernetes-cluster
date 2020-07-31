@@ -12,7 +12,6 @@
     - debug:
         msg: "VM Operation System: {{ ansible_distribution }}{{ ansible_distribution_major_version}}"
 
-
     - name: "Register main master that will be used to get all the data from"
       set_fact:
         main_master: "{{ groups['masters'][0] }}"
@@ -22,7 +21,37 @@
         msg: "main-master: {{main_master}}"
       when: "inventory_hostname == main_master"
 
-################################# START #################################
+  roles:
+    # - name: prep-node-vms
+    ### - name: cockpit # BROKEN IN CENTOS8
+    # - name: docker
+    # - name: firewalld
+    # - name: k8s-clusterconfiguration
+    ### done and tested
+
+
+    # - { role: kubeadm-init-first-master, when: "inventory_hostname == main_master" }
+    # - { role: kubeadm-join-master, when: "k8s_ha_masters |bool" }
+    # - { role: kubectx_kubens, when: "install_kubectx_kubens |bool" }
+    # - { role: flannel, when: k8s_cni_plugin |lower == "flannel" }
+    # - { role: callico, when: k8s_cni_plugin |lower == "callico" } # TODO in future
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################# OLD #################################
 
 # - { import_playbook: cleanup-vms,  when: reinit_vms_completely |bool }
 # - { import_playbook: nginx-k8s-lb.yml, when: install_loadbalancer |bool }
@@ -34,7 +63,7 @@
 
 # - import_playbook: sub-playbooks/k8s-dependencies.yml
 # FROM HERE
-- import_playbook: sub-playbooks/k8s-init-masters.yml
+# - import_playbook: sub-playbooks/k8s-init-masters.yml
 # - import_playbook: sub-playbooks/k8s-init-workers.yml
 # - import_playbook: sub-playbooks/k8s-label-nodes.yml
 # - { import_playbook: sub-playbooks/nginx-ingress-controller.yml, when: "inventory_hostname in groups['masters']" }
@@ -42,3 +71,5 @@
 
 # test
 # - { import_playbook: test-run.yml, when: deploy_test_app |bool }
+
+################################# OLD #################################
