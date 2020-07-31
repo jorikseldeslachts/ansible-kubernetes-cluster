@@ -28,5 +28,3 @@ worker_node_ports:
 cni_ports_flannel:
   - 8472/udp
   - 8285/udp
-
-
