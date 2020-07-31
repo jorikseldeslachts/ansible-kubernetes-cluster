@@ -32,7 +32,8 @@ done
 ```sh
 # syntax check
 export ANSIBLE_CONFIG=./ansible.cfg
-ansible-playbook -i inventories/inv-vagrant-full-install -u vagrant --ask-become-pass playbooks/k8s-all.yml --syntax-check
+# ansible-playbook -i inventories/inv-vagrant-full-install -u vagrant --ask-become-pass playbooks/k8s-all.yml --syntax-check
+ansible-playbook -i inventories/vagrant-full-install.inv -u vagrant --ask-become-pass playbook-k8s-all.yml
 
 # run playbook on servers
 ansible-playbook -i inventories/inv-vagrant-full-install -u vagrant --ask-become-pass playbooks/k8s-all.yml --syntax-check
