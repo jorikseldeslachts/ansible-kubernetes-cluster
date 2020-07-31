@@ -1,4 +1,3 @@
-
 # cluster config
 - name: Create kubeadm config path
   file:
@@ -16,4 +15,3 @@
 - name: SHOULD APPLY NEW CLUSTERCONFIGURATION WHEN ADDING NEW MASTERS!!!
   debug:
     msg: "NOT YET IMPLEMENTED"
-    

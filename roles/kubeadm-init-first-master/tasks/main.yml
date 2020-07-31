@@ -1,6 +1,5 @@
-
 # init cluster
-#     this cidr has to be the same as in the CNI config!! 
+#     this cidr has to be the same as in the CNI config!!
 #     otherwise coredns pods won't start!
 - name: "Initialize the cluster {{'with' if k8s_ha_masters |bool else 'without'}} --upload-certs flag"
   shell: |
@@ -25,7 +24,6 @@
     owner: "{{k8s_user}}"
     group: "{{k8s_user}}"
     remote_src: yes
-
 
 # taint master
 # - name: Allow running pods on the master node

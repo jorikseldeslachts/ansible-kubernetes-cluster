@@ -1,5 +1,5 @@
 - name: Remove all old Docker packages
-  yum: 
+  yum:
     name: "{{ item }}"
     state: removed
   with_items:
@@ -19,7 +19,7 @@
     state: present
   with_items:
     - yum-utils
-    - bridge-utils
+    # - bridge-utils deprecated on CentOS8
     - device-mapper-persistent-data
     - lvm2
 
@@ -27,12 +27,18 @@
   get_url:
     url: "{{docker_repository_url}}"
     dest: /etc/yum.repos.d/docker-ce.repo
-    
+
+- name: Install containerd
+  yum:
+    name: "{{ docker_containerd_rpm_package_url }}"
+    state: present
+
 - name: Install Docker
   yum:
     name: "{{item}}"
     state: latest
   with_items:
+    - "containerd" # CentOS8
     - "docker-ce-{{docker_version}}"
     - "docker-ce-cli-{{docker_version}}"
 
@@ -53,7 +59,7 @@
     src: daemon.json.j2
     dest: /etc/docker/daemon.json
     mode: 0644
-  
+
 - name: Start Docker service
   service:
     name: docker

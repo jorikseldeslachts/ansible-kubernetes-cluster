@@ -1,0 +1,72 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+# import server config
+require 'yaml'
+yaml_config = YAML.load_file('vagrant_servers.yaml')
+servers = yaml_config['servers']
+debug_mode = yaml_config['debug']
+
+# debug servers
+if debug_mode
+  puts "\nConfigured servers:\n\n"
+  servers.each do |item|
+    item.each do |key, value|
+      puts key.to_s +  ": " + value.to_s
+    end
+    puts "\n"
+  end
+end
+
+# start vagrant config
+Vagrant.configure("2") do |config|
+
+  # loop servers in config
+  servers.each do |server|
+    config.vm.define server['name'] do |node|
+
+      # configure base box
+      node.vm.box = server['box']
+      node.vm.box_version = server[:box_version]
+
+      # configure hostname & network
+      node.vm.hostname = server['name']
+      node.vm.network :private_network, ip: server['ip'], netmask: "255.255.255.0"
+
+      # configure virtual machine
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = server[:name]
+        vb.customize ["modifyvm", :id, "--cpus", server['cpus']]
+        vb.customize ["modifyvm", :id, "--memory", server['memory']]
+        vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+        vb.customize ["modifyvm", :id, "--audio", "none"]
+        vb.customize ["modifyvm", :id, "--groups", "/kubernetes-cluster"]
+      end
+
+      # provision virtual machine
+      node.ssh.username = "vagrant"
+      node.ssh.password = "vagrant"
+      node.vm.provision "shell", path: "bootstrap.sh"
+      node.vm.provision "shell", inline: "echo '# CUSTOM ENV VARS' > /etc/profile.d/env_vars.sh"
+      node.vm.provision "shell", inline: "echo \"export SERVER_TYPE=#{server['type']}\" >> /etc/profile.d/env_vars.sh"
+      node.vm.provision "shell", inline: "echo \"export IP_ADDRESS=#{server['ip']}\" >> /etc/profile.d/env_vars.sh"
+
+      # configure loadbalancer
+      if server['type'] == "loadbalancer"
+
+        # register master nodes
+        k8s_masters = ""
+        servers.each do |item|
+          if item['type'].to_s == "k8s-master"
+            k8s_masters += item['ip'].to_s + " "
+          end
+        end
+        node.vm.provision "shell", inline: "echo \"export K8S_MASTERS='#{k8s_masters}'\" >> /etc/profile.d/env_vars.sh"
+
+        # run loadbalander bootstrap script
+        node.vm.provision "shell", path: "bootstrap-loadbalancer.sh"
+      end
+    end
+  end
+end
