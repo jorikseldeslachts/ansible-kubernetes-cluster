@@ -1,0 +1,32 @@
+---
+master_node_ports:
+  - 22/tcp
+  - 80/tcp
+  - 443/tcp
+  - 53/tcp
+  - 53/udp
+  - 6783/tcp
+  - 10250/tcp         # Kubelet API
+  - 10255/tcp
+  - 30000-32767/tcp
+  - 2379-2380/tcp     # etcd server client API
+  - 6443/tcp          # Kubernetes API server
+  - 10251/tcp         # kube-scheduler
+  - 10252/tcp         # kube-controller-manager
+
+worker_node_ports:
+  - 22/tcp
+  - 80/tcp
+  - 443/tcp
+  - 53/tcp
+  - 53/udp
+  - 6783/tcp
+  - 10250/tcp         # Kubelet API
+  - 10255/tcp
+  - 30000-32767/tcp
+
+cni_ports_flannel:
+  - 8472/udp
+  - 8285/udp
+
+
