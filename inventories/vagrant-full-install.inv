@@ -25,17 +25,27 @@
 
 
 ################################ hosts ###############################
+[servers]
+k8s-node-1 ansible_host=172.16.88.21
+k8s-node-2 ansible_host=172.16.88.22
+k8s-node-3 ansible_host=172.16.88.23
+k8s-node-4 ansible_host=172.16.88.24
+
+[masters]
+k8s-node-1
+k8s-node-2
+k8s-node-3
+
+[workers]
+k8s-node-4
+
 [k8s-nodes:children]
 masters
 workers
 
-[masters]
-k8s-node-1 ansible_host=172.16.88.21
-k8s-node-2 ansible_host=172.16.88.22
-k8s-node-3 ansible_host=172.16.88.23
+[etcd:children]
+masters
 
-[workers]
-k8s-node-4 ansible_host=172.16.88.24
 
 # [loadbalancer]
 # kubegate ansible_host=10.66.66.1
