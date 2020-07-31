@@ -27,6 +27,11 @@
     value: "1"
     state: present
 
+- name: Install iproute-tc, missing in CentOS8 # Missing in CentOS8, causing pre-flight to fail
+  yum:
+    name: "iproute-tc"
+    state: latest
+
 # Install pip / requiremets
 - name: Install python pip
   yum:
