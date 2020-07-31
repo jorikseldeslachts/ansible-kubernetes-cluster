@@ -8,35 +8,30 @@
 - name: Enable IP masquerading
   shell: "firewall-cmd --permanent --add-masquerade"
 
-# All nodes
-- name: Open Kubernetes firewalld ports
-  firewalld:
-    port: "{{ item }}"
-    permanent: yes
-    immediate: yes
-    state: enabled
-  with_items:
-    - 80/tcp
-    - 443/tcp
-    - 53/tcp
-    - 53/udp
-    - 6783/tcp
-    - 10250/tcp         # Kubelet API
-    - 10255/tcp
-    - 30000-32767/tcp
+# This module is required to enable transparent masquerading
+# and to facilitate Virtual Extensible LAN (VxLAN) traffic
+# for communication between Kubernetes pods across the cluster.
+- name: load netfilter probe
+  modprobe:
+    name: br_netfilter
+    state: present
 
-# Masters
-- name: Open Extra Kubernetes firewalld ports on master nodes
+# All nodes
+- name: Open common ports on all nodes
   firewalld:
     port: "{{ item }}"
     permanent: yes
     immediate: yes
     state: enabled
-  with_items:
-    - 2379-2380/tcp     # etcd server client API
-    - 6443/tcp          # Kubernetes API server
-    - 10251/tcp         # kube-scheduler
-    - 10252/tcp         # kube-controller-manager
+  with_items: "{{ master_node_ports }}"
+
+- name: Open on extra ports on masters
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  with_items: "{{ master_node_ports }}"
   when: inventory_hostname in groups['masters']
 
 # Flannel CNI
@@ -46,9 +41,7 @@
     permanent: yes
     immediate: yes
     state: enabled
-  with_items:
-    - 8472/udp
-    - 8285/udp
+  with_items: "{{ cni_ports_flannel }}"
   when: k8s_cni_plugin |lower == "flannel"
 
 # Reload
