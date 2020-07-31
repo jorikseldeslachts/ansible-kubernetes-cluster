@@ -19,7 +19,7 @@ apiServer:
   - {{hostvars[node]['inventory_hostname']}}
   - {{hostvars[node]['inventory_hostname']}}.{{hostvars[node]['domain']}}
 {%endfor%}
-{% if k8s_kubeadm_apiserver_address is defined %}
+{# {% if k8s_kubeadm_apiserver_address is defined %}
   extraArgs:
     advertise-address: {{k8s_kubeadm_apiserver_address}}
 etcd:
@@ -31,4 +31,4 @@ etcd:
             listen-client-urls: https://${HOST}:2379
             advertise-client-urls: https://${HOST}:2379
             initial-advertise-peer-urls: https://${HOST}:2380
-{% endif %}
+{% endif %} #}
