@@ -2,26 +2,14 @@
   yum:
     name: "{{ item }}"
     state: removed
-  with_items:
-    - docker
-    - docker-client
-    - docker-client-latest
-    - docker-common
-    - docker-latest
-    - docker-latest-logrotate
-    - docker-logrotate
-    - docker-engi
+  with_items: "{{ docker_packages_to_remove }}"
   when: docker_remove_old_docker_packages |bool
 
 - name: Make sure all required packages are installed
   yum:
     name: "{{ item }}"
     state: present
-  with_items:
-    - yum-utils
-    # - bridge-utils deprecated on CentOS8
-    - device-mapper-persistent-data
-    - lvm2
+  with_items: "{{ docker_required_packages }}"
 
 - name: Add Docker repository
   get_url:
@@ -37,10 +25,7 @@
   yum:
     name: "{{item}}"
     state: latest
-  with_items:
-    - "containerd" # CentOS8
-    - "docker-ce-{{docker_version}}"
-    - "docker-ce-cli-{{docker_version}}"
+  with_items: "{{docker_packages}}"
 
 - name: "Installed Docker version:"
   debug:
