@@ -4,6 +4,8 @@
 
 
 # open firewall ports
+systemctl start firewalld
+systemctl enable firewalld
 firewall-cmd --permanent --add-masquerade
 firewall-cmd --permanent --add-service=http
 firewall-cmd --permanent --add-service=https
