@@ -4,8 +4,6 @@
 
 
 # open firewall ports
-systemctl start firewalld
-systemctl enable firewalld
 firewall-cmd --permanent --add-masquerade
 firewall-cmd --permanent --add-service=http
 firewall-cmd --permanent --add-service=https
@@ -33,7 +31,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -subj "/C=AU/ST=NSW/L=Sydney/O=Nginx/OU=server/CN=`hostname -f`/emailAddress=admin@test.com"
 
 # configure nginx service
-cat <<EOT > /etc/nginx/nginx.conf
+cat <<EOF > /etc/nginx/nginx.conf
 # user and pid file
 # user nginx;
 user root;
@@ -88,23 +86,23 @@ http {
     # include /etc/nginx/proxy.conf;
     include /etc/nginx/conf.d/*.conf;
 }
-EOT
+EOF
 
 # configure LB proxy on Kubernetes API
-cat <<EOT > /etc/nginx/conf.d/k8s-ha-apiserver.stream
+cat <<EOF > /etc/nginx/conf.d/k8s-ha-apiserver.stream
 upstream k8s_api_server {
     #   least_conn;
-EOT
+EOF
 for i in $K8S_MASTERS ; do
     echo "    server $i:6443;" >> /etc/nginx/conf.d/k8s-ha-apiserver.stream
 done
-cat <<EOT >> /etc/nginx/conf.d/k8s-ha-apiserver.stream
+cat <<EOF >> /etc/nginx/conf.d/k8s-ha-apiserver.stream
 }
 
 server {
-EOT
+EOF
 echo "    listen $IP_ADDRESS:6443;" >> /etc/nginx/conf.d/k8s-ha-apiserver.stream
-cat <<EOT >> /etc/nginx/conf.d/k8s-ha-apiserver.stream
+cat <<EOF >> /etc/nginx/conf.d/k8s-ha-apiserver.stream
     # logging
     error_log   /var/log/nginx/k8s-apiserver/stream_error.log;
 
@@ -121,21 +119,21 @@ server {
 
     proxy_pass k8s_api_server;
 }
-EOT
+EOF
 
 # configure LB proxy on Kubernetes Ingress
-cat <<EOT > /etc/nginx/conf.d/01-k8s-loadbalancer.conf
+cat <<EOF > /etc/nginx/conf.d/01-k8s-loadbalancer.conf
 ######################## k8s upstream ############################
 upstream k8s_nodes_http {
     # proxy to the upstream with the least amount of connections
     least_conn;
 
     # weight 3 means 3 times as much traffic
-EOT
+EOF
 for i in $K8S_MASTERS ; do
     echo "    server $i:30080 max_fails=1 fail_timeout=30s;" >> /etc/nginx/conf.d/01-k8s-loadbalancer.conf
 done
-cat <<EOT >> /etc/nginx/conf.d/01-k8s-loadbalancer.conf
+cat <<EOF >> /etc/nginx/conf.d/01-k8s-loadbalancer.conf
 }
 ################### http to https redirects ######################
 server {
@@ -179,7 +177,7 @@ server {
         proxy_pass http://k8s_nodes_http;
     }
 }
-EOT
+EOF
 
 # restart nginx
 systemctl restart nginx

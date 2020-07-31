@@ -51,4 +51,9 @@ yum install -y \
     nfs-utils
 echo " ==> Installing done."
 
+# enable and start firewall
+systemctl start firewalld
+systemctl enable firewalld
+
+
 echo " ==> Provisioning script done, ready to start installing Kubernetes."
