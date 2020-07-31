@@ -6,13 +6,9 @@
   lineinfile:
     path: /etc/hosts
     line: "{{hostvars[item]['ansible_host']}}   {{hostvars[item]['inventory_hostname']}}   {{hostvars[item]['inventory_hostname']}}.{{hostvars[item]['domain']}}"
+    state: present
   with_items:
     - "{{ groups['k8s-nodes'] }}"
-
-- name: Install NFS client tools
-  yum:
-    name: nfs-utils
-    state: present
 
 - name: Install some handy packages
   yum:
