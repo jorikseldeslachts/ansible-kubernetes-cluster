@@ -19,3 +19,16 @@ apiServer:
   - {{hostvars[node]['inventory_hostname']}}
   - {{hostvars[node]['inventory_hostname']}}.{{hostvars[node]['domain']}}
 {%endfor%}
+{% if k8s_kubeadm_apiserver_address is defined %}
+  extraArgs:
+    advertise-address: {{k8s_kubeadm_apiserver_address}}
+etcd:
+    local:
+        extraArgs:
+            initial-cluster: ${NAMES[0]}=https://${ETCDHOSTS[0]}:2380,${NAMES[1]}=https://${ETCDHOSTS[1]}:2380,${NAMES[2]}=https://${ETCDHOSTS[2]}:2380
+            initial-cluster-state: new
+            listen-peer-urls: https://${HOST}:2380
+            listen-client-urls: https://${HOST}:2379
+            advertise-client-urls: https://${HOST}:2379
+            initial-advertise-peer-urls: https://${HOST}:2380
+{% endif %}

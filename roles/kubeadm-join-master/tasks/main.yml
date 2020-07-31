@@ -21,7 +21,7 @@
       --upload-certs | grep -v upload-certs
   register: kubeadm_init_phase_result
   when: inventory_hostname == main_master
-  
+
 
 ########################### master-ha ###############################
 
@@ -50,7 +50,7 @@
 
 - name: Debug master join command
   debug:
-    msg: 
+    msg:
       # - "Disabled"
       - "{{full_join_command}}"
   when: inventory_hostname != main_master
@@ -62,7 +62,7 @@
 - name: Join HA masters to the cluster and keep retrying if API server returns "unexpected EOF"
   shell: "{{full_join_command}} >> /dev/null"
   register: join_result
-  until: 
+  until:
     - join_result.stdout.find("40s passed") == -1
     - join_result.stdout.find("unexpected EOF") == -1
     - join_result.stdout.find("Peer URLs already exists") == -1

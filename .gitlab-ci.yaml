@@ -1,0 +1,5 @@
+
+# - yamllint
+# - ansible syntax check
+# - ansible debug dry run
+# - vagrant syntax check

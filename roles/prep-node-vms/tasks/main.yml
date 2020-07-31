@@ -1,8 +1,7 @@
-
 - name: Update node hostnames
   hostname:
     name: "{{inventory_hostname}}"
-    
+
 - name: Update hostfile with all node ip's
   lineinfile:
     path: /etc/hosts
@@ -11,13 +10,12 @@
     - "{{ groups['k8s-nodes'] }}"
 
 - name: Install NFS client tools
-  yum: 
+  yum:
     name: nfs-utils
     state: present
-  when: install_nfs_client |bool
 
 - name: Install some handy packages
-  yum: 
+  yum:
     name: "{{item}}"
     state: present
   with_items:

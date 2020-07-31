@@ -1,7 +1,7 @@
 
 # What to install
 reinstall_vms_completely: no
-install_loadbalancer: yes
+install_loadbalancer: no #yes
 install_kubectx_kubens: yes
 install_docker: yes
 # install_prometheus: yes
@@ -10,11 +10,20 @@ install_docker: yes
 install_nginx_ingress: yes
 install_cockpit: yes
 deploy_test_app: yes
-install_nfs_client: yes
+
+
+# nodes extra vars
+extra_handy_packages:
+  - wget
+  - htop
+  - nano
+  - vim
+  - tree
+  - git
 
 # k8s vars
-k8s_version_major: 1.17.0 # 1.16.4
-k8s_loadbalancer_ip: 10.66.66.1 # zie nginx extra config
+k8s_version_major: 1.18.6 # 1.16.4
+k8s_loadbalancer_ip: 172.16.88.20
 k8s_ha_masters: yes
 k8s_pods_scheduled_on_master: yes
 k8s_user: k8s
@@ -25,6 +34,8 @@ k8s_kubectx_repository_url: https://github.com/ahmetb/kubectx
 k8s_cadvisor_port: 4194
 k8s_api_debug_level: "2"
 k8s_kubeadm_config_path: /etc/kubernetes/kubeadm
+k8s_kubeadm_apiserver_address: 172.16.88.21 # leave empty for default
+k8s_kubeadm_apiserver_port: 6443
 k8s_ignore_preflight_errors: no
 k8s_pre_pull_images: no
 
@@ -47,6 +58,7 @@ k8s_ingress_nodeport_https: 30443
 docker_version: 18.09.9
 docker_remove_old_docker_packages: yes
 docker_repository_url: https://download.docker.com/linux/centos/docker-ce.repo
+docker_containerd_rpm_package_url: https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
 docker_cgroup_driver: systemd
 docker_storage_driver: overlay2
 
@@ -59,22 +71,14 @@ test_app_path: /DATA
 # loadbalancer
 lb_ssl_ciphers: EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
 lb_galaxy_acl: False
-lb_listen_domains: 
+lb_listen_domains:
   - milkywaygalaxy.be
   - jorsel.be
   # - ellievision.be
 lb_k8s_api_url: k8s.milkywaygalaxy.be
 lb_k8s_api_cert_domain: milkywaygalaxy.be
 lb_k8s_api_port: 6443
-lb_k8s_public_ip: 148.251.246.29
+lb_k8s_public_ip: 172.16.88.20 # 148.251.246.29
 # lb_k8s_api_allowd_paths:
   # - /
 
-# extra vars
-extra_handy_packages:
-  - wget
-  - htop
-  - nano
-  - vim
-  - tree
-  - git
