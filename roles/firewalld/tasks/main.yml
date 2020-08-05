@@ -31,7 +31,9 @@
     permanent: yes
     immediate: yes
     state: enabled
-  with_items: "{{ master_node_ports }}"
+  with_items:
+    - "{{ master_node_ports }}"
+    - "{{ etcd_ports }}"
   when: inventory_hostname in groups['masters']
 
 # Flannel CNI
