@@ -1,0 +1,132 @@
+---
+# This role follows instructions of "kubernetes the hard way reworked" by "mmumshad":
+# https://github.com/mmumshad/kubernetes-the-hard-way/blob/master/docs/04-certificate-authority.md
+
+
+# create directory structure on etcd servers
+- name: Generate certs directory
+  file:
+    path: "{{ etcd_certs_directory }}"
+    state: directory
+    mode: 0755
+
+- name: Generate etcd directory
+  file:
+    path: "{{ etcd_data_directory }}"
+    state: directory
+    mode: 0700
+
+
+# Create CA and certificates locally and the distribute it to the etcd nodes
+- name: Create temporary directory on localhost to generate certificates
+  file:
+    path: "/tmp{{ etcd_certs_directory }}"
+    state: directory
+  delegate_to: localhost
+
+- name: Include tasks to generate an etcd CA
+  include: generate-etcd-ca.yml
+  delegate_to: localhost
+
+- name: Include etcd certificate creation tasks
+  include: generate-etcd-cert.yml
+  delegate_to: localhost
+
+- name: Distribute etcd CA and certificates to etcd nodes
+  copy:
+    src: "/tmp{{ etcd_certs_directory }}/"
+    dest: "{{ etcd_certs_directory }}/"
+    # backup: "{{ etcd_backup_old_certs }}"
+
+# - name: Remove temporary directory on localhost
+#   file:
+#     path: "/tmp{{ etcd_certs_directory }}"
+#     state: absent
+#   delegate_to: localhost
+
+
+# Configure kubelet service
+- name: Make sure there is no custom kubelet definition
+  file:
+    path: /etc/systemd/system/kubelet.service.d
+    state: absent
+
+- name: Make sure kubelet service is enabled and restarted
+  systemd:
+    name: kubelet
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+
+
+# Download and install etcd binaries
+- name: Download etcd binaries
+  get_url:
+    url: "{{ etcd_download_url }}/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: "/tmp/etcd-v{{ etcd_version }}-linux-amd64.tar.gz"
+    mode: 0755
+
+- name: Unarchive etcd binary
+  unarchive:
+    remote_src: yes
+    src: "/tmp/etcd-v{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: "/tmp/etcd-v{{ etcd_version }}-linux-amd64"
+    owner: root
+    group: root
+
+- name: Move etcd binaries to PATH location
+  copy:
+    remote_src: yes
+    src: "/tmp/etcd-v{{ etcd_version }}-linux-amd64/{{ item }}"
+    dest: "{{ etcd_path_location }}/{{ item }}"
+    mode: 0755
+  with_items:
+    - etcd
+    - etcdctl
+
+
+# Configure etcd service files
+- name: "Get IP on etcd network interface \"{{ etcd_network_interface }}\""
+  shell: |
+    echo $(ip addr show {{ etcd_network_interface }} | grep 'inet ' | awk '{print $2}' | cut -d / -f 1)
+  register: get_ip_address_result
+
+- set_fact:
+    etcd_internal_ip_address: "{{ get_ip_address_result.stdout }}"
+
+- name: Configure etcd service
+  template:
+    src: etcd.service.j2
+    dest: /etc/systemd/system/etcd.service
+
+- name: Make sure etcd service is enabled and restarted
+  systemd:
+    name: etcd
+    state: started # not restarted since that might break the cluster!!!
+    enabled: yes
+    daemon_reload: yes
+
+- name: Test etcd configuration on all nodes
+  shell: |
+    ETCDCTL_API=3 \
+    etcdctl member list \
+      --endpoints=https://127.0.0.1:2379 \
+      --cacert={{ etcd_certs_directory }}/ca.crt \
+      --cert={{ etcd_certs_directory }}/etcd-server.crt \
+      --key={{ etcd_certs_directory }}/etcd-server.key
+  register: etcd_test_results
+
+- debug:
+    msg: "{{ etcd_test_results.stdout_lines }}"
+
+
+# WARNING:
+#   - Do NOT create a task to make Ansible restart all the etcd services!
+- name: WARNING
+  debug:
+    msg:
+      - "Restarting all etcd nodes with Ansible at the same time would be a very bad idea!"
+      - "It is advised to manually restart the service one node at a time or just reboot the nodes one by one."
+      - "After that manually check the logs to see if the node joins the etcd cluster again."
+      - "Daemon-reload: OK"
+      - "systemctl restart etcd: NOT OK"
