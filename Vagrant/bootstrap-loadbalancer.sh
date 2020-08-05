@@ -30,11 +30,15 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -out /etc/ssl/certs/nginx-selfsigned.crt \
     -subj "/C=AU/ST=NSW/L=Sydney/O=Nginx/OU=server/CN=`hostname -f`/emailAddress=admin@test.com"
 
-# configure nginx service
+#
+# configure nginx.conf
+#
 cat <<EOF > /etc/nginx/nginx.conf
+# enable stream module (at top of conf)
+load_module /usr/lib64/nginx/modules/ngx_stream_module.so;
+
 # user and pid file
-# user nginx;
-user root;
+user nginx;
 pid /var/run/nginx.pid;
 
 # Set to number of CPU cores
@@ -43,6 +47,17 @@ worker_processes 1;
 events {
     # set to number op CPU cores X 1024
     worker_connections 1024;
+}
+
+# include .stream configs
+stream {
+    # log format
+
+    # logging
+    error_log   /var/log/nginx/k8s-apiserver/stream_error.log;
+
+    # includes
+    include /etc/nginx/conf.d/*.stream;
 }
 
 # http settings
@@ -88,7 +103,10 @@ http {
 }
 EOF
 
+
+#
 # configure LB proxy on Kubernetes API
+#
 cat <<EOF > /etc/nginx/conf.d/k8s-ha-apiserver.stream
 upstream k8s_api_server {
     #   least_conn;
@@ -110,18 +128,12 @@ cat <<EOF >> /etc/nginx/conf.d/k8s-ha-apiserver.stream
 #    proxy_timeout 3s;
 #    proxy_connect_timeout 1s;
 }
-
-server {
-    listen k8s.milkywaygalaxy.be:6443;
-
-    # logging
-    error_log   /var/log/nginx/k8s-apiserver/stream_error.log;
-
-    proxy_pass k8s_api_server;
-}
 EOF
 
+
+#
 # configure LB proxy on Kubernetes Ingress
+#
 cat <<EOF > /etc/nginx/conf.d/01-k8s-loadbalancer.conf
 ######################## k8s upstream ############################
 upstream k8s_nodes_http {
@@ -154,6 +166,34 @@ server {
     # listen ssl
     listen 443 ssl;
     ssl on;
+EOF
+    echo "    server_name $IP_ADDRESS;" >> /etc/nginx/conf.d/01-k8s-loadbalancer.conf
+cat <<EOF >> /etc/nginx/conf.d/01-k8s-loadbalancer.conf
+    # SSL/TLS
+    ssl_certificate     /etc/ssl/certs/nginx-selfsigned.crt;
+    ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+    ssl_protocols TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
+
+    # logging
+    access_log  /var/log/nginx/milkywaygalaxy.be/access.log   main;
+    error_log   /var/log/nginx/milkywaygalaxy.be/error.log    error;
+
+    location / {
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+
+        proxy_set_header X-provider Vagrant;
+        proxy_set_header Host \$host;
+        proxy_pass http://k8s_nodes_http;
+    }
+}
+server {
+    # listen ssl
+    listen 443 ssl;
+    ssl on;
     server_name *.milkywaygalaxy.be;
 
     # SSL/TLS
@@ -180,4 +220,6 @@ server {
 EOF
 
 # restart nginx
+nginx -t
 systemctl restart nginx
+
