@@ -8,3 +8,5 @@ etcd_backup_old_certs: no
 etcd_network_interface: ens18
 etcd_service_description: "Etcd service for Kubernetes"
 etcd_ca_crt_common_name: kubernetes-ca
+etcd_test_cluster_retries: 12
+etcd_test_cluster_delay: 10
