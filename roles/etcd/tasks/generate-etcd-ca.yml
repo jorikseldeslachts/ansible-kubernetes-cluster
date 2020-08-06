@@ -2,22 +2,26 @@
 
 # openssl genrsa -out ca.key 2048
 - name: Generate CA private key
-  openssl_privatekey:
-    path: "/tmp{{ etcd_certs_directory }}/ca.key"
-    type: RSA
-    size: 2048
+  shell: |
+    openssl genrsa \
+      -out /tmp{{ etcd_certs_directory }}/ca.key \
+      2048
 
 # openssl req -new -key ca.key -subj "/CN=KUBERNETES-CA" -out ca.csr
 - name: Generate CA CSR using the CA private key
-  openssl_csr:
-    path: "/tmp{{ etcd_certs_directory }}/ca.csr"
-    privatekey_path: "/tmp{{ etcd_certs_directory }}/ca.key"
-    common_name: KUBERNETES-CA
+  shell: |
+    openssl req -new \
+      -key /tmp{{ etcd_certs_directory }}/ca.key \
+      -subj "/CN={{ etcd_ca_crt_common_name }}" \
+      -out /tmp{{ etcd_certs_directory }}/ca.csr
 
 # openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial -out ca.crt -days 1000
 - name: Sign the CSR with the CA private key
-  openssl_certificate:
-    path: "/tmp{{ etcd_certs_directory }}/ca.crt"
-    csr_path: "/tmp{{ etcd_certs_directory }}/ca.csr"
-    privatekey_path: "/tmp{{ etcd_certs_directory }}/ca.key"
-    provider: selfsigned
+  shell: |
+    openssl x509 \
+      -req \
+      -in /tmp{{ etcd_certs_directory }}/ca.csr \
+      -signkey /tmp{{ etcd_certs_directory }}/ca.key \
+      -CAcreateserial \
+      -out /tmp{{ etcd_certs_directory }}/ca.crt \
+      -days 1000
