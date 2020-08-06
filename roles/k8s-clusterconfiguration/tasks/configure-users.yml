@@ -1,0 +1,44 @@
+---
+# k8s user
+- name: "Create a {{k8s_user}} user"
+  user:
+    name: "{{k8s_user}}"
+    password: "{{k8s_user_password}}"
+    comment: "Kubernetes Admin"
+    update_password: on_create
+    state: present
+    shell: /bin/bash
+    system: no
+    createhome: yes
+    home: "/home/{{k8s_user}}"
+
+- name: "Add user {{k8s_user}} to Docker group"
+  user:
+    name: "{{ k8s_user }}"
+    groups: "docker,{{ k8s_user }}"
+    append: yes
+
+# prompt colors
+- name: "Configure prompt for {{k8s_user}} user (masters)"
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: PS1='\[\e[1;34m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]master\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+  when: inventory_hostname in groups['masters']
+
+- name: "Configure prompt for {{k8s_user}} user (workers)"
+  lineinfile:
+    path: "/home/{{k8s_user}}/.bashrc"
+    line: PS1='\[\e[1;34m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]worker\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+  when: inventory_hostname in groups['workers']
+
+- name: "Configure prompt for root user (masters)"
+  lineinfile:
+    path: "/root/.bashrc"
+    line: PS1='\[\e[1;31m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]master\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+  when: inventory_hostname in groups['masters']
+
+- name: "Configure prompt for root user (workers)"
+  lineinfile:
+    path: "/root/.bashrc"
+    line: PS1='\[\e[1;31m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]worker\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+  when: inventory_hostname in groups['workers']

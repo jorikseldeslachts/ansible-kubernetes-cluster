@@ -1,31 +1,8 @@
-# preflight checks / requirements
-- name: Disable SELinux on reboot
-  selinux:
-    state: disabled
+---
 
-- name: Remove swapfile from /etc/fstab
-  mount:
-    name: "{{ item }}"
-    fstype: swap
-    state: absent
-  with_items:
-    - swap
-
-- name: Disable swap
-  command: swapoff -a
-  when: ansible_swaptotal_mb > 0
-
-- name: Ensure net.bridge.bridge-nf-call-ip6tables is set to 1 (IPv6)
-  sysctl:
-    name: net.bridge.bridge-nf-call-ip6tables
-    value: "1"
-    state: present
-
-- name: Ensure net.bridge.bridge-nf-call-iptables is set to 1 (IPv4)
-  sysctl:
-    name: net.bridge.bridge-nf-call-iptables
-    value: "1"
-    state: present
+# Preflight checks / requirements
+- name: Include kubernetes preflight check requirement tasks
+  include: preflight-reqs.yml
 
 
 # Install some packages
@@ -34,13 +11,14 @@
     name: "{{ item }}"
     state: latest
   with_items:
+    - python3
+    - python3-devel
+    - python3-pip
     - iproute-tc
     - nfs-utils
-    - python2-pip
 
 - name: Upgrade pip
-  # shell: pip install --upgrade pip  # pip on CentOS7
-  shell: pip2 install --upgrade pip   # pip2 on CentOS8
+  shell: "pip3 install --upgrade pip --user {{ k8s_user }}"  # pip3 on CentOS8
 
 - name: Python requirements
   python_requirements_facts:
@@ -49,183 +27,18 @@
       - requests
       - openshift
 
-- name: Pip install needed pip packages
-  pip:
-    name: "{{item}}"
-  with_items:
-    - pyyaml
-    - requests
+
+# Configure the k8s users and terminals
+- name: Include user and terminal customization tasks
+  include: configure-users.yml
 
 
-# k8s user
-- name: "Create a {{k8s_user}} user"
-  user:
-    name: "{{k8s_user}}"
-    password: "{{k8s_user_password}}"
-    comment: "Kubernetes Admin"
-    update_password: on_create
-    state: present
-    shell: /bin/bash
-    system: no
-    createhome: yes
-    home: "/home/{{k8s_user}}"
-
-- name: "Add user {{k8s_user}} to Docker group"
-  user:
-    name: "{{ k8s_user }}"
-    groups: "docker,{{ k8s_user }}"
-    append: yes
+# Install k8s packages / tools
+- name: Include Kubernetes package installation tasks
+  include: install-k8s-packages.yml
 
 
-# prompt colors
-- name: "Configure prompt for {{k8s_user}} user (masters)"
-  lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
-    line: PS1='\[\e[1;34m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]master\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+# Prepare masters
+- name: Include tasks to prepare masters for cluster init
+  include: prepare-masters.yml
   when: inventory_hostname in groups['masters']
-
-- name: "Configure prompt for {{k8s_user}} user (workers)"
-  lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
-    line: PS1='\[\e[1;34m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]worker\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
-  when: inventory_hostname in groups['workers']
-
-- name: "Configure prompt for root user (masters)"
-  lineinfile:
-    path: "/root/.bashrc"
-    line: PS1='\[\e[1;31m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]master\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
-  when: inventory_hostname in groups['masters']
-
-- name: "Configure prompt for root user (workers)"
-  lineinfile:
-    path: "/root/.bashrc"
-    line: PS1='\[\e[1;31m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]worker\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
-  when: inventory_hostname in groups['workers']
-
-
-# add repo
-- name: Add Kubernetes YUM repository
-  yum_repository:
-    name: Kubernetes
-    description: Kubernetes YUM repository
-    baseurl: "{{k8s_packages_repository_url}}"
-    gpgkey:
-      - https://packages.cloud.google.com/yum/doc/yum-key.gpg
-      - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-    gpgcheck: yes
-
-
-# install k8s packages / tools
-- name: Install Kubernetes packages
-  yum:
-    name: "{{item}}-{{k8s_version_major}}-0"
-    state: present
-    update_cache: yes
-    allow_downgrade: yes
-  with_items:
-    - kubelet
-    - kubeadm
-    - kubectl
-
-- name: "Check installed versions, should be version: {{k8s_version_major}}"
-  shell: |
-    yum list installed |awk '{print $1 "-" $2}' \
-      |egrep -i "kubelet|kubeadm|kubectl" |sed -e "s/.x86_64//"
-  register: yum_result
-  until:
-    - yum_result.stdout.find("kubeadm-{{k8s_version_major}}-0") != -1
-    - yum_result.stdout.find("kubelet-{{k8s_version_major}}-0") != -1
-    - yum_result.stdout.find("kubectl-{{k8s_version_major}}-0") != -1
-  retries: 3
-  delay: 5
-
-- name: Debug installed versions
-  debug:
-    msg: "{{yum_result.stdout_lines}}"
-
-- name: Start kubelet
-  service:
-    name: kubelet
-    enabled: yes
-    state: started
-
-
-# docker driver
-- name: Detect docker's cgroup-driver
-  shell: |
-    docker info 2>/dev/null |grep -i cgroup | cut -d":" -f2 | tr -d " "
-  register: docker_cgroup_driver
-
-- name: "Debug Docker driver"
-  debug:
-    msg: "{{ docker_cgroup_driver.stdout }}"
-
-# - name: Replace crgroup-driver
-#   replace:
-#     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-#     regexp: "--cgroup-driver=(systemd|cgroupfs)"
-#     replace: "--cgroup-driver={{docker_cgroup_driver.stdout}}"
-#     backup: no
-
-# - name: Replace cadvisor-port
-#   replace:
-#     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-#     regexp: "cadvisor-port=0"
-#     replace: "cadvisor-port={{k8s_cadvisor_port}}"
-#     backup: no
-
-###################### Master only ######################
-
-- name: Create alias k for kubectl
-  lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
-    line: "alias k=kubectl"
-  when: inventory_hostname in groups['masters']
-
-- name: Install basic bash completion
-  yum:
-    name: bash-completion
-    state: present
-  when: inventory_hostname in groups['masters']
-
-- name: "Kubectl bash completion: source the completion script in /home/{{k8s_user}}/.bashrc file"
-  lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
-    line: "source <(kubectl completion bash)"
-  when: inventory_hostname in groups['masters']
-
-- name: "Kubectl bash completion: add the completion script to /etc/bash_completion.d"
-  shell: |
-    kubectl completion bash > /etc/bash_completion.d/kubectl
-  when: inventory_hostname in groups['masters']
-
-- name: Extend bash completion to also work for alias k
-  lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
-    line: "complete -F __start_kubectl k"
-  when: inventory_hostname in groups['masters']
-
-- name: Pull kubeadm init images beforehand
-  shell: kubeadm config images pull
-  when:
-    - inventory_hostname in groups['masters']
-    - "{{ k8s_pre_pull_images |bool }}"
-
-
-# cluster configuration
-- name: Create kubeadm config path
-  file:
-    path: "{{k8s_kubeadm_config_path}}"
-    state: directory
-    owner: "{{k8s_user}}"
-    group: "{{k8s_user}}"
-    mode: 0755
-
-- name: Copy custom kubeadm-config.yml
-  template:
-    src: kubeadm-config.yml.j2
-    dest: "{{k8s_kubeadm_config_path}}/kubeadm-config.yml"
-
-- name: SHOULD APPLY NEW CLUSTERCONFIGURATION WHEN ADDING NEW MASTERS!!!
-  debug:
-    msg: "NOT YET IMPLEMENTED"
