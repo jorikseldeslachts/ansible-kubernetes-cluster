@@ -1,11 +1,10 @@
 ---
-
 etcd_version: 3.4.10
 etcd_download_url: https://github.com/etcd-io/etcd/releases/download
 etcd_certs_directory: /etc/etcd
 etcd_data_directory: /var/lib/etcd
 etcd_path_location: /usr/local/bin
-etcd_backup_old_certs: yes
+etcd_backup_old_certs: no
 etcd_network_interface: ens18
 etcd_service_description: "Etcd service for Kubernetes"
-
+etcd_ca_crt_common_name: kubernetes-ca
