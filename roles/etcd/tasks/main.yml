@@ -3,7 +3,7 @@
 # https://github.com/mmumshad/kubernetes-the-hard-way/blob/master/docs/04-certificate-authority.md
 
 
-# create directory structure on etcd servers
+# Create directory structure on etcd servers
 - name: Generate certs directory
   file:
     path: "{{ etcd_certs_directory }}"
@@ -17,36 +17,60 @@
     mode: 0700
 
 
-# Create CA and certificates locally and the distribute it to the etcd nodes
-- name: Create temporary directory on localhost to generate certificates
+# Install required python packages to generate certificates
+- name: Install required python modules for certificate generation
+  pip:
+    executable: pip3
+    name: "{{ item }}"
+  with_items:
+    - cryptography
+    - pyOpenSSL
+
+
+# Create CA and certificates on one master and then distribute it to the etcd nodes
+- name: Create temporary directory on the first etcd node to generate certificates
   file:
     path: "/tmp{{ etcd_certs_directory }}"
     state: directory
-  delegate_to: localhost
+  when: "inventory_hostname == groups['etcd'][0]"
 
 - name: Include tasks to generate an etcd CA
   include: generate-etcd-ca.yml
-  delegate_to: localhost
+  when: "inventory_hostname == groups['etcd'][0]"
 
 - name: Include etcd certificate creation tasks
   include: generate-etcd-cert.yml
-  delegate_to: localhost
+  when: "inventory_hostname == groups['etcd'][0]"
+
+- name: Register certificate files to fetch
+  find:
+    path: "/tmp{{ etcd_certs_directory }}/"
+  register: etcd_certificates
+  when: "inventory_hostname == groups['etcd'][0]"
+
+- name: Fetch certificates from the first etcd node
+  fetch:
+    src: "{{ item.path }}"
+    dest: /tmp
+  with_items:
+    - "{{ etcd_certificates.files }}"
+  when: "inventory_hostname == groups['etcd'][0]"
 
 - name: Distribute etcd CA and certificates to etcd nodes
   copy:
-    src: "/tmp{{ etcd_certs_directory }}/"
+    src: "/tmp/{{ main_master }}/tmp{{ etcd_certs_directory }}/"
     dest: "{{ etcd_certs_directory }}/"
-    # backup: "{{ etcd_backup_old_certs }}"
+    backup: "{{ etcd_backup_old_certs }}"
 
-# - name: Remove temporary directory on localhost
-#   file:
-#     path: "/tmp{{ etcd_certs_directory }}"
-#     state: absent
-#   delegate_to: localhost
+- name: Remove temporary directory on localhost
+  file:
+    path: "/tmp/{{ groups['etcd'][0] }}"
+    state: absent
+  delegate_to: localhost
 
 
-# Configure kubelet service
-- name: Make sure there is no custom kubelet definition
+# Make sure kubelet has no custom configuration overrides
+- name: Make sure there is no custom kubelet override
   file:
     path: /etc/systemd/system/kubelet.service.d
     state: absent
@@ -70,7 +94,7 @@
   unarchive:
     remote_src: yes
     src: "/tmp/etcd-v{{ etcd_version }}-linux-amd64.tar.gz"
-    dest: "/tmp/etcd-v{{ etcd_version }}-linux-amd64"
+    dest: "/tmp"
     owner: root
     group: root
 
@@ -106,7 +130,7 @@
     enabled: yes
     daemon_reload: yes
 
-- name: Test etcd configuration on all nodes
+- name: Test etcd configuration on the first etcd node
   shell: |
     ETCDCTL_API=3 \
     etcdctl member list \
@@ -115,9 +139,12 @@
       --cert={{ etcd_certs_directory }}/etcd-server.crt \
       --key={{ etcd_certs_directory }}/etcd-server.key
   register: etcd_test_results
+  when: "inventory_hostname == groups['etcd'][0]"
 
-- debug:
+- name: Print etcd test results
+  debug:
     msg: "{{ etcd_test_results.stdout_lines }}"
+  when: "inventory_hostname == groups['etcd'][0]"
 
 
 # WARNING:
@@ -130,3 +157,4 @@
       - "After that manually check the logs to see if the node joins the etcd cluster again."
       - "Daemon-reload: OK"
       - "systemctl restart etcd: NOT OK"
+  when: "inventory_hostname == groups['etcd'][0]"
