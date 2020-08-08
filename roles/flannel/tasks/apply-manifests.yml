@@ -1,0 +1,44 @@
+---
+
+########################### main-master ###############################
+
+# apply CNI
+- name: Apply Flannel CNI plugin
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      apply -f {{k8s_cni_config_path}}/flannel-cni-config.yml
+  register: kubectl_output
+  until:
+    - kubectl_output.stdout.find("unexpected EOF") == -1
+  retries: 10
+  delay: 3
+  ignore_errors: yes
+
+- name: Kubectl output
+  debug:
+    msg:
+      - "{{ kubectl_output.stdout_lines }}"
+
+# Clean up extra unused DaemonSets
+- name: Wait 20 seconds for DaemonSets to deploy
+  wait_for:
+    timeout: 20
+
+- name: Clean up extra unused DaemonSets
+  shell: |
+    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      -n kube-system delete daemonset \
+      kube-flannel-ds-arm64 \
+      kube-flannel-ds-arm \
+      kube-flannel-ds-ppc64le \
+      kube-flannel-ds-s390x
+  register: kubectl_output
+  until: kubectl_output.stdout.find("kube-flannel-ds-") == -1
+  retries: 20
+  delay: 3
+  ignore_errors: yes
+
+- name: Kubectl output
+  debug:
+    msg:
+      - "{{ kubectl_output.stdout_lines }}"

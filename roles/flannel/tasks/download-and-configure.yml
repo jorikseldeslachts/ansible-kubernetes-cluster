@@ -1,0 +1,33 @@
+---
+
+########################### all masters ###############################
+
+# Replace the CIDR
+- name: "Register original pod cidr"
+  set_fact:
+    original_flannel_pod_cidr: 10.244.0.0/16
+
+- name: Create CNI config directory
+  file:
+    path: "{{k8s_cni_config_path}}"
+    state: directory
+    owner: "{{k8s_user}}"
+    group: "{{k8s_user}}"
+    mode: 0555
+
+- name: Download CNI yaml file
+  get_url:
+    url: "{{k8s_cni_file_url}}"
+    dest: "{{k8s_cni_config_path}}/flannel-cni-config.yml"
+
+- name: Replace original pod CIDR with custom pod CIDR in yaml file
+  replace:
+    path: "{{k8s_cni_config_path}}/flannel-cni-config.yml"
+    regexp: "{{original_flannel_pod_cidr}}"
+    replace: "{{k8s_cni_pod_cidr}}"
+
+- name: Replace original DaemonSet names
+  replace:
+    path: "{{k8s_cni_config_path}}/flannel-cni-config.yml"
+    regexp: "name: kube-flannel-ds-amd64"
+    replace: "name: flannel-cni"
