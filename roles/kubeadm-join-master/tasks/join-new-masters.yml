@@ -2,7 +2,7 @@
 
 ########################### master-ha ###############################
 
-# Copy vars from main-master to other HA-masters
+# Copy join vars from main-master to other HA-masters
 - name: Register vars on HA masters
   set_fact:
     master_join_command: "{{ hostvars[main_master]['kubeadm_token_create_result'].stdout }}"
