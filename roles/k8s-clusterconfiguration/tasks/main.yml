@@ -33,9 +33,15 @@
   include: configure-users.yml
 
 
-# Install k8s packages / tools
+# Install k8s packages
 - name: Include Kubernetes package installation tasks
   include: install-k8s-packages.yml
+
+
+# Install kubens and kubectx
+- name: Inclued installation of kubectx and kubens tools
+  include: install-kubectx-kubens.yml
+  when: inventory_hostname in groups['masters']
 
 
 # Prepare masters
