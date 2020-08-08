@@ -6,7 +6,8 @@
     kubeadm init \
       --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml \
       {{'--upload-certs' if k8s_ha_masters |bool else ''}} \
-      {{'--ignore-preflight-errors=all' if k8s_ignore_preflight_errors |bool else ''}}
+      {{'--ignore-preflight-errors=all' if k8s_ignore_preflight_errors |bool else ''}} \
+      {{'|tee ' + k8s_kubeadm_log_path + '/kubeadm-init-cluster.log' if k8s_kubeadm_log_to_file |bool else ''}}
 
 # copy init conf
 - name: Create .kube directory
