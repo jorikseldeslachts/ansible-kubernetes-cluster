@@ -8,6 +8,7 @@
 - [Digitalocean Ansible cluster tutorial](https://www.digitalocean.com/community/tutorials/how-to-create-a-kubernetes-cluster-using-kubeadm-on-centos-7)
 - [Kubectl cheat sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
 - [Services explained](https://www.youtube.com/watch?v=5lzUpDtmWgM)
+- [Good HA tutorial and loadbalancing setups](https://itnext.io/on-premise-ha-kubernetes-cluster-15e41f18bd12)
 
 
 ## Ansible
