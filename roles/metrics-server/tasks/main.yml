@@ -1,0 +1,26 @@
+---
+
+# Installs metrics-server on a nodes for horizontal/vertical scaling
+# Enables "kubectl top nodes" command
+# https://github.com/kubernetes-sigs/metrics-server
+
+- name: Include tasks to download and configure metrics-server
+  include: download-and-configure.yml
+  when: inventory_hostname in groups['masters']
+
+- name: Include tasks to deploy metrics-server
+  include: apply-manifest.yml
+  when: inventory_hostname == main_master
+
+- name: Check if metrics-server deployment is running
+  shell: |
+    kubectl \
+      --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      get deploy metrics-server \
+      --no-headers \
+      | awk '{ print $2 }'
+  register: kubectl_output
+  until:
+    - kubectl_output.stdout.find("1/1") != -1
+  retries: 10
+  delay: 3

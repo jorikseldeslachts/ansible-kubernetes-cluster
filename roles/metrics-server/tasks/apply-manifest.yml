@@ -1,0 +1,19 @@
+---
+
+- name: Deploy metrics-server
+  shell: |
+    kubectl \
+      --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      apply -f {{ k8s_metrics_server_config_path }}/metrics-server-config.yml
+  register: kubectl_output
+  until:
+    - kubectl_output.stdout.find("unexpected EOF") == -1
+  retries: 10
+  delay: 3
+  ignore_errors: yes
+
+- name: Kubectl output
+  debug:
+    msg:
+      - "{{ kubectl_output.stdout_lines }}"
+
