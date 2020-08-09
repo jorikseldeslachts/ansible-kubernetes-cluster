@@ -20,12 +20,13 @@
 - name: Upgrade pip
   shell: "pip3 install --upgrade pip --user {{ k8s_user }}"  # pip3 on CentOS8
 
-- name: Python requirements
-  python_requirements_facts:
-    dependencies:
-      - pyyaml
-      - requests
-      - openshift
+- name: Install Python requirements
+  pip:
+    executable: pip3
+    name:
+      - pyyaml>=3.11
+      - openshift>=0.6
+      - requests==2.22.0
 
 
 # Configure the k8s users and terminals
