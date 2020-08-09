@@ -5,7 +5,8 @@
 # apply CNI
 - name: Apply Flannel CNI plugin
   shell: |
-    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+    kubectl \
+      --kubeconfig=/home/{{k8s_user}}/.kube/config \
       apply -f {{k8s_cni_config_path}}/flannel-cni-config.yml
   register: kubectl_output
   until:
@@ -26,7 +27,8 @@
 
 - name: Clean up extra unused DaemonSets
   shell: |
-    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
+    kubectl \
+      --kubeconfig=/home/{{k8s_user}}/.kube/config \
       -n kube-system delete daemonset \
       kube-flannel-ds-arm64 \
       kube-flannel-ds-arm \
