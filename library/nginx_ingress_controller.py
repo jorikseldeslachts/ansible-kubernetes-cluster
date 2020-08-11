@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # https://blog.toast38coza.me/custom-ansible-module-hello-world/
-
+# https://kubernetes.github.io/ingress-nginx/how-it-works/
 
 # ANSIBLE_METADATA = {
 #     'metadata_version': '1.1',
@@ -98,7 +98,7 @@ def main():
     write_file(module.params['destination'], custom_yaml)
 
     # return result
-    response = {"Status": "Nginx Ingress Controller deployed as DaemonSet"}
+    response = {"Status": "Manifests to deploy Nginx Ingress Controller as DaemonSet"}
     module.exit_json(changed=False, meta=response)
 
 
@@ -109,12 +109,12 @@ def download_original(url):
         return response.content.decode()
     except Exception as e:
         print("Error downloading the original yaml content")
-        module.fail_json(msg="Oopsie")
+        module.fail_json(msg="Error downloading the original yaml content")
 
 
 def create_custom_yaml_content(original_content, node_selector):
     # split in yaml files
-    yaml_content = original_content.split("---")[:-1]
+    yaml_content = original_content.split("---") #[:-1]
 
     # define result var
     end_result = ""
@@ -124,28 +124,31 @@ def create_custom_yaml_content(original_content, node_selector):
     for item in yaml_content:
         if item is not None:
             resource = yaml.load(item, Loader=yaml.FullLoader)
-            
+
+            print("Found item:\n\t- {0}\n\t  {1}".format(resource['kind'], resource['metadata']['name']))
+
             if resource['kind'].lower() == 'deployment':
                 print("Found Deployment, turning it into a DaemonSet")
 
                 # change to daemonset
                 print("Changing type to Daemonset")
                 resource['kind'] = "DaemonSet"
-                
+
                 # delete replicas
-                print("Deleting replicas section")
-                del resource['spec']['replicas']
-                
+                if 'replicas' in resource['spec']:
+                    print("Deleting replicas section")
+                    del resource['spec']['replicas']
+
                 # change nodeselector
                 if node_selector is not None:
                     print("Updating nodeselector to match: {0}".format(node_selector))
                     resource['spec']['template']['spec']['nodeSelector'] = {
                         node_selector.split('=')[0]: node_selector.split('=')[1]
                     }
-                
+
             # add resource to end_result
             end_result = append_result(end_result, resource)
-    
+
     # return result
     return end_result
 
