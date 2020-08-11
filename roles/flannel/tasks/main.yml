@@ -12,6 +12,23 @@
   when: inventory_hostname == main_master
 
 
+# Test and wait fo flannel pods to come up
+- name: Wait for flannel pods to get ready
+  shell: |
+    kubectl \
+      --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      get pods -n kube-system \
+      | grep -i flannel
+  register: result
+  until:
+    - result.stdout.find("Terminating") == -1
+    - result.stdout.find("PodInitializing") == -1
+    - result.stdout.find("Pending") == -1
+    - result.stdout.find("ContainerCreating") == -1
+  retries: 20
+  delay: 10
+
+
 # Check
 - name: Flannel installed pod CIDR
   debug:
@@ -19,18 +36,3 @@
       - "Configured pod CIDR to {{k8s_cni_pod_cidr}} instead of original {{original_flannel_pod_cidr}}"
       - "Replaced DaemonSet names with: flannel-cni"
   when: inventory_hostname == main_master
-
-
-# Test and wait fo flannel pods to come up
-# - name: Wait for flannel pods to get ready
-#   shell: |
-#     kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
-#       get pods -n kube-system | grep -i flannel
-#   register: result
-#   until:
-#     - result.stdout.find("Terminating") == -1
-#     - result.stdout.find("PodInitializing") == -1
-#     - result.stdout.find("Pending") == -1
-#     - result.stdout.find("ContainerCreating") == -1
-#   retries: 20
-#   delay: 10
