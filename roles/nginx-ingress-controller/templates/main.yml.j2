@@ -1,11 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{k8s_ingress_namespace}}
+  name: ingress-nginx-controller
   namespace: ingress-nginx
   labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/part-of: ingress-nginx
+    app.kubernetes.io/version: 0.34.1
+    helm.sh/chart: ingress-nginx-2.11.1
 spec:
   type: {{k8s_ingress_service_type}}
   ports:
@@ -20,5 +23,6 @@ spec:
       protocol: TCP
       nodePort: {{k8s_ingress_nodeport_https}}
   selector:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/part-of: ingress-nginx
