@@ -1,75 +1,42 @@
+---
 
-- name: Create ingress config directory
-  file:
-    path: "{{k8s_ingress_config_path}}"
-    state: directory
-    owner: "{{k8s_user}}"
-    group: "{{k8s_user}}"
-    mode: 0555
+# How it works
+#     https://kubernetes.github.io/ingress-nginx/how-it-works/
+#     https://github.com/kubernetes/ingress-nginx
 
-# - name: Download ingress yaml file
-#   get_url:
-#     url: "{{k8s_ingress_file_url}}"
-#     dest: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
+# Prometheus / Grafana
+#     https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/
 
-# - name: "Configure Nginx ingress replica amount (replicas: {{k8s_ingress_replicas}})"
-#   replace:
-#     path: "{{k8s_ingress_config_path}}/nginx-ingress-config.yml"
-#     regexp: 'replicas(.+)'
-#     replace: "replicas: {{k8s_ingress_replicas}}"
+# !!! WARNING !!!
+#     https://github.com/kubernetes/ingress-nginx/blob/master/docs/deploy/baremetal.md
 
+# Services of type NodePort perform source address translation by default.
+# This means the source IP of a HTTP request is always the IP address of the
+# Kubernetes node that received the request from the perspective of NGINX.
 
-# - name: Install pip for custom module
-#   yum:
-#     name: "{{item}}"
-#     state: present
-#   with_items:
-#     - python-pip
+# The recommended way to preserve the source IP in a NodePort setup is to set
+# the value of the externalTrafficPolicy field of the ingress-nginx Service spec
+# to Local (example).
 
-# - name: Pip install requirements
-#   pip:
-#     name: "{{item}}"
-#   with_items:
-#     - requests
-#     - pyyaml
+# !!! warning This setting effectively drops packets sent to Kubernetes
+# nodes which are not running any instance of the NGINX Ingress controller.
+# Consider assigning NGINX Pods to specific nodes in order to control on what nodes
+# the NGINX Ingress controller should be scheduled or not scheduled.
 
-- name: Download and transform nginx ingress controller into DaemonSet
-  nginx_ingress_controller:
-    git_url: "{{k8s_ingress_file_url}}"
-    node_selector: "node-role.kubernetes.io/infra=true"
-    destination: "{{k8s_ingress_config_path}}/custom-nginx-ingress-config.yml"
-
-- name: Configure Service for Ingress Controller
-  template:
-    src: main.yml.j2
-    dest: "{{k8s_ingress_config_path}}/custom-nginx-ingress-service.yml"
+# NOTE:
+# - In this playbook the Deployment gets transformed into a Daemonset.
+#   Because of this there is an Nginx pod on every master node and thus
+#   the package dropping issue should be resolved.
+# - It is important though to make sure that there is a pod running on
+#   every master, please make sure this is the case!
 
 
-########################### main_master ###############################
-- name: Apply Nginx Ingress Controller and Service
-  shell: |
-    kubectl --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      apply -f {{k8s_ingress_config_path}}/custom-nginx-ingress-{{item}}.yml
-  register: kubectl_output
-  with_items:
-    - "config"
-    - "service"
-  until:
-    - kubectl_output.stdout.find("unexpected EOF") == -1
-  retries: 10
-  delay: 3
-  when: inventory_hostname == main_master
+# Download and configure ingress controller
+- name: Include download and configuration tasks
+  include: download-and-configure.yml
+  when: inventory_hostname in groups['masters']
 
-- name: Kubectl output
-  debug:
-    msg:
-      - "{{ item.stdout_lines }}"
-  with_items:
-    - "{{kubectl_output.results}}"
-  when: inventory_hostname == main_master
-
-- name: Nginx ingress installed
-  debug:
-    msg:
-      - "{{'replicas: {{k8s_ingress_replicas}}' if k8s_ingress_replicas is defined else 'DaemonSet'}}"
+# Deploy all manifests
+- name: Include deployment tasks
+  include: apply-manifests.yml
   when: inventory_hostname == main_master

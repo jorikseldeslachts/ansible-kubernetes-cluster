@@ -1,0 +1,24 @@
+---
+
+########################### masters ###############################
+
+# Config path
+- name: Create ingress config directory
+  file:
+    path: "{{ k8s_ingress_config_path }}"
+    state: directory
+    owner: "{{ k8s_user }}"
+    group: "{{ k8s_user }}"
+    mode: 0755
+
+# NOTE: Using custom module in <projectdir>/library/nginx_ingress_controller.py
+- name: Download and transform Nginx ingress-controller into DaemonSet
+  nginx_ingress_controller:
+    git_url: "{{ k8s_ingress_file_url }}"
+    node_selector: "node-role.kubernetes.io/infra=true"
+    destination: "{{ k8s_ingress_config_path }}/nginx-ingress-controller-config.yml"
+
+- name: Configure Service for Ingress Controller
+  template:
+    src: main.yml.j2
+    dest: "{{ k8s_ingress_config_path }}//nginx-ingress-controller-service.yml"
