@@ -1,4 +1,0 @@
-- hosts: masters
-  become: yes
-  roles:
-    - nginx-ingress-controller
