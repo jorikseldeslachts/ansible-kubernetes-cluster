@@ -1,5 +1,16 @@
 # ETCD
 
+
+## About
+An Ansible role to install a HA Etcd cluster for Kubernetes.
+
+
+## Documentation
+- [etcd.io](https://etcd.io/)
+- [Raft Algorithm explained with an animation](http://thesecretlivesofdata.com/raft/)
+- [How does Etcd work?](https://medium.com/better-programming/a-closer-look-at-etcd-the-brain-of-a-kubernetes-cluster-788c8ea759a5)
+
+
 ## Troubleshooting and checking
 ```sh
 # set version
