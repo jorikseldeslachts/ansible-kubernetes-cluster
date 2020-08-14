@@ -44,7 +44,7 @@ Install the playbooks:
       -i inventories/vagrant-full-install.inv \
       -u vagrant \
       --ask-become-pass \
-      playbook-k8s-all.yml \
+      playbook-k8s-all.yml
   ```
 - Add new master(s) to an existing cluster:
   ```sh
@@ -53,7 +53,7 @@ Install the playbooks:
       -i inventories/vagrant-full-install.inv \
       -u vagrant \
       --ask-become-pass \
-      playbook-kubeadm-add-new-master.yml \
+      playbook-kubeadm-add-new-master.yml
   ```
 - Add new worker(s) to an existing cluster:
   ```sh
@@ -62,7 +62,7 @@ Install the playbooks:
       -i inventories/vagrant-full-install.inv \
       -u vagrant \
       --ask-become-pass \
-      playbook-kubeadm-add-new-worker.yml \
+      playbook-kubeadm-add-new-worker.yml
   ```
 
 
