@@ -85,6 +85,7 @@ Install the playbooks:
 - [ ] Check to NOT join master/worker if already "Ready"
 - [ ] Taint master to allow running pods on the master node in "init-first-master" role
 - [ ] Support for [`Calico`](https://docs.projectcalico.org/) CNI
+- [ ] Add the option to add new nodes to the etcd cluster when adding masters
 
 
 ## Contributors
