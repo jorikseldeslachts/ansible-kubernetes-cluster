@@ -3,12 +3,7 @@
 # What to install
 ###############################
 reinstall_vms_completely: no
-install_loadbalancer: no #yes
 install_kubectx_kubens: yes
 install_docker: yes
-# install_prometheus: yes
-# install_grafana: yes
-# install_k8s_dashboard: yes
 install_nginx_ingress: yes
 install_cockpit: yes
-deploy_test_app: yes

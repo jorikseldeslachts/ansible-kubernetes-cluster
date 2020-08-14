@@ -1,4 +1,5 @@
 ---
+
 # nodes extra vars
 extra_handy_packages:
   - wget
@@ -11,27 +12,3 @@ extra_handy_packages:
   - jq
   - tcpdump
   - iotop
-
-
-
-
-# test app
-test_app_coffee_replicas: 6
-test_app_tea_replicas: 9
-test_app_url: test-2.jorsel.be
-test_app_path: /DATA
-
-# loadbalancer
-lb_ssl_ciphers: EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
-lb_galaxy_acl: False
-lb_listen_domains:
-  - milkywaygalaxy.be
-  - jorsel.be
-  # - ellievision.be
-lb_k8s_api_url: k8s.milkywaygalaxy.be
-lb_k8s_api_cert_domain: milkywaygalaxy.be
-lb_k8s_api_port: 6443
-lb_k8s_public_ip: 172.16.88.20 # 148.251.246.29
-# lb_k8s_api_allowd_paths:
-  # - /
-
