@@ -19,11 +19,18 @@
         main_master: "{{ groups['masters'][0] }}"
 
   roles:
-    - { role: prep-node-vms }
+    - { role: prep-node-vms,
+        when: "inventory_hostname in groups['workers']" }
     # - { role: cockpit } # BROKEN IN CENTOS8
-    - { role: docker }
-    - { role: firewalld }
-    - { role: k8s-clusterconfiguration }
-    - { role: kubeadm-join-workers }
-    - { role: k8s-label-nodes }
-    - { role: k8s-ready-check }
+    - { role: docker,
+        when: "inventory_hostname in groups['workers']" }
+    - { role: firewalld,
+        when: "inventory_hostname in groups['workers']" }
+    - { role: k8s-clusterconfiguration,
+        when: "inventory_hostname in groups['workers']" }
+    - { role: kubeadm-join-workers,
+        when: "inventory_hostname in groups['workers']" }
+    - { role: k8s-label-nodes,
+        when: "inventory_hostname in groups['workers']" }
+    - { role: k8s-ready-check,
+        when: "inventory_hostname in groups['workers']" }
