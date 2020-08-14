@@ -12,6 +12,11 @@ It provides three playbooks:
 | [`playbook-kubeadm-add-new-worker.yml`](./playbook-kubeadm-add-new-worker.yml) | Add new worker(s) to an existing cluster. |
 
 
+## Requirements
+- Ansible 2.8
+- Virtual Machines with `CentOS8` ready when not using [`Vagrant`](./Vagrant/)
+
+
 ## Ansible
 Before running the playbooks you need to copy your SSH key to the remote servers.
 ```sh
