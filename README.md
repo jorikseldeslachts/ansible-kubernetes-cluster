@@ -4,9 +4,12 @@
 ## About
 This project can be used to setup a `Kubernetes` cluster with HA control panes and HA Etcd cluster using `Ansible`.
 It provides three playbooks:
-- [`playbook-k8s-all.yml`](./playbook-k8s-all.yml): Complete Kubernetes cluster installation.
-- [`playbook-kubeadm-add-new-master.yml`](./playbook-kubeadm-add-new-master.yml): Add new master(s) to an existing cluster.
-- [`playbook-kubeadm-add-new-worker.yml`](./playbook-kubeadm-add-new-worker.yml): Add new worker(s) to an existing cluster.
+
+| Playbook | Description |
+|---|---|
+| [`playbook-k8s-all.yml`](./playbook-k8s-all.yml)                               | Complete Kubernetes cluster installation. |
+| [`playbook-kubeadm-add-new-master.yml`](./playbook-kubeadm-add-new-master.yml) | Add new master(s) to an existing cluster. |
+| [`playbook-kubeadm-add-new-worker.yml`](./playbook-kubeadm-add-new-worker.yml) | Add new worker(s) to an existing cluster. |
 
 
 ## Ansible
