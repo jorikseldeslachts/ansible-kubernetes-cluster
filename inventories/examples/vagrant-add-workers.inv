@@ -19,16 +19,15 @@ main-master
 new-workers
 
 [main-master]
-k8s-node-5 ansible_host=10.66.66.5
+k8s-node-1 ansible_host=172.16.88.21
 
 [new-workers]
-k8s-node-8 ansible_host=10.66.66.8
-
+k8s-node-4 ansible_host=172.16.88.24
 
 ################################ vars ################################
 [all:vars]
 ansible_user=root
-domain=milkywaygalaxy.be
+domain=mydomain.com
 
 [k8s-nodes:vars]
 noschedule=False
