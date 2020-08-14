@@ -22,10 +22,15 @@ $ for i in {21,22,23,24}
       echo "172.16.88.$i done"
   done
 ```
-After export the `Ansible` configuration and you are ready to run the playbooks.
+
+You will need to prepare an inventory file for Ansible. There are examples you can copy and edit in the [inventories/examples](./inventories/examples/) folder.
+Place them in the `inventories` folder and you are good to go.
+
+After that export the `Ansible` configuration and you are ready to run the playbooks.
 ```sh
 $ export ANSIBLE_CONFIG=./ansible.cfg
 ```
+
 It is advised to run a syntax check to be sure all needed variabled are filled in and there are no syntax errors.
 ```sh
 # Run a syntax check
@@ -50,7 +55,7 @@ Install the playbooks:
   ```sh
   # Add masters
   $ ansible-playbook \
-      -i inventories/vagrant-full-install.inv \
+      -i inventories/vagrant-add-master.inv \
       -u vagrant \
       --ask-become-pass \
       playbook-kubeadm-add-new-master.yml
@@ -59,7 +64,7 @@ Install the playbooks:
   ```sh
   # Add workers
   $ ansible-playbook \
-      -i inventories/vagrant-full-install.inv \
+      -i inventories/vagrant-add-worker.inv \
       -u vagrant \
       --ask-become-pass \
       playbook-kubeadm-add-new-worker.yml
