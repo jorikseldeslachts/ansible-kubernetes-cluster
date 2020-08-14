@@ -45,6 +45,7 @@ vagrantfile:
   image: engineerbetter/vagrant:latest
   stage: vagrant-validate
   script:
-    - cd Vagrant && ls -lAh
+    - cd Vagrant
     - vagrant --version
+    - VBoxManage --version
     - vagrant validate --debug
