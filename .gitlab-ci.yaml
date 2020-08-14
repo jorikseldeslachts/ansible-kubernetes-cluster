@@ -1,5 +1,49 @@
+---
 
-# - yamllint
-# - ansible syntax check
-# - ansible debug dry run
-# - vagrant syntax check
+stages:
+  - ansible-syntax-check
+  - yaml-check
+  - vagrant-validate
+
+
+# Ansible Syntax Check
+.playook-syntax-check:
+  image: ansible/ansible:centos7
+  stage: ansible-syntax-check
+  script:
+    - ansible-playbook -i $INVENTORY $PLAYBOOK --syntax-check
+
+playbook-full-install:
+  extends: .playook-syntax-check
+  variables:
+    PLAYBOOK: playbook-k8s-all.yml
+    INVENTORY: inventories/examples/vagrant-full-install.inv
+
+playbook-add-master:
+  extends: .playook-syntax-check
+  variables:
+    PLAYBOOK: playbook-kubeadm-add-new-master.yml
+    INVENTORY: inventories/examples/vagrant-add-master.inv
+
+playbook-add-worker:
+  extends: .playook-syntax-check
+  variables:
+    PLAYBOOK: playbook-kubeadm-add-new-worker.yml
+    INVENTORY: inventories/examples/vagrant-add-worker.inv
+
+
+# Yaml linting
+yamllint:
+  image: sdesbure/yamllint:latest
+  stage: yaml-check
+  script:
+    - yamllint .
+
+
+# Vagrant Validation
+vagrantfile:
+  image: engineerbetter/vagrant:latest
+  stage: vagrant-validate
+  script:
+    - cd Vagrant
+    - vagrant validate
