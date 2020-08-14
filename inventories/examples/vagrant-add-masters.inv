@@ -20,6 +20,9 @@
 main-master
 new-masters
 
+[masters:children]
+new-masters
+
 [main-master]
 k8s-node-1 ansible_host=172.16.88.21
 
