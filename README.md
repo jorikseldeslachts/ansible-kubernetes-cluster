@@ -79,6 +79,7 @@ Install the playbooks:
 ## TODO
 - [ ] Check to NOT join master/worker if already "Ready"
 - [ ] Taint master to allow running pods on the master node in "init-first-master" role
+- [ ] Support for [`Calico`](https://docs.projectcalico.org/) CNI
 
 
 ## Contributors
