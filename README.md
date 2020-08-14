@@ -76,7 +76,7 @@ Install the playbooks:
   ```
 
 
-## Todo
+## TODO
 - [ ] Check to NOT join master/worker if already "Ready"
 - [ ] Taint master to allow running pods on the master node in "init-first-master" role
 
