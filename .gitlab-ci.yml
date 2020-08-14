@@ -1,9 +1,9 @@
 ---
 
 stages:
-  - ansible-syntax-check
-  - yaml-check
   - vagrant-validate
+  - yaml-check
+  - ansible-syntax-check
 
 
 # Ansible Syntax Check
