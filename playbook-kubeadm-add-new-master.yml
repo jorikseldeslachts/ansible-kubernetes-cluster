@@ -31,7 +31,8 @@
     - { role: kubeadm-join-masters,
         when:
           - "k8s_ha_masters |bool"
-          - "inventory_hostname in groups['masters']"}
+          - "inventory_hostname in groups['masters']"
+      }
     - { role: k8s-label-nodes,
         when: "inventory_hostname in groups['masters']" }
     - { role: k8s-ready-check,
