@@ -8,7 +8,7 @@ stages:
 
 # Ansible Syntax Check
 .playook-syntax-check:
-  image: ansible/ansible:centos7
+  image: cytopia/ansible:latest
   stage: ansible-syntax-check
   script:
     - ansible-playbook -i $INVENTORY $PLAYBOOK --syntax-check
