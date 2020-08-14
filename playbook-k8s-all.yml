@@ -1,6 +1,8 @@
+---
+
 - hosts: k8s-nodes
-  tasks:
-    - name: "Starting full Kubernetes cluster installation on nodes:"
+  pre_tasks:
+    - name: "Starting playbook for full Kubernetes cluster installation:"
       debug:
         msg:
           - "Nodes: {{ groups['k8s-nodes'] }}"
@@ -16,60 +18,17 @@
       set_fact:
         main_master: "{{ groups['masters'][0] }}"
 
-    - name: "Ready to start importing other playbooks"
-      debug:
-        msg: "main-master: {{main_master}}"
-      when: "inventory_hostname == main_master"
-
   roles:
-    # - name: prep-node-vms
-    ### - name: cockpit # BROKEN IN CENTOS8
-    # - name: docker
-    # - name: firewalld
-    # - name: k8s-clusterconfiguration
-    ### done and tested
-
-
-    # - { role: kubeadm-init-first-master, when: "inventory_hostname == main_master" }
-    # - { role: kubeadm-join-master, when: "k8s_ha_masters |bool" }
-    # - { role: kubectx_kubens, when: "install_kubectx_kubens |bool" }
-    # - { role: flannel, when: k8s_cni_plugin |lower == "flannel" }
-    # - { role: callico, when: k8s_cni_plugin |lower == "callico" } # TODO in future
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-################################# OLD #################################
-
-# - { import_playbook: cleanup-vms,  when: reinit_vms_completely |bool }
-# - { import_playbook: nginx-k8s-lb.yml, when: install_loadbalancer |bool }
-
-# - import_playbook: sub-playbooks/prep-node-vms.yml
-# - { import_playbook: sub-playbooks/cockpit.yml, when: install_cockpit |bool } # BROKEN
-# - { import_playbook: sub-playbooks/docker.yml, when: install_docker |bool }
-# - import_playbook: sub-playbooks/firewalld.yml
-
-# - import_playbook: sub-playbooks/k8s-dependencies.yml
-# FROM HERE
-# - import_playbook: sub-playbooks/k8s-init-masters.yml
-# - import_playbook: sub-playbooks/k8s-init-workers.yml
-# - import_playbook: sub-playbooks/k8s-label-nodes.yml
-# - { import_playbook: sub-playbooks/nginx-ingress-controller.yml, when: "inventory_hostname in groups['masters']" }
-# - import_playbook: sub-playbooks/k8s-cluster-info.yml
-
-# test
-# - { import_playbook: test-run.yml, when: deploy_test_app |bool }
-
-################################# OLD #################################
+    - { role: prep-node-vms }
+    # - { role: cockpit } # BROKEN IN CENTOS8
+    - { role: docker }
+    - { role: firewalld }
+    - { role: etcd, when: "inventory_hostname in groups['etcd']" }
+    - { role: k8s-clusterconfiguration }
+    - { role: kubeadm-init-first-master, when: "inventory_hostname == main_master" }
+    - { role: kubeadm-join-masters, when: "k8s_ha_masters |bool" }
+    - { role: flannel, when: k8s_cni_plugin |lower == "flannel" }
+    - { role: kubeadm-join-workers }
+    - { role: k8s-label-nodes }
+    - { role: k8s-ready-check }
+    - { role: metrics-server }
