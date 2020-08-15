@@ -41,11 +41,16 @@ yamllint:
 
 
 # Vagrant Validation
+# - vagrant validate
+# - run bootstrap scripts in container (centos/systemd?)
+# - yamllint vangrant servers
+
 vagrantfile:
   image: engineerbetter/vagrant:latest
   stage: vagrant-validate
   script:
     - cd Vagrant
+    - cat Vagrantfile
     - vagrant --version
-    - VBoxManage --version
-    - vagrant validate --debug
+    # - VBoxManage --version
+    - vagrant validate -p # --debug
