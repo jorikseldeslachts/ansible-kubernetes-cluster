@@ -1,3 +1,4 @@
+---
 test_app_coffee_replicas: 3
 test_app_tea_replicas: 2
 test_app_path: /tmp

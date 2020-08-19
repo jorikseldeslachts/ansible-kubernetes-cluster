@@ -12,7 +12,7 @@
       "node-role.kubernetes.io/master",
       "node-role.kubernetes.io/worker",
       "node-role.kubernetes.io/infra"
-      ]
+    ]
   when: inventory_hostname == main_master
 
 

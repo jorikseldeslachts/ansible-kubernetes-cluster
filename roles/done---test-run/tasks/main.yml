@@ -18,8 +18,8 @@
     src: "{{ item }}.j2"
     dest: "{{ test_app_path }}/cafe-app/{{ item }}"
   with_items:
-   - cafe-app.yml
-   - cafe-ingress.yml
+    - cafe-app.yml
+    - cafe-ingress.yml
   when: inventory_hostname in groups['masters']
 
 - name: Deploy test app

@@ -1,3 +1,5 @@
+---
+
 # init cluster
 #     this cidr has to be the same as in the CNI config!!
 #     otherwise coredns pods won't start!

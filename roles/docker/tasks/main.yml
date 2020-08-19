@@ -1,3 +1,5 @@
+---
+
 - name: Remove all old Docker packages
   yum:
     name: "{{ item }}"

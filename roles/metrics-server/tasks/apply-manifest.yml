@@ -16,4 +16,3 @@
   debug:
     msg:
       - "{{ kubectl_output.stdout_lines }}"
-

@@ -1,3 +1,5 @@
+---
+
 # Debug
 - name: Register node status. Wait for nodes with "NotReady" status to become "Ready"
   shell: |

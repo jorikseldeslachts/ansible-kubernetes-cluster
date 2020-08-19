@@ -1,3 +1,5 @@
+---
+
 - name: Create .kubectx directory
   file:
     state: directory
