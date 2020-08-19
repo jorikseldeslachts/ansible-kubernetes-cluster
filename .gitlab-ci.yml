@@ -1,10 +1,9 @@
 ---
 
 stages:
-  # - vagrant-validate
   - yaml-lint
   - ansible-syntax-check
-
+  - vagrant-validate
 
 # Ansible Syntax Check
 .playook-syntax-check:
