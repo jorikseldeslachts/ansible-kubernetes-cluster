@@ -1,8 +1,8 @@
 ---
 
 stages:
-  - vagrant-validate
-  - yaml-check
+  # - vagrant-validate
+  - yaml-lint
   - ansible-syntax-check
 
 
@@ -33,11 +33,17 @@ add-worker:
 
 
 # Yaml linting
-yamllint:
+roles:
   image: sdesbure/yamllint:latest
-  stage: yaml-check
+  stage: yaml-lint
   script:
-    - yamllint .
+    - yamllint roles
+
+vagrant-inventory:
+  image: sdesbure/yamllint:latest
+  stage: yaml-lint
+  script:
+    - yamllint Vagrant/vagrant-servers.yaml
 
 
 # Vagrant Validation
@@ -53,4 +59,4 @@ vagrantfile:
     - cat Vagrantfile
     - vagrant --version
     # - VBoxManage --version
-    - vagrant validate -p # --debug
+    - vagrant validate --debug
