@@ -33,7 +33,7 @@ add-worker:
 
 
 # Yaml linting
-roles:
+ansible-roles:
   image: sdesbure/yamllint:latest
   stage: yaml-lint
   script:
