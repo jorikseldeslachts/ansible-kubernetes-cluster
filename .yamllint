@@ -6,3 +6,7 @@ rules:
   truthy: disable
   line-length:
     level: warning
+  new-line-at-end-of-file:
+    level: error
+  document-start:
+    level: error
