@@ -41,8 +41,7 @@ add-worker:
     ALLOW_WARNINGS: "false"
   script:
     - |
-      yamllint --strict ${YAML_PATH} ; \\
-      LINT_STATUS=$? ; \\
+      yamllint --strict ${YAML_PATH} || LINT_STATUS=$(echo $?) && true
       case ${LINT_STATUS} in
         0)
           echo "Everything OK"
@@ -58,7 +57,7 @@ add-worker:
           fi ;;
         *)
           echo "Error: Unknown reason" ;;
-      esac ; \\
+      esac
       exit ${LINT_STATUS}
 
 ansible-roles:
