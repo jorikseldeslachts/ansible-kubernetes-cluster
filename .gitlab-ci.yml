@@ -32,19 +32,46 @@ add-worker:
 
 
 # Yaml linting
-ansible-roles:
+.yamllint:
   image: sdesbure/yamllint:latest
   stage: yaml-lint
   allow_failure: true
+  variables:
+    YAML_PATH: .
+    ALLOW_WARNINGS: false
   script:
-    - yamllint roles
+    - |
+      yamllint --strict ${YAML_PATH}
+      LINT_STATUS=$?
+      case ${LINT_STATUS} in
+        0)
+          echo "Everything OK"
+          exit 0 ;;
+        1)
+          echo "Error: YAML errors detected" ;;
+        2)
+          if [ "${ALLOW_WARNINGS}" = true ]; then
+              echo "Error: YAML warnings detected, ignoring"
+              exit 0
+          else
+              echo "Error: YAML warnings detected"
+          fi ;;
+        *)
+          echo "Error: Unknown reason" ;;
+      esac
+      exit ${LINT_STATUS}
+
+ansible-roles:
+  extends: .yamllint
+  variables:
+    YAML_PATH: roles
+    ALLOW_WARNINGS: true
 
 vagrant-inventory:
-  image: sdesbure/yamllint:latest
-  stage: yaml-lint
-  allow_failure: true
-  script:
-    - yamllint Vagrant/vagrant_servers.yaml
+  extends: .yamllint
+  variables:
+    YAML_PATH: Vagrant/vagrant_servers.yaml
+    ALLOW_WARNINGS: true
 
 
 # Vagrant Validation
