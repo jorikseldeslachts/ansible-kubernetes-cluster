@@ -41,7 +41,8 @@ add-worker:
     ALLOW_WARNINGS: "false"
   script:
     - yamllint --strict ${YAML_PATH} || LINT_STATUS=$?
-    - if [ ${LINT_STATUS} -eq 2 ] && [ "${ALLOW_WARNINGS}" = true ]; then
+    - |
+      if [ ${LINT_STATUS} -eq 2 ] && [ "${ALLOW_WARNINGS}" = true ]; then
         echo "Error: YAML warnings detected, ignoring"
         exit 0
       else
