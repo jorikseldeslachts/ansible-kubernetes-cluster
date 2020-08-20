@@ -35,12 +35,14 @@ add-worker:
 ansible-roles:
   image: sdesbure/yamllint:latest
   stage: yaml-lint
+  allow_failure: true
   script:
     - yamllint roles
 
 vagrant-inventory:
   image: sdesbure/yamllint:latest
   stage: yaml-lint
+  allow_failure: true
   script:
     - yamllint Vagrant/vagrant-servers.yaml
 
