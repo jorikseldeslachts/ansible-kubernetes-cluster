@@ -44,7 +44,7 @@ vagrant-inventory:
   stage: yaml-lint
   allow_failure: true
   script:
-    - yamllint Vagrant/vagrant-servers.yaml
+    - yamllint Vagrant/vagrant_servers.yaml
 
 
 # Vagrant Validation
