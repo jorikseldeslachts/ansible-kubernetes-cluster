@@ -40,9 +40,10 @@ add-worker:
     YAML_PATH: .
     ALLOW_WARNINGS: "false"
   script:
-    - yamllint --strict ${YAML_PATH} || LINT_STATUS=$?
+    - yamllint --strict ${YAML_PATH} ; LINT_STATUS=$?
     - |
-      if [ $LINT_STATUS -eq 0 ]; then
+      if [ ${LINT_STATUS} -eq 0 ]; then
+        echo -e "Everything OK"
         exit 0
       else
         if [ ${LINT_STATUS} -eq 2 ] && [ "${ALLOW_WARNINGS}" = true ]; then
