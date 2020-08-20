@@ -39,20 +39,15 @@ add-worker:
   variables:
     YAML_PATH: .
     ALLOW_WARNINGS: "false"
+    LINT_STATUS: 0
   script:
-    - yamllint --strict ${YAML_PATH} ; LINT_STATUS=$?
+    - yamllint --strict ${YAML_PATH} || LINT_STATUS=$?
     - |
-      if [ ${LINT_STATUS} -eq 0 ]; then
-        echo -e "Everything OK"
+      if [ ${LINT_STATUS} -eq 2 ] && [ "${ALLOW_WARNINGS}" = true ]; then
+        echo -e "YAML warnings detected: ignoring because \"ALLOW_WARNINGS\" is set to \"true\""
         exit 0
       else
-        if [ ${LINT_STATUS} -eq 2 ] && [ "${ALLOW_WARNINGS}" = true ]; then
-          echo -e "YAML warnings detected: ignoring because \"ALLOW_WARNINGS\" is set to \"true\""
-          exit 0
-        else
-          echo -e "Error: One or more errors and warnings detected"
-          exit ${LINT_STATUS}
-        fi
+        exit ${LINT_STATUS}
       fi
 
 ansible-roles:
