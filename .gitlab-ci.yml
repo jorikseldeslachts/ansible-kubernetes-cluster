@@ -37,8 +37,8 @@ add-worker:
   stage: yaml-lint
   allow_failure: true
   variables:
-    YAML_PATH: "."
-    ALLOW_WARNINGS: false
+    YAML_PATH: .
+    ALLOW_WARNINGS: "false"
   script:
     - |
       yamllint --strict ${YAML_PATH}
@@ -65,13 +65,13 @@ ansible-roles:
   extends: .yamllint
   variables:
     YAML_PATH: roles
-    ALLOW_WARNINGS: true
+    ALLOW_WARNINGS: "true"
 
 vagrant-inventory:
   extends: .yamllint
   variables:
     YAML_PATH: Vagrant/vagrant_servers.yaml
-    ALLOW_WARNINGS: true
+    ALLOW_WARNINGS: "true"
 
 
 # Vagrant Validation
