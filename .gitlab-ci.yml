@@ -37,7 +37,7 @@ add-worker:
   stage: yaml-lint
   allow_failure: true
   variables:
-    YAML_PATH: .
+    YAML_PATH: "."
     ALLOW_WARNINGS: false
   script:
     - |
