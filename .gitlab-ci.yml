@@ -40,37 +40,25 @@ add-worker:
     YAML_PATH: .
     ALLOW_WARNINGS: "false"
   script:
+    - yamllint --strict ${YAML_PATH} || LINT_STATUS=$(echo $?) && true
     - |
-      yamllint --strict ${YAML_PATH} || LINT_STATUS=$(echo $?) && true
-      case ${LINT_STATUS} in
-        0)
-          echo "Everything OK"
-          exit 0 ;;
-        1)
-          echo "Error: YAML errors detected" ;;
-        2)
-          if [ "${ALLOW_WARNINGS}" = true ]; then
-              echo "Error: YAML warnings detected, ignoring"
-              exit 0
-          else
-              echo "Error: YAML warnings detected"
-          fi ;;
-        *)
-          echo "Error: Unknown reason" ;;
-      esac
-      exit ${LINT_STATUS}
+      if [ $LINT_STATUS -eq 2 ] && [ "${ALLOW_WARNINGS}" = true ]; then
+        echo "Error: YAML warnings detected, ignoring"
+        exit 0
+      fi
+    - exit ${LINT_STATUS}
 
 ansible-roles:
   extends: .yamllint
   variables:
     YAML_PATH: roles
-    ALLOW_WARNINGS: "true"
+    ALLOW_WARNINGS: "false"
 
 vagrant-inventory:
   extends: .yamllint
   variables:
     YAML_PATH: Vagrant/vagrant_servers.yaml
-    ALLOW_WARNINGS: "true"
+    ALLOW_WARNINGS: "false"
 
 
 # Vagrant Validation
