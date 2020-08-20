@@ -40,13 +40,13 @@ add-worker:
     YAML_PATH: .
     ALLOW_WARNINGS: "false"
   script:
-    - yamllint --strict ${YAML_PATH} || LINT_STATUS=$(echo $?) && true
     - |
+      yamllint --strict ${YAML_PATH} || LINT_STATUS=$(echo $?) && true
       if [ "${LINT_STATUS}" -eq "2" ] && [ "${ALLOW_WARNINGS}" = true ]; then
         echo "Error: YAML warnings detected, ignoring"
         exit 0
       fi
-    - exit ${LINT_STATUS}
+      exit ${LINT_STATUS}
 
 ansible-roles:
   extends: .yamllint
