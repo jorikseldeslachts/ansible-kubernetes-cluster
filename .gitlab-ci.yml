@@ -53,7 +53,7 @@ ansible-roles:
   extends: .yamllint
   variables:
     YAML_PATH: roles
-    ALLOW_WARNINGS: "false"
+    ALLOW_WARNINGS: "true"
 
 vagrant-inventory:
   extends: .yamllint
