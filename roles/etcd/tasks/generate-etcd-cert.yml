@@ -1,7 +1,8 @@
 ---
 
 # Note:
-#   openssl has issues with alt names so using shell module instead here with a configfile
+#   openssl has issues with alt names so using shell module
+#   instead here with a configfile
 
 # openssl genrsa -out etcd-server.key 2048
 - name: Generate etcd private key
@@ -19,7 +20,8 @@
     src: etcd-csr.conf.j2
     dest: "/tmp{{ etcd_certs_directory }}/etcd-csr.conf"
 
-# openssl req -new -key etcd-server.key -subj "/CN=etcd-server" -out etcd-server.csr -config etcd-csr.conf
+# openssl req -new -key etcd-server.key -subj "/CN=etcd-server" \
+#   -out etcd-server.csr -config etcd-csr.conf
 - name: Generate etcd CSR using the etcd private key
   shell: |
     openssl req \
@@ -29,8 +31,9 @@
       -out /tmp{{ etcd_certs_directory }}/etcd-server.csr \
       -config /tmp{{ etcd_certs_directory }}/etcd-csr.conf
 
-# openssl x509 -req -in etcd-server.csr -CA ca.crt -CAkey ca.key -CAcreateserial \
-#       -out etcd-server.crt -extensions v3_req_ext -extfile etcd-csr.conf -days 1000
+# openssl x509 -req -in etcd-server.csr -CA ca.crt -CAkey ca.key \
+#   -CAcreateserial -out etcd-server.crt -extensions v3_req_ext \
+#   -extfile etcd-csr.conf -days 1000
 - name: Sign the CSR with the etcd private key
   shell: |
     openssl x509 \

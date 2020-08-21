@@ -15,7 +15,8 @@
       -subj "/CN={{ etcd_ca_crt_common_name }}" \
       -out /tmp{{ etcd_certs_directory }}/ca.csr
 
-# openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial -out ca.crt -days 1000
+# openssl x509 -req -in ca.csr -signkey ca.key \
+#     -CAcreateserial -out ca.crt -days 1000
 - name: Sign the CSR with the CA private key
   shell: |
     openssl x509 \
