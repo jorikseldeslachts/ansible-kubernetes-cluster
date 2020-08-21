@@ -42,8 +42,13 @@ add-worker:
     YAML_PATH: .
     ALLOW_WARNINGS: "false"
     LINT_STATUS: 0
+    RULE_OVERRIDES: 0
   script:
-    - yamllint --strict ${YAML_PATH} || LINT_STATUS=$?
+    - |
+      if [ ${RULE_OVERRIDES} -eq 0 ]; then
+        yamllint --strict ${YAML_PATH} || LINT_STATUS=$?
+      else
+        yamllint --strict ${YAML_PATH} -d "${RULE_OVERRIDES}" || LINT_STATUS=$?
     - |
       if [ ${LINT_STATUS} -eq 2 ] && [ "${ALLOW_WARNINGS}" = true ]; then
         echo -e "YAML warnings detected: ignoring because \"ALLOW_WARNINGS\" is set to \"true\""
@@ -55,13 +60,23 @@ add-worker:
 ansible-playbooks:
   extends: .yamllint
   variables:
-    YAML_PATH: playbook*
+    RULE_OVERRIDES:
+    YAML_PATH: >-
+      playbook-k8s-all.yml
+      playbook-kubeadm-add-new-master.yml
+      playbook-kubeadm-add-new-worker.yml
     ALLOW_WARNINGS: "false"
 
 ansible-roles:
   extends: .yamllint
   variables:
     YAML_PATH: roles
+    ALLOW_WARNINGS: "false"
+
+ansible-group-vars:
+  extends: .yamllint
+  variables:
+    YAML_PATH: group_vars
     ALLOW_WARNINGS: "false"
 
 vagrant-inventory:
