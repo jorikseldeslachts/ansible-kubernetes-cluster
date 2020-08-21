@@ -9,4 +9,6 @@
 
 - name: Include tasks to join new masters to the cluster
   include: join-new-masters.yml
-  when: inventory_hostname != main_master
+  when:
+    - inventory_hostname in groups['masters']
+    - inventory_hostname != main_master
