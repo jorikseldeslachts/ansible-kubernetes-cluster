@@ -1,7 +1,8 @@
 ---
 
 # Debug
-- name: Register node status. Wait for nodes with "NotReady" status to become "Ready"
+- name: "Register node status. \
+         Wait for nodes with \"NotReady\" status to become \"Ready\""
   shell: |
     kubectl \
       --kubeconfig=/home/{{k8s_user}}/.kube/config \
