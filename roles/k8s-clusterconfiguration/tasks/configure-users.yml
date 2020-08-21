@@ -19,26 +19,39 @@
     append: yes
 
 # prompt colors
+- name: Set some vars for shell prompts
+  set_fact:
+    red: '\[\e[1;31m\]'
+    blue: '\[\e[1;34m\]'
+    yellow: '\[\e[1;33m\]'
+    purple: '\[\e[1;35m\]'
+    cyan: '\[\e[1;36m\]'
+    reset: '\[\e[0m\]'
+
 - name: "Configure prompt for {{k8s_user}} user (masters)"
   lineinfile:
     path: "/home/{{k8s_user}}/.bashrc"
-    line: PS1='\[\e[1;34m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]master\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+    line: "PS1='{{ blue }}\\u{{ yellow }}@{{ blue }}({{ purple }}master\
+           {{ blue }}){{ cyan }}\\h {{ yellow }}\\w {{ blue }}\\$ {{ reset }}'"
   when: inventory_hostname in groups['masters']
 
 - name: "Configure prompt for {{k8s_user}} user (workers)"
   lineinfile:
     path: "/home/{{k8s_user}}/.bashrc"
-    line: PS1='\[\e[1;34m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]worker\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+    line: "PS1='{{ blue }}\\u{{ yellow }}@{{ blue }}({{ purple }}worker\
+           {{ blue }}){{ cyan }}\\h {{ yellow }}\\w {{ blue }}\\$ {{ reset }}'"
   when: inventory_hostname in groups['workers']
 
 - name: "Configure prompt for root user (masters)"
   lineinfile:
     path: "/root/.bashrc"
-    line: PS1='\[\e[1;31m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]master\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+    line: "PS1='{{ red }}\\u{{ yellow }}@{{ blue }}({{ purple }}master\
+           {{ blue }}){{ cyan }}\\h {{ yellow }}\\w {{ blue }}\\$ {{ reset }}'"
   when: inventory_hostname in groups['masters']
 
 - name: "Configure prompt for root user (workers)"
   lineinfile:
     path: "/root/.bashrc"
-    line: PS1='\[\e[1;31m\]\u\[\e[1;33m\]@\[\e[1;34m\](\[\e[1;35m\]worker\[\e[1;34m\])\[\e[1;36m\]\h \[\e[1;33m\]\w \[\e[1;34m\]\$ \[\e[0m\]'
+    line: "PS1='{{ red }}\\u{{ yellow }}@{{ blue }}({{ purple }}worker\
+           {{ blue }}){{ cyan }}\\h {{ yellow }}\\w {{ blue }}\\$ {{ reset }}'"
   when: inventory_hostname in groups['workers']
