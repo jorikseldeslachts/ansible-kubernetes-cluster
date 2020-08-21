@@ -3,6 +3,7 @@
 
 ## About
 An Ansible role to install a HA Etcd cluster for Kubernetes.
+This role follows instructions of ["kubernetes the hard way reworked"](https://github.com/mmumshad/kubernetes-the-hard-way/blob/master/docs/04-certificate-authority.md) by "mmumshad":
 
 
 ## Documentation
