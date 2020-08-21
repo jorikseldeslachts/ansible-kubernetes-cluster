@@ -3,7 +3,12 @@
 
 extends: default
 rules:
-  truthy: disable
+  truthy:
+    allowed-values:
+      - 'yes'
+      - 'no'
+      - 'true'
+      - 'false'
   line-length:
     level: warning
   new-line-at-end-of-file:
