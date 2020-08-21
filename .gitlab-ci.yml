@@ -3,6 +3,8 @@
 stages:
   - yaml-lint
   - ansible-syntax-check
+  # - ansible-lint
+  # - molecule
   - vagrant-validate
 
 # Ansible Syntax Check
@@ -49,6 +51,12 @@ add-worker:
       else
         exit ${LINT_STATUS}
       fi
+
+ansible-playbooks:
+  extends: .yamllint
+  variables:
+    YAML_PATH: playbook*
+    ALLOW_WARNINGS: "false"
 
 ansible-roles:
   extends: .yamllint

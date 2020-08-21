@@ -12,7 +12,8 @@
       when: "inventory_hostname == groups['masters'][0]"
 
     - debug:
-        msg: "VM Operation System: {{ ansible_distribution }}{{ ansible_distribution_major_version}}"
+        msg: "VM Operation System: \
+              {{ ansible_distribution }}{{ ansible_distribution_major_version}}"
 
     - name: "Register main master that will be used to get all the data from"
       set_fact:
@@ -20,7 +21,7 @@
 
   roles:
     - { role: prep-node-vms,
-        when: "inventory_hostname in groups['masters']"}
+        when: "inventory_hostname in groups['masters']" }
     # - { role: cockpit } # BROKEN IN CENTOS8
     - { role: docker,
         when: "inventory_hostname in groups['masters']" }
@@ -29,10 +30,8 @@
     - { role: k8s-clusterconfiguration,
         when: "inventory_hostname in groups['masters']" }
     - { role: kubeadm-join-masters,
-        when:
-          - "k8s_ha_masters |bool"
-          - "inventory_hostname in groups['masters']"
-      }
+        when: "k8s_ha_masters |bool and \
+               inventory_hostname in groups['masters']" }
     - { role: k8s-label-nodes,
         when: "inventory_hostname in groups['masters']" }
     - { role: k8s-ready-check,

@@ -12,7 +12,8 @@
       when: "inventory_hostname == groups['masters'][0]"
 
     - debug:
-        msg: "VM Operation System: {{ ansible_distribution }}{{ ansible_distribution_major_version}}"
+        msg: "VM Operation System: \
+              {{ ansible_distribution }}{{ ansible_distribution_major_version}}"
 
     - name: "Register main master that will be used to get all the data from"
       set_fact:
