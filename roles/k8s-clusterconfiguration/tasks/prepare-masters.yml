@@ -2,11 +2,6 @@
 
 ###################### Master only ######################
 
-- name: Make sure kubeadm logging directory is present
-  file:
-    state: directory
-    path: "{{ k8s_kubeadm_log_path }}"
-
 - name: Create alias k for kubectl
   lineinfile:
     path: "/home/{{k8s_user}}/.bashrc"
