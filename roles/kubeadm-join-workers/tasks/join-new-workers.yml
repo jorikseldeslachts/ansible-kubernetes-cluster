@@ -5,16 +5,19 @@
 # Copy join vars from main-master to other workers
 - name: Register vars on workers
   set_fact:
-    worker_join_command: "{{ hostvars[main_master]['kubeadm_token_create_result'].stdout }}"
+    worker_join_command: >-
+      {{ hostvars[main_master]['kubeadm_token_create_result'].stdout }}
 
 
 # join worker to cluster
 - name: Join worker to the cluster
-  shell: |
-    {{ worker_join_command }} \
-      --v={{ k8s_api_debug_level }} \
-      {{'--ignore-preflight-errors=all' if k8s_ignore_preflight_errors |bool else ''}}
-      {{'|tee ' + k8s_kubeadm_log_path + '/kubeadm-join-master.log' if k8s_kubeadm_log_to_file |bool else ''}}
+  shell: >
+    {{ worker_join_command }}
+    --v={{ k8s_api_debug_level }}
+    {{'--ignore-preflight-errors=all'
+    if k8s_ignore_preflight_errors |bool else ''}}
+    {{'|tee ' + k8s_kubeadm_log_path + '/kubeadm-join-master.log'
+    if k8s_kubeadm_log_to_file |bool else ''}}
   register: join_result
   until:
     - join_result.stdout.find("unexpected EOF") == -1

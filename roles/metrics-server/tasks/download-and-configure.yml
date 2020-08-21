@@ -20,5 +20,6 @@
     insertafter: 'args:'
     line: "{{ item }}"
   with_items:
-    - "          - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname"
     - "          - --kubelet-insecure-tls"
+    - "          - --kubelet-preferred-address-types=
+      InternalIP,ExternalIP,Hostname"
