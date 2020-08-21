@@ -49,6 +49,7 @@ add-worker:
         yamllint --strict ${YAML_PATH} || LINT_STATUS=$?
       else
         yamllint --strict ${YAML_PATH} -d "${RULE_OVERRIDES}" || LINT_STATUS=$?
+      fi
     - |
       if [ ${LINT_STATUS} -eq 2 ] && [ "${ALLOW_WARNINGS}" = true ]; then
         echo -e "YAML warnings detected: ignoring because \"ALLOW_WARNINGS\" is set to \"true\""
