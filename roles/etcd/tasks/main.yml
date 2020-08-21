@@ -14,16 +14,6 @@
     mode: 0700
 
 
-# Install required python packages to generate certificates
-- name: Install required python modules for certificate generation
-  pip:
-    executable: pip3
-    name: "{{ item }}"
-  with_items:
-    - cryptography
-    - pyOpenSSL
-
-
 # Create CA and certs on one master and then distribute it to the etcd nodes
 - name: Create temporary directory on the first etcd node to generate certs
   file:
@@ -64,20 +54,6 @@
     path: "/tmp/{{ groups['etcd'][0] }}"
     state: absent
   delegate_to: localhost
-
-
-# Make sure kubelet has no custom configuration overrides
-- name: Make sure there is no custom kubelet override
-  file:
-    path: /etc/systemd/system/kubelet.service.d
-    state: absent
-
-- name: Make sure kubelet service is enabled and restarted
-  systemd:
-    name: kubelet
-    state: restarted
-    enabled: yes
-    daemon_reload: yes
 
 
 # Download and install etcd binaries
