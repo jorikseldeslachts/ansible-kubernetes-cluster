@@ -1,4 +1,5 @@
 ---
+
 # docker vars
 docker_version: 18.09.9
 docker_remove_old_docker_packages: yes
@@ -17,7 +18,7 @@ docker_required_packages:
   - lvm2
   # - bridge-utils deprecated on CentOS8
 docker_packages:
-  - "containerd" # CentOS8
+  - "containerd"
   - "docker-ce-{{docker_version}}"
   - "docker-ce-cli-{{docker_version}}"
 docker_repository_url: https://download.docker.com/linux/centos/docker-ce.repo
