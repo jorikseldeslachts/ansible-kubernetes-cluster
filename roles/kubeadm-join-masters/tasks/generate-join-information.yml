@@ -10,11 +10,17 @@
     --description ansible_join_token_{{ lookup('pipe','date +%Y%m%d%H%M%S') }}
     --print-join-command
   register: kubeadm_token_create_result
+  changed_when:
+    - "'kubeadm join' in kubeadm_token_create_result.stdout"
+    - "'--token' in kubeadm_token_create_result.stdout"
+    - "'--discovery-token-ca-cert-hash' in kubeadm_token_create_result.stdout"
 
 # Upload certs on main master
 - name: Upload certs on main master
-  shell: |
-    kubeadm init phase upload-certs \
-      --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml \
-      --upload-certs | grep -v upload-certs
+  shell: >
+    kubeadm init phase upload-certs
+    --config={{ k8s_kubeadm_config_path }}/kubeadm-config.yml
+    --upload-certs
+    | grep -v upload-certs
   register: kubeadm_init_phase_result
+  changed_when: yes

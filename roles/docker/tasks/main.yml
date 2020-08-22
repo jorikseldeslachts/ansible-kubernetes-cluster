@@ -15,7 +15,7 @@
 
 - name: Add Docker repository
   get_url:
-    url: "{{docker_repository_url}}"
+    url: "{{ docker_repository_url }}"
     dest: /etc/yum.repos.d/docker-ce.repo
 
 - name: Install containerd
@@ -25,13 +25,13 @@
 
 - name: Install Docker
   yum:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: latest
-  with_items: "{{docker_packages}}"
+  with_items: "{{ docker_packages }}"
 
 - name: "Installed Docker version:"
   debug:
-    msg: "{{docker_version}}"
+    msg: "{{ docker_version }}"
 
 # kubernetes docker config driver=systemd
 # https://kubernetes.io/docs/setup/production-environment/container-runtimes/

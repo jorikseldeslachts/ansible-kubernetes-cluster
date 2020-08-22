@@ -5,7 +5,7 @@
   include: preflight-reqs.yml
 
 
-# Pogging path
+# Logging path
 - name: Make sure kubeadm logging directory is present
   file:
     state: directory
@@ -22,7 +22,11 @@
     - nfs-utils
 
 - name: Upgrade pip
-  shell: "pip3 install --upgrade pip --user {{ k8s_user }}"  # pip3 on CentOS8
+  command: >
+    pip3 install
+    --upgrade pip
+    --user {{ k8s_user }}
+  changed_when: yes
 
 - name: Install Python requirements
   pip:

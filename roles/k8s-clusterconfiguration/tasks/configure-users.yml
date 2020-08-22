@@ -1,18 +1,18 @@
 ---
 # k8s user
-- name: "Create a {{k8s_user}} user"
+- name: "Create a {{ k8s_user }} user"
   user:
-    name: "{{k8s_user}}"
-    password: "{{k8s_user_password}}"
+    name: "{{ k8s_user }}"
+    password: "{{ k8s_user_password }}"
     comment: "Kubernetes Admin"
     update_password: on_create
     state: present
     shell: /bin/bash
     system: no
     createhome: yes
-    home: "/home/{{k8s_user}}"
+    home: "/home/{{ k8s_user }}"
 
-- name: "Add user {{k8s_user}} to Docker group"
+- name: "Add user {{ k8s_user }} to Docker group"
   user:
     name: "{{ k8s_user }}"
     groups: "docker,{{ k8s_user }}"
@@ -28,16 +28,16 @@
     cyan: '\[\e[1;36m\]'
     reset: '\[\e[0m\]'
 
-- name: "Configure prompt for {{k8s_user}} user (masters)"
+- name: "Configure prompt for {{ k8s_user }} user (masters)"
   lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
+    path: "/home/{{ k8s_user }}/.bashrc"
     line: "PS1='{{ blue }}\\u{{ yellow }}@{{ blue }}({{ purple }}master\
            {{ blue }}){{ cyan }}\\h {{ yellow }}\\w {{ blue }}\\$ {{ reset }}'"
   when: inventory_hostname in groups['masters']
 
-- name: "Configure prompt for {{k8s_user}} user (workers)"
+- name: "Configure prompt for {{ k8s_user }} user (workers)"
   lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
+    path: "/home/{{ k8s_user }}/.bashrc"
     line: "PS1='{{ blue }}\\u{{ yellow }}@{{ blue }}({{ purple }}worker\
            {{ blue }}){{ cyan }}\\h {{ yellow }}\\w {{ blue }}\\$ {{ reset }}'"
   when: inventory_hostname in groups['workers']

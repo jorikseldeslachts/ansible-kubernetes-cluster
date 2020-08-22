@@ -5,7 +5,7 @@
          Wait for nodes with \"NotReady\" status to become \"Ready\""
   shell: |
     kubectl \
-      --kubeconfig=/home/{{k8s_user}}/.kube/config \
+      --kubeconfig=/home/{{ k8s_user }}/.kube/config \
       get nodes \
       -o wide
   register: get_nodes

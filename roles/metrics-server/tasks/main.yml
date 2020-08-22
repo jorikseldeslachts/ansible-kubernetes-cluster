@@ -15,7 +15,7 @@
 - name: Check if metrics-server deployment is running
   shell: >
     kubectl
-    --kubeconfig=/home/{{k8s_user}}/.kube/config
+    --kubeconfig=/home/{{ k8s_user }}/.kube/config
     get deploy metrics-server
     --no-headers
     --namespace kube-system

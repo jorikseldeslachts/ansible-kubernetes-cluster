@@ -2,27 +2,34 @@
 
 # openssl genrsa -out ca.key 2048
 - name: Generate CA private key
-  shell: |
-    openssl genrsa \
-      -out /tmp{{ etcd_certs_directory }}/ca.key \
-      2048
+  shell: >
+    openssl genrsa
+    -out /tmp{{ etcd_certs_directory }}/ca.key
+    2048
+  register: result
+  changed_when:
+    - "'Generating RSA private key' in result.stdout"
 
 # openssl req -new -key ca.key -subj "/CN=KUBERNETES-CA" -out ca.csr
 - name: Generate CA CSR using the CA private key
-  shell: |
-    openssl req -new \
-      -key /tmp{{ etcd_certs_directory }}/ca.key \
-      -subj "/CN={{ etcd_ca_crt_common_name }}" \
-      -out /tmp{{ etcd_certs_directory }}/ca.csr
+  shell: >
+    openssl req -new
+    -key /tmp{{ etcd_certs_directory }}/ca.key
+    -subj "/CN={{ etcd_ca_crt_common_name }}"
+    -out /tmp{{ etcd_certs_directory }}/ca.csr
+  changed_when: yes
 
 # openssl x509 -req -in ca.csr -signkey ca.key \
 #     -CAcreateserial -out ca.crt -days 1000
 - name: Sign the CSR with the CA private key
-  shell: |
-    openssl x509 \
-      -req \
-      -in /tmp{{ etcd_certs_directory }}/ca.csr \
-      -signkey /tmp{{ etcd_certs_directory }}/ca.key \
-      -CAcreateserial \
-      -out /tmp{{ etcd_certs_directory }}/ca.crt \
-      -days 1000
+  shell: >
+    openssl x509
+    -req
+    -in /tmp{{ etcd_certs_directory }}/ca.csr
+    -signkey /tmp{{ etcd_certs_directory }}/ca.key
+    -CAcreateserial
+    -out /tmp{{ etcd_certs_directory }}/ca.crt
+    -days 1000
+  register: result
+  changed_when:
+    - "'Signature ok' in result.stdout"

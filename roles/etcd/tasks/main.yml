@@ -91,8 +91,10 @@
       | awk '{print $2}' \
       | cut -d / -f 1)
   register: get_ip_address_result
+  changed_when: yes
 
-- set_fact:
+- name: Register etcd ip address
+  set_fact:
     etcd_internal_ip_address: "{{ get_ip_address_result.stdout }}"
 
 - name: Configure etcd service

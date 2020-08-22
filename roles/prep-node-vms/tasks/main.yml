@@ -1,15 +1,15 @@
 ---
 - name: Update node hostnames
   hostname:
-    name: "{{inventory_hostname}}"
+    name: "{{ inventory_hostname }}"
 
 - name: Update hostfile with all node ip's
   lineinfile:
     path: /etc/hosts
     line: >
-      {{hostvars[item]['ansible_host']}}
-         {{hostvars[item]['inventory_hostname']}}
-            {{hostvars[item]['inventory_hostname']}}.{{hostvars[item]['domain']}}"
+      {{ hostvars[item]['ansible_host'] }}
+      {{ hostvars[item]['inventory_hostname'] }}
+      {{ hostvars[item]['inventory_hostname'] }}.{{ hostvars[item]['domain'] }}"
     state: present
   with_items:
     - "{{ groups['k8s-nodes'] }}"
@@ -25,7 +25,7 @@
 
 - name: Install some handy packages
   yum:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   with_items:
     - "{{ extra_handy_packages }}"

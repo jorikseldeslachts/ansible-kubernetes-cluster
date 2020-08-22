@@ -4,10 +4,10 @@
 - name: Remove master & worker labels from all nodes
   shell: |
     kubectl \
-      --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      label node {{item.0}} {{item.1}}-
+      --kubeconfig=/home/{{ k8s_user }}/.kube/config \
+      label node {{ item.0 }} {{ item.1 }}-
   with_nested:
-    - "{{ansible_play_hosts}}"
+    - "{{ ansible_play_hosts }}"
     - [
       "node-role.kubernetes.io/master",
       "node-role.kubernetes.io/worker",
@@ -20,8 +20,8 @@
 - name: Set master role label on masters
   shell: |
     kubectl \
-      --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      label node {{item.0}} {{item.1}}
+      --kubeconfig=/home/{{ k8s_user }}/.kube/config \
+      label node {{ item.0 }} {{ item.1 }}
   with_nested:
     - "{{ groups['masters'] }}"
     - "node-role.kubernetes.io/master=true"
@@ -30,8 +30,8 @@
 - name: Set infra role label on masters
   shell: |
     kubectl \
-      --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      label node {{item.0}} {{item.1}}
+      --kubeconfig=/home/{{ k8s_user }}/.kube/config \
+      label node {{ item.0 }} {{ item.1 }}
   with_nested:
     - "{{ groups['masters'] }}"
     - "node-role.kubernetes.io/infra=true"
@@ -40,10 +40,10 @@
 - name: Set worker role label on workers
   shell: |
     kubectl \
-      --kubeconfig=/home/{{k8s_user}}/.kube/config \
-      label node {{item.0}} {{item.1}}
+      --kubeconfig=/home/{{ k8s_user }}/.kube/config \
+      label node {{ item.0 }} {{ item.1 }}
   with_nested:
-    - "{{groups['workers']}}"
+    - "{{ groups['workers'] }}"
     - "node-role.kubernetes.io/worker=true"
   when: inventory_hostname == main_master
 

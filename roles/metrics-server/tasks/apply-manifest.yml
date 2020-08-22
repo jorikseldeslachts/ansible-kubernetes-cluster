@@ -3,7 +3,7 @@
 - name: Deploy metrics-server
   shell: >
     kubectl
-    --kubeconfig=/home/{{k8s_user}}/.kube/config
+    --kubeconfig=/home/{{ k8s_user }}/.kube/config
     apply -f {{ k8s_metrics_server_config_path }}/metrics-server-config.yml
   register: kubectl_output
   until:
@@ -11,6 +11,8 @@
   retries: 10
   delay: 3
   ignore_errors: yes
+  changed_when:
+    - "'configured' in kubectl_output.stdout"
 
 - name: Kubectl output
   debug:

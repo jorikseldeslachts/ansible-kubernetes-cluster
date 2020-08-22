@@ -4,7 +4,7 @@
 
 - name: Create alias k for kubectl
   lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
+    path: "/home/{{ k8s_user }}/.bashrc"
     line: "alias k=kubectl"
 
 - name: Install basic bash completion
@@ -13,41 +13,43 @@
     state: present
 
 - name: "Kubectl bash completion: source the completion script\
-         in /home/{{k8s_user}}/.bashrc file"
+         in /home/{{ k8s_user }}/.bashrc file"
   lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
+    path: "/home/{{ k8s_user }}/.bashrc"
     line: "source <(kubectl completion bash)"
 
 - name: "Kubectl bash completion: add the completion script\
          to /etc/bash_completion.d"
-  shell: |
+  command: >
     kubectl completion bash > /etc/bash_completion.d/kubectl
+  changed_when: yes
 
 - name: Extend bash completion to also work for alias k
   lineinfile:
-    path: "/home/{{k8s_user}}/.bashrc"
+    path: "/home/{{ k8s_user }}/.bashrc"
     line: "complete -F __start_kubectl k"
 
 
 # Cluster configuration
 - name: Create kubeadm config path
   file:
-    path: "{{k8s_kubeadm_config_path}}"
+    path: "{{ k8s_kubeadm_config_path }}"
     state: directory
-    owner: "{{k8s_user}}"
-    group: "{{k8s_user}}"
+    owner: "{{ k8s_user }}"
+    group: "{{ k8s_user }}"
     mode: 0755
 
 - name: Copy custom kubeadm-config.yml
   template:
     src: kubeadm-config.yml.j2
-    dest: "{{k8s_kubeadm_config_path}}/kubeadm-config.yml"
+    dest: "{{ k8s_kubeadm_config_path }}/kubeadm-config.yml"
 
 - name: SHOULD APPLY NEW CLUSTERCONFIGURATION WHEN ADDING NEW MASTERS!!!
   debug:
     msg: "NOT YET IMPLEMENTED"
 
 - name: Pull kubeadm init images beforehand
-  shell: kubeadm config images pull
+  command: kubeadm config images pull
   when:
     - k8s_pre_pull_images |bool
+  changed_when: yes

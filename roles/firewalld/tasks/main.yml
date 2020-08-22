@@ -8,7 +8,10 @@
 
 # CNI requires masquerading
 - name: Enable IP masquerading
-  shell: "firewall-cmd --permanent --add-masquerade"
+  command: "firewall-cmd --permanent --add-masquerade"
+  register: result
+  changed_when:
+    - "'success' in result.stdout"
 
 # This module is required to enable transparent masquerading
 # and to facilitate Virtual Extensible LAN (VxLAN) traffic
@@ -50,16 +53,21 @@
 
 # Reload
 - name: Reload firewalld
-  shell: firewall-cmd --reload
+  command: firewall-cmd --reload
+  register: result
+  changed_when:
+    - "'success' in result.stdout"
 
 # Check / Debug
-- name: Get firewalld configuration
-  shell: |
-    firewall-cmd --list-all | egrep -i "interfaces|services| ports|masquerade"
+- name: Check firewalld configuration
+  shell: >
+    firewall-cmd --list-all
+    | egrep -i "interfaces|services| ports|masquerade"
   register: firewalld_output
+  changed_when: no
 
 - name: Debug firewalld configuration
   debug:
     msg:
-      - "Node group: {{group_names}}"
+      - "Node group: {{ group_names }}"
       - "{{ firewalld_output.stdout_lines }}"

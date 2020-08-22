@@ -32,12 +32,13 @@
     - join_result.stdout.find("Peer URLs already exists") == -1
   retries: 10
   delay: 3
+  changed_when: yes
 
 
 # copy init conf
 - name: Create .kube directory
   file:
-    path: "/home/{{k8s_user}}/.kube"
+    path: "/home/{{ k8s_user }}/.kube"
     state: directory
     owner: "{{ k8s_user }}"
     group: "{{ k8s_user }}"

@@ -23,3 +23,4 @@
     - join_result.stdout.find("unexpected EOF") == -1
   retries: 10
   delay: 3
+  changed_when: yes
