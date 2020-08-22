@@ -44,6 +44,7 @@ add-worker:
     ALLOW_WARNINGS: "false"
     LINT_STATUS: 0
   script:
+    - cat .yamllint
     - yamllint --strict ${YAML_PATH} || LINT_STATUS=$?
     - |
       if [ ${LINT_STATUS} -eq 2 ] && [ "${ALLOW_WARNINGS}" = true ]; then
