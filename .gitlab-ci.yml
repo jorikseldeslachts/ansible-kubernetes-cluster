@@ -92,9 +92,9 @@ vagrant-inventory:
 vagrantfile:
   image: engineerbetter/vagrant:latest
   stage: vagrant-validate
+  allow_failure: true
   script:
     - cd Vagrant
-    - cat Vagrantfile
     - vagrant --version
     # - VBoxManage --version
     - vagrant validate --debug
