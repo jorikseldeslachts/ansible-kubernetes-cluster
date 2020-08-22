@@ -88,7 +88,9 @@ vagrant-inventory:
 roles:
   image: pipelinecomponents/ansible-lint
   stage: ansible-lint
+  allow_failure: true
   script:
+    - export ANSIBLE_CONFIG=./ansible.cfg
     - ansible-lint roles/*
 
 
