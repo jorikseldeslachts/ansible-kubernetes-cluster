@@ -3,7 +3,7 @@
 stages:
   - yaml-lint
   - ansible-syntax-check
-  # - ansible-lint
+  - ansible-lint
   # - molecule
   - vagrant-validate
 
@@ -82,6 +82,14 @@ vagrant-inventory:
   variables:
     YAML_PATH: Vagrant/vagrant_servers.yaml
     ALLOW_WARNINGS: "false"
+
+
+# ansible-lint
+roles:
+  image: pipelinecomponents/ansible-lint
+  stage: ansible-lint
+  script:
+    - ansible-lint roles/*
 
 
 # Vagrant Validation
