@@ -74,6 +74,8 @@ ansible-group-vars:
   variables:
     YAML_PATH: group_vars
     ALLOW_WARNINGS: "false"
+  before_script:
+    - echo "  line-length: disable" > .yamllint
 
 vagrant-inventory:
   extends: .yamllint
