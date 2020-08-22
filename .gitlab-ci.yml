@@ -57,7 +57,6 @@ add-worker:
 ansible-playbooks:
   extends: .yamllint
   variables:
-    # RULE_OVERRIDES: "{ rules: {line-length: disable}}"
     YAML_PATH: >-
       playbook-k8s-all.yml
       playbook-kubeadm-add-new-master.yml
@@ -74,7 +73,7 @@ ansible-group-vars:
   extends: .yamllint
   variables:
     YAML_PATH: group_vars
-    ALLOW_WARNINGS: "false"
+    ALLOW_WARNINGS: "true"
   before_script:
     - "echo '  line-length: disable' >> .yamllint"
 
