@@ -21,5 +21,5 @@
     line: "{{ item }}"
   with_items:
     - "          - --kubelet-insecure-tls"
-    - "          - --kubelet-preferred-address-types=
+    - "          - --kubelet-preferred-address-types=\
       InternalIP,ExternalIP,Hostname"
