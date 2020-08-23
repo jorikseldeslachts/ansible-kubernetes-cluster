@@ -12,15 +12,15 @@
     name: bash-completion
     state: present
 
-- name: "Kubectl bash completion: source the completion script\
+- name: "Kubectl bash completion: source the completion script \
          in /home/{{ k8s_user }}/.bashrc file"
   lineinfile:
     path: "/home/{{ k8s_user }}/.bashrc"
     line: "source <(kubectl completion bash)"
 
-- name: "Kubectl bash completion: add the completion script\
+- name: "Kubectl bash completion: add the completion script \
          to /etc/bash_completion.d"
-  command: >
+  shell: >
     kubectl completion bash > /etc/bash_completion.d/kubectl
   changed_when: yes
 
