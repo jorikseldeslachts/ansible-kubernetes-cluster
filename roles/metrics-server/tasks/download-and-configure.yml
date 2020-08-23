@@ -23,3 +23,12 @@
     - "          - --kubelet-insecure-tls"
     - "          - --kubelet-preferred-address-types=\
       InternalIP,ExternalIP,Hostname"
+
+- name: "Add nodeSelector to only schedule \
+         metrics-server on master nodes"
+  lineinfile:
+    path: "{{ k8s_metrics_server_config_path }}/metrics-server-config.yml"
+    insertafter: 'nodeSelector:'
+    line: "{{ item }}"
+  with_items:
+    - "        node-role.kubernetes.io/master: \"true\""
