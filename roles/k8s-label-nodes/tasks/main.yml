@@ -2,12 +2,13 @@
 
 # Remove old role labels
 - name: Remove master & worker labels from all nodes
-  shell: |
-    kubectl \
-      --kubeconfig=/home/{{ k8s_user }}/.kube/config \
-      label node {{ item.0 }} {{ item.1 }}-
+  shell: >
+    kubectl
+    label node {{ item.0 }} {{ item.1 }}-
+    --kubeconfig=/home/{{ k8s_user }}/.kube/config
   with_nested:
-    - "{{ ansible_play_hosts }}"
+    # - "{{ ansible_play_hosts }}"
+    - "{{  groups['k8s-nodes'] }}"
     - [
       "node-role.kubernetes.io/master",
       "node-role.kubernetes.io/worker",
@@ -18,42 +19,45 @@
 
 # Set new role labels
 - name: Set master role label on masters
-  shell: |
-    kubectl \
-      --kubeconfig=/home/{{ k8s_user }}/.kube/config \
-      label node {{ item.0 }} {{ item.1 }}
+  shell: >
+    kubectl
+    label node {{ item.0 }} {{ item.1 }}
+    --kubeconfig=/home/{{ k8s_user }}/.kube/config
   with_nested:
     - "{{ groups['masters'] }}"
     - "node-role.kubernetes.io/master=true"
   when: inventory_hostname == main_master
 
 - name: Set infra role label on masters
-  shell: |
-    kubectl \
-      --kubeconfig=/home/{{ k8s_user }}/.kube/config \
-      label node {{ item.0 }} {{ item.1 }}
+  shell: >
+    kubectl
+    label node {{ item.0 }} {{ item.1 }}
+    --kubeconfig=/home/{{ k8s_user }}/.kube/config
   with_nested:
     - "{{ groups['masters'] }}"
     - "node-role.kubernetes.io/infra=true"
   when: inventory_hostname == main_master
 
 - name: Set worker role label on workers
-  shell: |
-    kubectl \
-      --kubeconfig=/home/{{ k8s_user }}/.kube/config \
-      label node {{ item.0 }} {{ item.1 }}
+  shell: >
+    kubectl
+    label node {{ item.0 }} {{ item.1 }}
+    --kubeconfig=/home/{{ k8s_user }}/.kube/config
   with_nested:
     - "{{ groups['workers'] }}"
     - "node-role.kubernetes.io/worker=true"
   when: inventory_hostname == main_master
 
-# - name: Set NoSchedule taint on nodes
-#   shell: |
-#     kubectl \
-#       --kubeconfig=/home/{{k8s_user}}/.kube/config \
-#       taint node {{item.0}} {{item.1}}{{'' if noschedule |bool else '-'}}
-#   with_nested:
-#     - "{{groups['k8s-nodes']}}"
-#     - "node-role.kubernetes.io/master:NoSchedule"
-#   ignore_errors: yes
-#   when: inventory_hostname == main_master
+
+# Set scheduling taint
+- name: Set NoSchedule taint on master nodes
+  shell: >
+    kubectl
+    taint node {{ item.0 }} {{ item.1 }}{{ '' if noschedule |bool else '-' }}
+    --kubeconfig=/home/{{ k8s_user }}/.kube/config
+  with_nested:
+    - "{{ groups['masters'] }}"
+    - "node-role.kubernetes.io/master:NoSchedule"
+  ignore_errors: yes
+  when: inventory_hostname == main_master
+  changed_when: yes
