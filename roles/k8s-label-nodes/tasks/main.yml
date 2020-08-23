@@ -1,51 +1,41 @@
 ---
 
 # Remove old role labels
-# - name: Remove master & worker labels from all nodes
-#   shell: >
-#     kubectl
-#     label node {{ item.0 }} {{ item.1 }}-
-#     --kubeconfig=/home/{{ k8s_user }}/.kube/config
-#   with_nested:
-#     # - "{{ ansible_play_hosts }}"
-#     - "{{  groups['k8s-nodes'] }}"
-#     - [
-#       "node-role.kubernetes.io/master",
-#       "node-role.kubernetes.io/worker",
-#     ]
-#   when: inventory_hostname == main_master
+- name: Remove master & worker labels from all nodes
+  shell: >
+    kubectl
+    label node {{ item.0 }} {{ item.1 }}-
+    --kubeconfig=/home/{{ k8s_user }}/.kube/config
+  with_nested:
+    # - "{{ ansible_play_hosts }}"
+    - "{{  groups['k8s-nodes'] }}"
+    - [
+      "node-role.kubernetes.io/master",
+      "node-role.kubernetes.io/worker",
+    ]
+  when: inventory_hostname == main_master
 
 
-# # Set new role labels
-# - name: Set master role label on masters
-#   shell: >
-#     kubectl
-#     label node {{ item.0 }} {{ item.1 }}
-#     --kubeconfig=/home/{{ k8s_user }}/.kube/config
-#   with_nested:
-#     - "{{ groups['masters'] }}"
-#     - "node-role.kubernetes.io/master=true"
-#   when: inventory_hostname == main_master
+# Set new role labels
+- name: Set master role label on masters
+  shell: >
+    kubectl
+    label node {{ item.0 }} {{ item.1 }}
+    --kubeconfig=/home/{{ k8s_user }}/.kube/config
+  with_nested:
+    - "{{ groups['masters'] }}"
+    - "node-role.kubernetes.io/master=true"
+  when: inventory_hostname == main_master
 
-# - name: Set infra role label on masters
-#   shell: >
-#     kubectl
-#     label node {{ item.0 }} {{ item.1 }}
-#     --kubeconfig=/home/{{ k8s_user }}/.kube/config
-#   with_nested:
-#     - "{{ groups['masters'] }}"
-#     - "node-role.kubernetes.io/infra=true"
-#   when: inventory_hostname == main_master
-
-# - name: Set worker role label on workers
-#   shell: >
-#     kubectl
-#     label node {{ item.0 }} {{ item.1 }}
-#     --kubeconfig=/home/{{ k8s_user }}/.kube/config
-#   with_nested:
-#     - "{{ groups['workers'] }}"
-#     - "node-role.kubernetes.io/worker=true"
-#   when: inventory_hostname == main_master
+- name: Set worker role label on workers
+  shell: >
+    kubectl
+    label node {{ item.0 }} {{ item.1 }}
+    --kubeconfig=/home/{{ k8s_user }}/.kube/config
+  with_nested:
+    - "{{ groups['workers'] }}"
+    - "node-role.kubernetes.io/worker=true"
+  when: inventory_hostname == main_master
 
 
 # Set scheduling taint
