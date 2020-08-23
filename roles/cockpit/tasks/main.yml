@@ -1,34 +1,11 @@
 ---
 
 ###################### ALL ######################
-- name: Install all Cockpit dependencies
-  yum:
-    name: "{{item}}"
-    state: present
-  with_items:
-    - NetworkManager
-    - NetworkManager-libnm
-    - glib-networking
-    - gnutls
-    - gsettings-desktop-schemas
-    - json-glib
-    - libmodman
-    - libndp
-    - libnl3
-    - libproxy
-    - nettle
-    - trousers
-    - wpa_supplicant
 
-- name: Start & Enable NetworkManager service
-  systemd:
-    name: NetworkManager
-    state: restarted
-    enabled: yes
-
+# Install packages
 - name: Install Cockpit main components
   yum:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   with_items:
     - cockpit
@@ -38,28 +15,23 @@
 
 - name: Install Cockpit extra packages
   yum:
-    name: "{{item}}"
+    name: "{{ item }}"
   with_items:
     - cockpit-pcp             # PCP integration
     - cockpit-doc             # deployment and developer guide
     - cockpit-dashboard       # remote servers and dashboard
     - cockpit-packagekit      # user interface for package updates
     - cockpit-storaged        # user interface for storage, using
+    - cockpit-composer
+    - cockpit-session-recording
+
     - cockpit-networkmanager  # user interface for networking
     - cockpit-kdump           # user interface for kernel crash dumping
     - cockpit-docker          # user interface for Docker containers
     - cockpit-kubernetes      # user interface for Kubernetes cluster
 
-    ##### Extra Possibilities #####
 
-    #   - cockpit-selinux            # SELinux package
-    #   - cockpit-machines           # user interface for virtual machines
-    #   - cockpit-machines-ovirt
-    #   - cockpit-sosreport          # user interface for diagnostic reports
-    #   - cockpit-subscriptions      # subscription user interface package
-    #   - subscription-manager-cockpit
-    #   - cockpit-composer           # for creating custom centos 7 images
-
+# Configure firewall
 - name: Open Cockpit service on Firewalld
   firewalld:
     service: cockpit
@@ -68,6 +40,8 @@
     permanent: yes
     immediate: yes
 
+
+# Start and enable service & socket
 - name: start cockpit service
   systemd:
     name: cockpit
@@ -79,7 +53,7 @@
     enabled: yes
 
 
-###################### All ######################
+# Configure Cockpit cluster
 - name: Configure cockpit.conf
   template:
     src: cockpit.conf.j2
