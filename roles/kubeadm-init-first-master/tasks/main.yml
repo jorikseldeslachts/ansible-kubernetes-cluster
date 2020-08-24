@@ -32,9 +32,3 @@
     owner: "{{ k8s_user }}"
     group: "{{ k8s_user }}"
     remote_src: yes
-
-# taint master
-# - name: Allow running pods on the master node
-#   become: yes
-#   shell: kubectl taint nodes --all node-role.kubernetes.io/master-
-#   when: "{{k8s_pods_scheduled_on_master}}"
