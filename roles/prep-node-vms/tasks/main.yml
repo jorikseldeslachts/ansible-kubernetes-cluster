@@ -9,7 +9,7 @@
     line: >
       {{ hostvars[item]['ansible_host'] }}
       {{ hostvars[item]['inventory_hostname'] }}
-      {{ hostvars[item]['inventory_hostname'] }}.{{ hostvars[item]['domain'] }}"
+      {{ hostvars[item]['inventory_hostname'] }}.{{ hostvars[item]['domain'] }}
     state: present
   with_items:
     - "{{ groups['k8s-nodes'] }}"
