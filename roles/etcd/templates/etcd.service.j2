@@ -18,7 +18,7 @@ ExecStart={{ etcd_path_location }}/etcd \
   --listen-client-urls https://{{ etcd_internal_ip_address }}:2379,https://127.0.0.1:2379 \
   --advertise-client-urls https://{{ etcd_internal_ip_address }}:2379 \
   --initial-cluster-token etcd-cluster-0 \
-  --initial-cluster {% for host in groups['etcd'] %}{{ hostvars[host]['inventory_hostname'] }}=https://{{ hostvars[host]['ansible_default_ipv4']['address'] }}:2380{% if not loop.last %},{% else %} \{% endif %}{% endfor %}
+  --initial-cluster {% for host in groups['etcd'] %}{{ hostvars[host]['inventory_hostname'] }}=https://{{ hostvars[host]['ansible_host'] }}:2380{% if not loop.last %},{% else %} \{% endif %}{% endfor %}
 
   --initial-cluster-state new \
   --data-dir={{ etcd_data_directory }}
