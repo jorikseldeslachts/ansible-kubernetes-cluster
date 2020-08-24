@@ -16,7 +16,7 @@ Set up a local test environment to test the Ansible playbooks.
              ____________________      |      ___________________      |
             |                    |     |     |                   |     |
             | Host: k8s-nginx-lb |     |     | Host: k8s-node-2  |     |
-Laptop -----| Type: Loadbalander |-----+-----| Type: K8S Master  |-----|
+Laptop -----| Type: Loadbalancer |-----+-----| Type: K8S Master  |-----|
             | IP: 172.16.88.20   |     |     | IP: 172.16.88.22  |     |
             |____________________|     |     |___________________|     |
                                        |                               |
