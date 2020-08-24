@@ -1,0 +1,9 @@
+---
+###############################
+# What to install
+###############################
+reinstall_vms_completely: no
+install_kubectx_kubens: yes
+install_docker: yes
+install_nginx_ingress: yes
+install_cockpit: yes

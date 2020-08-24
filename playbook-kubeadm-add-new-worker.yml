@@ -1,0 +1,37 @@
+---
+
+- hosts: k8s-nodes
+  pre_tasks:
+    - name: "Starting playbook to add worker nodes:"
+      debug:
+        msg:
+          - "Nodes: {{ groups['k8s-nodes'] }}"
+          - "Masters: {{ groups['masters'] }}"
+          - "Workers: {{ groups['workers'] }}"
+          - "Main-Master: {{ groups['masters'][0] }}"
+      when: "inventory_hostname == groups['masters'][0]"
+
+    - debug:
+        msg: "VM Operation System: \
+              {{ ansible_distribution }}{{ ansible_distribution_major_version}}"
+
+    - name: "Register main master that will be used to get all the data from"
+      set_fact:
+        main_master: "{{ groups['masters'][0] }}"
+
+  roles:
+    - { role: prep-node-vms,
+        when: "inventory_hostname in groups['workers']" }
+    # - { role: cockpit } # BROKEN IN CENTOS8
+    - { role: docker,
+        when: "inventory_hostname in groups['workers']" }
+    - { role: firewalld,
+        when: "inventory_hostname in groups['workers']" }
+    - { role: k8s-clusterconfiguration,
+        when: "inventory_hostname in groups['workers']" }
+    - { role: kubeadm-join-workers,
+        when: "inventory_hostname in groups['workers']" }
+    - { role: k8s-label-nodes,
+        when: "inventory_hostname in groups['workers']" }
+    - { role: k8s-ready-check,
+        when: "inventory_hostname in groups['workers']" }

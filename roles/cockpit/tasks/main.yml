@@ -1,63 +1,37 @@
+---
+
 ###################### ALL ######################
-- name: Install all Cockpit dependencies
-  yum:
-    name: "{{item}}"
-    state: present
-  with_items:
-    - NetworkManager
-    - NetworkManager-libnm
-    - glib-networking
-    - gnutls
-    - gsettings-desktop-schemas
-    - json-glib
-    - libmodman
-    - libndp
-    - libnl3
-    - libproxy
-    - nettle
-    - trousers
-    - wpa_supplicant
 
-- name: Start & Enable NetworkManager service
-  systemd:
-    name: NetworkManager
-    state: restarted
-    enabled: yes
-
+# Install packages
 - name: Install Cockpit main components
   yum:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   with_items:
     - cockpit
-    - cockpit-bridge              # Cockpit bridge server-side component
-    - cockpit-system              # Cockpit admin interface package for configuring and troubleshooting a system
-    - cockpit-ws                  # Cockpit Web Service
+    - cockpit-bridge          # bridge server-side component
+    - cockpit-system          # interface for configuring and troubleshooting
+    - cockpit-ws              # Web Service
 
 - name: Install Cockpit extra packages
   yum:
-    name: "{{item}}"
+    name: "{{ item }}"
   with_items:
-    - cockpit-pcp                 # Cockpit PCP integration
-    - cockpit-doc                 # Cockpit deployment and developer guide
-    - cockpit-dashboard           # Cockpit remote servers and dashboard
-    - cockpit-packagekit          # Cockpit user interface for package updates
-    - cockpit-storaged            # Cockpit user interface for storage, using
-    - cockpit-networkmanager      # Cockpit user interface for networking, using NetworkManager
-    - cockpit-kdump               # Cockpit user interface for kernel crash dumping
-    - cockpit-docker              # Cockpit user interface for Docker containers
-    - cockpit-kubernetes          # Cockpit user interface for Kubernetes cluster
+    - cockpit-pcp             # PCP integration
+    - cockpit-doc             # deployment and developer guide
+    - cockpit-dashboard       # remote servers and dashboard
+    - cockpit-packagekit      # user interface for package updates
+    - cockpit-storaged        # user interface for storage, using
+    - cockpit-composer
+    - cockpit-session-recording
 
-    ##### Extra Possibilities #####
+    - cockpit-networkmanager  # user interface for networking
+    - cockpit-kdump           # user interface for kernel crash dumping
+    - cockpit-docker          # user interface for Docker containers
+    - cockpit-kubernetes      # user interface for Kubernetes cluster
 
-    #   - cockpit-selinux            # Cockpit SELinux package
-    #   - cockpit-machines           # Cockpit user interface for virtual machines
-    #   - cockpit-machines-ovirt
-    #   - cockpit-sosreport          # Cockpit user interface for diagnostic reports
-    #   - cockpit-subscriptions      # Cockpit subscription user interface package
-    #   - subscription-manager-cockpit
-    #   - cockpit-composer           # Cockpit user interface for creating custom centos 7 images
 
+# Configure firewall
 - name: Open Cockpit service on Firewalld
   firewalld:
     service: cockpit
@@ -66,6 +40,8 @@
     permanent: yes
     immediate: yes
 
+
+# Start and enable service & socket
 - name: start cockpit service
   systemd:
     name: cockpit
@@ -77,7 +53,7 @@
     enabled: yes
 
 
-###################### All ######################
+# Configure Cockpit cluster
 - name: Configure cockpit.conf
   template:
     src: cockpit.conf.j2

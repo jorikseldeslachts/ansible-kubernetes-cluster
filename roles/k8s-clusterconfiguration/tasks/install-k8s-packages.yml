@@ -1,0 +1,47 @@
+---
+# install k8s packages / tools
+- name: Add Kubernetes YUM repository
+  yum_repository:
+    name: Kubernetes
+    description: Kubernetes YUM repository
+    baseurl: "{{ k8s_packages_repository_url }}"
+    gpgkey:
+      - https://packages.cloud.google.com/yum/doc/yum-key.gpg
+      - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    gpgcheck: yes
+
+- name: Install Kubernetes binaries
+  yum:
+    name: "{{ item }}-{{ k8s_version_major }}-0"
+    state: present
+    update_cache: yes
+    allow_downgrade: yes
+  with_items:
+    - kubelet
+    - kubeadm
+    - kubectl
+
+# - name: "Check installed versions, should be version: {{ k8s_version_major }}"
+#   shell: >
+#     yum list installed
+#     |awk '{print $1 "-" $2}'
+#     |egrep -i "kubelet|kubeadm|kubectl"
+#     |sed -e "s/.x86_64//"
+#   register: yum_result
+#   until:
+#     - yum_result.stdout.find("kubeadm-{{ k8s_version_major }}-0") != -1
+#     - yum_result.stdout.find("kubelet-{{ k8s_version_major }}-0") != -1
+#     - yum_result.stdout.find("kubectl-{{ k8s_version_major }}-0") != -1
+#   retries: 3
+#   delay: 5
+#   changed_when: no
+
+# - name: Debug installed versions
+#   debug:
+#     msg: "{{ yum_result.stdout_lines }}"
+
+- name: Start kubelet
+  service:
+    name: kubelet
+    enabled: yes
+    state: restarted

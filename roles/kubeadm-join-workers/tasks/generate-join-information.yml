@@ -1,0 +1,16 @@
+---
+
+########################### main master ###############################
+
+# First create token on master
+- name: Create join token on main master
+  shell: >
+    kubeadm token create
+    --ttl 10h
+    --description ansible_join_token_{{ lookup('pipe','date +%Y%m%d%H%M%S') }}
+    --print-join-command
+  register: kubeadm_token_create_result
+  changed_when:
+    - "'kubeadm join' in kubeadm_token_create_result.stdout"
+    - "'--token' in kubeadm_token_create_result.stdout"
+    - "'--discovery-token-ca-cert-hash' in kubeadm_token_create_result.stdout"

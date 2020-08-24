@@ -1,0 +1,55 @@
+---
+
+# Note:
+#   openssl has issues with alt names so using shell module
+#   instead here with a configfile
+
+# openssl genrsa -out etcd-server.key 2048
+- name: Generate etcd private key
+  # openssl_privatekey:
+  #   path: "/tmp{{ etcd_certs_directory }}/etcd-server.key"
+  #   type: RSA
+  #   size: 2048
+  shell: >
+    openssl genrsa
+    -out /tmp{{ etcd_certs_directory }}/etcd-server.key
+    2048
+  register: result
+  changed_when:
+    - "'Generating RSA private key' in result.stdout"
+
+- name: Create openssl config file
+  template:
+    src: etcd-csr.conf.j2
+    dest: "/tmp{{ etcd_certs_directory }}/etcd-csr.conf"
+
+# openssl req -new -key etcd-server.key -subj "/CN=etcd-server" \
+#   -out etcd-server.csr -config etcd-csr.conf
+- name: Generate etcd CSR using the etcd private key
+  shell: >
+    openssl req
+    -new
+    -key /tmp{{ etcd_certs_directory }}/etcd-server.key
+    -subj "/CN=etcd-server"
+    -out /tmp{{ etcd_certs_directory }}/etcd-server.csr
+    -config /tmp{{ etcd_certs_directory }}/etcd-csr.conf
+  changed_when: yes
+
+# openssl x509 -req -in etcd-server.csr -CA ca.crt -CAkey ca.key \
+#   -CAcreateserial -out etcd-server.crt -extensions v3_req_ext \
+#   -extfile etcd-csr.conf -days 1000
+- name: Sign the CSR with the etcd private key
+  shell: >
+    openssl x509
+    -req
+    -in /tmp{{ etcd_certs_directory }}/etcd-server.csr
+    -CA /tmp{{ etcd_certs_directory }}/ca.crt
+    -CAkey /tmp{{ etcd_certs_directory }}/ca.key
+    -CAcreateserial
+    -out /tmp{{ etcd_certs_directory }}/etcd-server.crt
+    -extensions v3_req_ext
+    -extfile /tmp{{ etcd_certs_directory }}/etcd-csr.conf
+    -days 1000
+  register: result
+  changed_when:
+    - "'Signature ok' in result.stdout"

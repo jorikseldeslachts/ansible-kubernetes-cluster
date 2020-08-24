@@ -1,0 +1,27 @@
+---
+
+# docker vars
+docker_version: 18.09.9
+docker_remove_old_docker_packages: yes
+docker_packages_to_remove:
+  - docker
+  - docker-client
+  - docker-client-latest
+  - docker-common
+  - docker-latest
+  - docker-latest-logrotate
+  - docker-logrotate
+  - docker-engi
+docker_required_packages:
+  - yum-utils
+  - device-mapper-persistent-data
+  - lvm2
+  # - bridge-utils deprecated on CentOS8
+docker_packages:
+  - "containerd"
+  - "docker-ce-{{docker_version}}"
+  - "docker-ce-cli-{{docker_version}}"
+docker_repository_url: https://download.docker.com/linux/centos/docker-ce.repo
+docker_containerd_rpm_package_url: https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+docker_cgroup_driver: systemd
+docker_storage_driver: overlay2

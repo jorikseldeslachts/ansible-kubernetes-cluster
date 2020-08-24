@@ -2,109 +2,97 @@
 
 
 ## About
+This project can be used to setup a `Kubernetes` cluster with HA control panes and HA Etcd cluster using `Ansible`.
+It provides three playbooks:
+
+| Playbook | Description |
+|---|---|
+| [`playbook-k8s-all.yml`](./playbook-k8s-all.yml)                               | Complete Kubernetes cluster installation. |
+| [`playbook-kubeadm-add-new-master.yml`](./playbook-kubeadm-add-new-master.yml) | Add new master(s) to an existing cluster. |
+| [`playbook-kubeadm-add-new-worker.yml`](./playbook-kubeadm-add-new-worker.yml) | Add new worker(s) to an existing cluster. |
 
 
-## Documentation
-- [Digitalocean Ansible cluster tutorial](https://www.digitalocean.com/community/tutorials/how-to-create-a-kubernetes-cluster-using-kubeadm-on-centos-7)
-- [Kubectl cheat sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
-- [Services explained](https://www.youtube.com/watch?v=5lzUpDtmWgM)
+## Requirements
+- Ansible 2.8
+- Virtual Machines with `CentOS8` ready when not using [`Vagrant`](./Vagrant/)
 
 
 ## Ansible
-```bash
+Before running the playbooks you need to copy your SSH key to the remote servers.
+```sh
 # copy ssh keys
-for i in {21,22,23,24}
-do
-    sshpass -p "vagrant" ssh-copy-id root@172.16.88.$i
-    sshpass -p "vagrant" ssh-copy-id vagrant@172.16.88.$i
-    echo "172.16.88.$i done"
-done
-
-# remove yum lock if ansible is crashing on a second run
-for i in {24,25,26}
-do
-    ssh root@172.16.88.$i rm -rf /var/run/yum.pid
-    ssh root@172.16.88.$i yum clean all
-    echo "172.16.88.$i done"
-done
+$ for i in {21,22,23,24}
+  do
+      sshpass -p "vagrant" ssh-copy-id vagrant@172.16.88.$i
+      sshpass -p "vagrant" ssh-copy-id root@172.16.88.$i
+      echo "172.16.88.$i done"
+  done
 ```
 
+You will need to prepare an inventory file for Ansible. There are examples you can copy and edit in the [inventories/examples](./inventories/examples/) folder.
+Place them in the `inventories` folder and you are good to go.
+
+After that export the `Ansible` configuration and you are ready to run the playbooks.
 ```sh
-# syntax check
-export ANSIBLE_CONFIG=./ansible.cfg
-ansible-playbook -i inventories/inv-vagrant-full-install -u vagrant --ask-become-pass playbooks/k8s-all.yml --syntax-check
-
-# run playbook on servers
-ansible-playbook -i inventories/inv-vagrant-full-install -u vagrant --ask-become-pass playbooks/k8s-all.yml --syntax-check
+$ export ANSIBLE_CONFIG=./ansible.cfg
 ```
 
-# Playbook
-
+It is advised to run a syntax check to be sure all needed variabled are filled in and there are no syntax errors.
 ```sh
-# syntax check
-export ANSIBLE_CONFIG=./ansible.cfg
-ansible-playbook -i inventories/inventory-full-install playbooks/k8s-all.yml --syntax-check
-
-
-# full install
-git pull origin feature/split_in_seperate_roles; \
-ansible-playbook -i inventories/inv-vagrant-full-install -u vagrant --ask-become-pass playbooks/k8s-all.yml --syntax-check
-
-# add master
-# git pull origin feature/split_in_seperate_roles; \
-# ansible-playbook -i inventories/inventory-add-master -u jorik --ask-become-pass k8s-playbook.yml
-
-
-# add worker
-# git pull origin feature/split_in_seperate_roles; \
-# ansible-playbook -i inventories/inventory-add-worker -u jorik --ask-become-pass k8s-playbook.yml
-
+# Run a syntax check
+$ ansible-playbook playbook-k8s-all.yml \
+  -i inventories/vagrant-full-install.inv \
+  -u vagrant \
+  --ask-become-pass \
+  --syntax-check
 ```
 
+Install the playbooks:
+- Complete Kubernetes cluster installation:
+  ```sh
+  # Complete installation
+  $ ansible-playbook \
+      -i inventories/vagrant-full-install.inv \
+      -u vagrant \
+      --ask-become-pass \
+      playbook-k8s-all.yml
+  ```
+- Add new master(s) to an existing cluster:
+  ```sh
+  # Add masters
+  $ ansible-playbook \
+      -i inventories/vagrant-add-master.inv \
+      -u vagrant \
+      --ask-become-pass \
+      playbook-kubeadm-add-new-master.yml
+  ```
+- Add new worker(s) to an existing cluster:
+  ```sh
+  # Add workers
+  $ ansible-playbook \
+      -i inventories/vagrant-add-worker.inv \
+      -u vagrant \
+      --ask-become-pass \
+      playbook-kubeadm-add-new-worker.yml
+  ```
 
-## Useful Kubernetes commands:
-| Explenation | Command |
-| --- | --- |
-| Lists pods on nodes | kubectl get pod -o=custom-columns=NAME:.metadata.name,STATUS:.status.phase,NODE:.spec.nodeName --all-namespaces --sort-by=.spec.nodeName | 
-| | kubectl cluster-info |
-| Allow pods on master | kubectl taint node k8s-host-1.cosmos.milkywaygalaxy.be node-role.kubernetes.io/master:NoSchedule- |
-| | |
 
 
-```
 ## Known Issues
 - When running the Ansible playbook using `WSL` you might get the following warning:
-  > [WARNING] Ansible is being run in a world writable directory (/mnt/d/Documents/projects/kubernetes-cluster-hetzner), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
-
+  > [WARNING] Ansible is being run in a world writable directory, ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
   This can be solved by the following command:
   ```sh
   export ANSIBLE_CONFIG=./ansible.cfg
   ```
 
 
-# TODO
-- [x] install nginx ingress
-  - [ ] Daemonset on each node
-- [ ] install test project
-- [ ] make /DATA dir
-- [ ] storage??
-- [x] SET HOSTNAMES IN HOSTFILE!!!! THAT IS WHAT MADE NETWORK FUCKEDUP
-- [x] get nodes : register + debug
-- [x] print if cni1 is aangemaakt
-- [ ] -kubernetes dashboard!
-- [x] k8s .bashrc
-- [x] blue colors
-- [x] bash completion get added every rerun ">>" --> replace with lineinfile
-- [ ] k9s
-- [ ] octant
-- [ ] Loadbalander setup
-  - [ ] Nginx.conf
-  - [ ] ladbalander.conf
-  - [ ] expose API
-- [ ] Check to NOT join master/worker if already "ready"
-  - [x] k get node k8s-node-5 --no-headers | awk '{ print $1 "," $2 "," $3 }'
-- [ ] eviction of pods > 80-90% memory in role "k8s-dependencies"
-- [ ] taint master to allow running pods on the master node in "init-first-master" role
+## TODO
+- [ ] Check to NOT join master/worker if already "Ready"
+- [ ] Taint master to allow running pods on the master node in "init-first-master" role
+- [ ] Support for [`Calico`](https://docs.projectcalico.org/) CNI
+- [ ] Add the option to add new nodes to the etcd cluster when adding masters
+
 
 ## Contributors
-- Jorik Seldeslachts (Main Developer)
+- Jorik Seldeslachts

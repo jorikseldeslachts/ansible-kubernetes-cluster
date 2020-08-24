@@ -1,0 +1,58 @@
+######################################################################
+#
+# Minimal requirements:
+#
+#   * At least one or more master needed in [masters] section.
+#     The first master in this section will become the main master.
+#
+#   * Etcd will be installed as a HA cluster on the nodes in the
+#     [etcd] section. It is important to note that in this stage
+#     you can not add extra etcd nodes to the cluster after the
+#     initial installation using this Ansible project.
+#
+#   * Workers optional
+#
+# WARNING:
+#
+#   * !!! NOT IDEMPOTENT !!!
+#     All nodes specified will be reinitialised / reinstalled
+#     Work and created Kubernetes resource objects will be lost!!!
+#
+#   * If you want to reinstall the whole cluster make sure
+#     you specify the 'reinstall_vms_completely' option.
+#     This way the VM's will be cleaned up before reinstallation
+#
+######################################################################
+
+
+################################ hosts ###############################
+[servers]
+k8s-node-1 ansible_host=172.16.88.21
+k8s-node-2 ansible_host=172.16.88.22
+k8s-node-3 ansible_host=172.16.88.23
+k8s-node-4 ansible_host=172.16.88.24
+
+[masters]
+k8s-node-1
+k8s-node-2
+k8s-node-3
+
+[workers]
+k8s-node-4
+
+[k8s-nodes:children]
+masters
+workers
+
+[etcd:children]
+masters
+
+################################ vars ################################
+[all:vars]
+ansible_user=root
+domain=mydomain.com
+network_interface=enp0s8
+loadbalancer_ip=172.16.88.20
+
+[k8s-nodes:vars]
+noschedule=False

@@ -1,32 +1,34 @@
+---
+
 # init cluster
 #     this cidr has to be the same as in the CNI config!!
 #     otherwise coredns pods won't start!
-- name: "Initialize the cluster {{'with' if k8s_ha_masters |bool else 'without'}} --upload-certs flag"
-  shell: |
-    kubeadm init \
-      --config={{k8s_kubeadm_config_path}}/kubeadm-config.yml \
-      {{'--upload-certs' if k8s_ha_masters |bool else ''}} \
-      {{'--ignore-preflight-errors=all' if k8s_ignore_preflight_errors |bool else ''}}
+- name: "Initialize the cluster \
+        {{'with' if k8s_ha_masters |bool else 'without'}} \
+        --upload-certs flag"
+  shell: >
+    kubeadm init
+    --config={{ k8s_kubeadm_config_path }}/kubeadm-config.yml
+    {{'--upload-certs' if k8s_ha_masters |bool else ''}}
+    {{'--ignore-preflight-errors=all'
+    if k8s_ignore_preflight_errors |bool else ''}}
+    {{'|tee ' + k8s_kubeadm_log_path + '/kubeadm-init-cluster.log'
+    if k8s_kubeadm_log_to_file |bool else ''}}
+  changed_when: yes
 
 # copy init conf
 - name: Create .kube directory
   file:
-    path: "/home/{{k8s_user}}/.kube"
+    path: "/home/{{ k8s_user }}/.kube"
     state: directory
-    owner: "{{k8s_user}}"
-    group: "{{k8s_user}}"
+    owner: "{{ k8s_user }}"
+    group: "{{ k8s_user }}"
     mode: 0755
 
 - name: Copy admin.conf to .kube folder
   copy:
     src: /etc/kubernetes/admin.conf
-    dest: "/home/{{k8s_user}}/.kube/config"
-    owner: "{{k8s_user}}"
-    group: "{{k8s_user}}"
+    dest: "/home/{{ k8s_user }}/.kube/config"
+    owner: "{{ k8s_user }}"
+    group: "{{ k8s_user }}"
     remote_src: yes
-
-# taint master
-# - name: Allow running pods on the master node
-#   become: yes
-#   shell: kubectl taint nodes --all node-role.kubernetes.io/master-
-#   when: "{{k8s_pods_scheduled_on_master}}"

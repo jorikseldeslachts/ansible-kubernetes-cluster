@@ -1,0 +1,29 @@
+---
+# preflight checks / requirements
+- name: Disable SELinux on reboot
+  selinux:
+    state: disabled
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Ensure net.bridge.bridge-nf-call-ip6tables is set to 1 (IPv6)
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: "1"
+    state: present
+
+- name: Ensure net.bridge.bridge-nf-call-iptables is set to 1 (IPv4)
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: "1"
+    state: present

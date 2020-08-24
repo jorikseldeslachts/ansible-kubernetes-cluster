@@ -1,0 +1,39 @@
+######################################################################
+#
+# Minimal requirements:
+#
+#   * Main master MUST be specified with [main-master]
+#     This should be a working, already installed master
+#     The main master will NOT be reinstalled so it is safe to use!
+#
+#   * One or more entries in the [new-masters] section
+#     These are the only VM's that will be touched!
+#
+#   * The 'k8s_ha_masters' is not needed since new masters will
+#     always be assumed to be used for HA control panes
+#
+######################################################################
+
+
+################################ hosts ###############################
+[k8s-nodes:children]
+main-master
+new-masters
+
+[masters:children]
+new-masters
+
+[main-master]
+k8s-node-1 ansible_host=172.16.88.21
+
+[new-masters]
+k8s-node-2 ansible_host=172.16.88.22
+k8s-node-3 ansible_host=172.16.88.23
+
+################################ vars ################################
+[all:vars]
+ansible_user=root
+domain=mydomain.com
+
+[k8s-nodes:vars]
+noschedule=False

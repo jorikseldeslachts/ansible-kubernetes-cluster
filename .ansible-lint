@@ -1,0 +1,6 @@
+---
+# Rules can be found at https://ansible-lint.readthedocs.io/en/latest/
+
+skip_list:
+  - '403'
+  - '306'

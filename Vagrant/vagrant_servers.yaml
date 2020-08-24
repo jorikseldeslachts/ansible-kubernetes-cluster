@@ -1,5 +1,5 @@
 ---
-debug: false # true
+debug: false
 servers:
   - name: k8s-nginx-lb
     type: loadbalancer

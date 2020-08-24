@@ -1,0 +1,35 @@
+---
+
+- name: Create metrics-server config directory
+  file:
+    path: "{{ k8s_metrics_server_config_path }}"
+    state: directory
+    owner: "{{ k8s_user }}"
+    group: "{{ k8s_user }}"
+    mode: 0555
+
+- name: Download CNI yaml file
+  get_url:
+    url: "{{ k8s_metrics_server_file_url }}"
+    dest: "{{ k8s_metrics_server_config_path }}/metrics-server-config.yml"
+    force: yes
+
+- name: Add extra arguments to the deployment section
+  lineinfile:
+    path: "{{ k8s_metrics_server_config_path }}/metrics-server-config.yml"
+    insertafter: 'args:'
+    line: "{{ item }}"
+  with_items:
+    - "          - --v={{ k8s_metrics_server_log_level }}"
+    - "          - --kubelet-insecure-tls"
+    - "          - --kubelet-preferred-address-types=\
+      InternalIP,ExternalIP,Hostname"
+
+- name: "Add nodeSelector to only schedule \
+         metrics-server on master nodes"
+  lineinfile:
+    path: "{{ k8s_metrics_server_config_path }}/metrics-server-config.yml"
+    insertafter: 'nodeSelector:'
+    line: "{{ item }}"
+  with_items:
+    - "        node-role.kubernetes.io/master: \"true\""

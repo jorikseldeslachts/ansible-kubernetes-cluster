@@ -1,0 +1,36 @@
+---
+
+- hosts: k8s-nodes
+  pre_tasks:
+    - name: "Starting playbook for full Kubernetes cluster installation:"
+      debug:
+        msg:
+          - "Nodes: {{ groups['k8s-nodes'] }}"
+          - "Masters: {{ groups['masters'] }}"
+          - "Workers: {{ groups['workers'] }}"
+          - "Main-Master: {{ groups['masters'][0] }}"
+      when: "inventory_hostname == groups['masters'][0]"
+
+    - debug:
+        msg: "VM Operation System: \
+              {{ ansible_distribution }}{{ ansible_distribution_major_version}}"
+
+    - name: "Register main master that will be used to get all the data from"
+      set_fact:
+        main_master: "{{ groups['masters'][0] }}"
+
+  roles:
+    - { role: prep-node-vms }
+    # - { role: cockpit } # BROKEN IN CENTOS8
+    - { role: docker }
+    - { role: firewalld }
+    - { role: etcd, when: "inventory_hostname in groups['etcd']" }
+    - { role: k8s-clusterconfiguration }
+    - { role: kubeadm-init-first-master,
+        when: "inventory_hostname == main_master" }
+    - { role: kubeadm-join-masters, when: "k8s_ha_masters |bool" }
+    - { role: flannel, when: k8s_cni_plugin |lower == "flannel" }
+    - { role: kubeadm-join-workers }
+    - { role: k8s-label-nodes }
+    - { role: k8s-ready-check }
+    - { role: metrics-server }

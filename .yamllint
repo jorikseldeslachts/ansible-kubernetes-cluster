@@ -1,0 +1,20 @@
+---
+# https://yamllint.readthedocs.io/en/stable/configuration.html
+
+extends: default
+rules:
+  truthy:
+    allowed-values:
+      - 'yes'
+      - 'no'
+      - 'true'
+      - 'false'
+  line-length:
+    level: warning
+  new-line-at-end-of-file:
+    level: error
+  document-start:
+    level: error
+  braces:
+    min-spaces-inside: 1
+    max-spaces-inside: 1

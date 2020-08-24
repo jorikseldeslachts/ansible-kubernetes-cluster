@@ -1,4 +1,0 @@
-- hosts: masters
-  become: yes
-  roles:
-    - test-run

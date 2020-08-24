@@ -1,0 +1,9 @@
+---
+
+- name: Generate and retrieve join information from main-master
+  include: generate-join-information.yml
+  when: inventory_hostname == main_master
+
+- name: Include tasks to join new workers to the cluster
+  include: join-new-workers.yml
+  when: inventory_hostname in groups['workers']
