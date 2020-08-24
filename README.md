@@ -24,6 +24,7 @@ Before running the playbooks you need to copy your SSH key to the remote servers
 $ for i in {21,22,23,24}
   do
       sshpass -p "vagrant" ssh-copy-id vagrant@172.16.88.$i
+      sshpass -p "vagrant" ssh-copy-id root@172.16.88.$i
       echo "172.16.88.$i done"
   done
 ```
