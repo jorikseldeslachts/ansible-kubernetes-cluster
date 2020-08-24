@@ -13,6 +13,13 @@
     state: directory
     mode: 0700
 
+- name: Make sure /usr/local/bin directory exists
+  file:
+    path: /usr/local/bin
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
 
 # Create CA and certs on one master and then distribute it to the etcd nodes
 - name: Create temporary directory on the first etcd node to generate certs
