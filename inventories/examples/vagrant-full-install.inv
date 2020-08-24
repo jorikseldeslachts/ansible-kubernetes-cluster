@@ -52,6 +52,7 @@ masters
 ansible_user=root
 domain=mydomain.com
 network_interface=enp0s8
+loadbalancer_ip=172.16.88.20
 
 [k8s-nodes:vars]
 noschedule=False

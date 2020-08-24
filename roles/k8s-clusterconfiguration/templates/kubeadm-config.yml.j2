@@ -2,7 +2,7 @@ apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 kubernetesVersion: stable
 {%if k8s_ha_masters %}
-controlPlaneEndpoint: {{k8s_loadbalancer_ip}}:{{k8s_apiserver_port}}
+controlPlaneEndpoint: {{loadbalancer_ip}}:{{k8s_apiserver_port}}
 {%endif%}
 networking:
   podSubnet: {{k8s_cni_pod_cidr}}
@@ -12,9 +12,9 @@ apiServer:
   certSANs:
   - localhost
   - 127.0.0.1
-  - {{k8s_loadbalancer_ip}}
+  - {{loadbalancer_ip}}
 {%for node in groups['k8s-nodes'] %}
-  - {{hostvars[node]['ansible_default_ipv4']['address'] }}
+  - {{hostvars[node]['ansible_host']}}
   - {{hostvars[node]['inventory_hostname']}}
   - {{hostvars[node]['inventory_hostname']}}.{{hostvars[node]['domain']}}
 {%endfor%}
@@ -22,7 +22,7 @@ etcd:
   external:
     endpoints:
 {%for node in groups['etcd'] %}
-    - https://{{ hostvars[node]['ansible_default_ipv4']['address'] }}:2379
+    - https://{{hostvars[node]['ansible_host']}}:2379
 {%endfor%}
     caFile: {{ etcd_certs_directory }}/ca.crt
     certFile: {{ etcd_certs_directory }}/etcd-server.crt
