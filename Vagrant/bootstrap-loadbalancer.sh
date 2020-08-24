@@ -20,7 +20,7 @@ systemctl enable nginx
 systemctl restart nginx
 
 # create logging directories
-mkdir -p /var/log/nginx/{k8s-apiserver,milkywaygalaxy.be}
+mkdir -p /var/log/nginx/{k8s-apiserver,mydomain.com}
 
 # generate ssl testing certificate
 mkdir /etc/ssl/private
@@ -150,11 +150,11 @@ cat <<EOF >> /etc/nginx/conf.d/01-k8s-loadbalancer.conf
 ################### http to https redirects ######################
 server {
     listen 80;
-    server_name *.milkywaygalaxy.be;
+    server_name *.mydomain.com;
 
     # logging
-    access_log  /var/log/nginx/milkywaygalaxy.be/access.log   main;
-    error_log   /var/log/nginx/milkywaygalaxy.be/error.log    error;
+    access_log  /var/log/nginx/mydomain.com/access.log   main;
+    error_log   /var/log/nginx/mydomain.com/error.log    error;
 
     location / {
         # return 301 https://\$server_name\$request_uri; # gives https://%2A.domain.com
@@ -177,8 +177,8 @@ cat <<EOF >> /etc/nginx/conf.d/01-k8s-loadbalancer.conf
     ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
 
     # logging
-    access_log  /var/log/nginx/milkywaygalaxy.be/access.log   main;
-    error_log   /var/log/nginx/milkywaygalaxy.be/error.log    error;
+    access_log  /var/log/nginx/mydomain.com/access.log   main;
+    error_log   /var/log/nginx/mydomain.com/error.log    error;
 
     location / {
         proxy_set_header X-Real-IP \$remote_addr;
@@ -194,7 +194,7 @@ server {
     # listen ssl
     listen 443 ssl;
     ssl on;
-    server_name *.milkywaygalaxy.be;
+    server_name *.mydomain.com;
 
     # SSL/TLS
     ssl_certificate     /etc/ssl/certs/nginx-selfsigned.crt;
@@ -204,8 +204,8 @@ server {
     ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
 
     # logging
-    access_log  /var/log/nginx/milkywaygalaxy.be/access.log   main;
-    error_log   /var/log/nginx/milkywaygalaxy.be/error.log    error;
+    access_log  /var/log/nginx/mydomain.com/access.log   main;
+    error_log   /var/log/nginx/mydomain.com/error.log    error;
 
     location / {
         proxy_set_header X-Real-IP \$remote_addr;
