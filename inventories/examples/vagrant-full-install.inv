@@ -27,14 +27,10 @@
 
 ################################ hosts ###############################
 [servers]
-# k8s-node-1 ansible_host=172.16.88.21
-# k8s-node-2 ansible_host=172.16.88.22
-# k8s-node-3 ansible_host=172.16.88.23
-# k8s-node-4 ansible_host=172.16.88.24
-k8s-node-1 ansible_host=10.42.0.21
-k8s-node-2 ansible_host=10.42.0.22
-k8s-node-3 ansible_host=10.42.0.23
-k8s-node-4 ansible_host=10.42.0.24
+k8s-node-1 ansible_host=172.16.88.21
+k8s-node-2 ansible_host=172.16.88.22
+k8s-node-3 ansible_host=172.16.88.23
+k8s-node-4 ansible_host=172.16.88.24
 
 [masters]
 k8s-node-1
