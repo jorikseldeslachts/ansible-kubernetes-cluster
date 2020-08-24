@@ -6,7 +6,7 @@
 - name: Update hostfile with all node ip's
   lineinfile:
     path: /etc/hosts
-    line: >
+    line: >-
       {{ hostvars[item]['ansible_host'] }}
       {{ hostvars[item]['inventory_hostname'] }}
       {{ hostvars[item]['inventory_hostname'] }}.{{ hostvars[item]['domain'] }}
