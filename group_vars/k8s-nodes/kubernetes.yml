@@ -27,3 +27,4 @@ k8s_cni_config_path: /etc/kubernetes/cni
 # Metrics-Server
 k8s_metrics_server_file_url: https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.7/components.yaml
 k8s_metrics_server_config_path: /etc/kubernetes/metrics-server
+k8s_metrics_server_log_level: 2

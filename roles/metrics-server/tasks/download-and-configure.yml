@@ -20,6 +20,7 @@
     insertafter: 'args:'
     line: "{{ item }}"
   with_items:
+    - "          - --v={{ k8s_metrics_server_log_level }}"
     - "          - --kubelet-insecure-tls"
     - "          - --kubelet-preferred-address-types=\
       InternalIP,ExternalIP,Hostname"
