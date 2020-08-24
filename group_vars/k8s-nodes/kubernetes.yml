@@ -1,7 +1,6 @@
 ---
 # k8s vars
 k8s_version_major: 1.18.6
-# k8s_loadbalancer_ip: 10.42.0.25  # 172.16.88.20
 k8s_ha_masters: yes
 k8s_pods_scheduled_on_master: yes
 k8s_user: k8s
