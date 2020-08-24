@@ -95,12 +95,6 @@ roles:
     - export ANSIBLE_CONFIG=./ansible.cfg
     - ansible-lint roles/*
 
-
-# Vagrant Validation
-# - vagrant validate
-# - run bootstrap scripts in container (centos/systemd?)
-# - yamllint vangrant servers
-
 vagrantfile:
   image: engineerbetter/vagrant:latest
   stage: vagrant-validate
@@ -111,6 +105,8 @@ vagrantfile:
     # - VBoxManage --version
     - vagrant validate --debug
 
+
+# privacy scan
 include:
   - project: milkywaygalaxy/templates/pipelines
     ref: master
