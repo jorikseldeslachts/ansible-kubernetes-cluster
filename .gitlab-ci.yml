@@ -1,11 +1,13 @@
 ---
 
 stages:
+  - privacy-scan
   - yaml-lint
   - ansible-syntax-check
   - ansible-lint
   # - molecule
   - vagrant-validate
+
 
 # Ansible Syntax Check
 .playook-syntax-check:
@@ -108,3 +110,8 @@ vagrantfile:
     - vagrant --version
     # - VBoxManage --version
     - vagrant validate --debug
+
+include:
+  - project: milkywaygalaxy/templates/pipelines
+    ref: master
+    file: privacy-scan/.gitlab-ci.yml
