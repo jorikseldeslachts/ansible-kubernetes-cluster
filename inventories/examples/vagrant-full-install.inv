@@ -51,6 +51,7 @@ masters
 [all:vars]
 ansible_user=root
 domain=mydomain.com
+network_interface=enp0s8
 
 [k8s-nodes:vars]
 noschedule=False
