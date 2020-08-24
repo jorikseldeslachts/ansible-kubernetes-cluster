@@ -1,10 +1,5 @@
 #!/bin/sh
 
-# This script will try math the VM's with the galaxyos images.
-# The galaxyos images are custom CentOS7 based images created by:
-# https://gitlab.com/milkywaygalaxy/kickstart/galaxyos
-
-
 # change ssh to no password
 sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 systemctl restart sshd
