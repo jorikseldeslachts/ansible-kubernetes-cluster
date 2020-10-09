@@ -111,4 +111,3 @@ include:
   - project: milkywaygalaxy/templates/pipelines
     ref: master
     file: privacy-scan/.gitlab-ci.yml
-    allow_failure: true
