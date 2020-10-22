@@ -1,7 +1,8 @@
 ---
 
 # docker vars
-docker_version: 18.09.9
+# docker_version: 18.09.9
+docker_version: 19.03.13
 docker_remove_old_docker_packages: yes
 docker_packages_to_remove:
   - docker
