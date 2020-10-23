@@ -93,6 +93,7 @@ roles:
   allow_failure: true
   script:
     - export ANSIBLE_CONFIG=./ansible.cfg
+    - ansible --version
     - ansible-lint roles/*
 
 vagrantfile:
