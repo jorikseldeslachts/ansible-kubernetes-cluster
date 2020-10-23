@@ -1,0 +1,14 @@
+---
+
+# https://itnext.io/on-premise-ha-kubernetes-cluster-15e41f18bd12
+# https://octetz.com/posts/ha-control-plane-k8s-kubeadm
+
+- name: Generate and retrieve join information from main-master
+  include: generate-join-information.yml
+  when: inventory_hostname == main_master
+
+- name: Include tasks to join new masters to the cluster
+  include: join-new-masters.yml
+  when:
+    - inventory_hostname in groups['masters']
+    - inventory_hostname != main_master

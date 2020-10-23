@@ -1,17 +1,59 @@
-# cluster config
-- name: Create kubeadm config path
+---
+
+# Preflight checks / requirements
+- name: Include kubernetes preflight check requirement tasks
+  include: preflight-reqs.yml
+
+
+# Logging path
+- name: Make sure kubeadm logging directory is present
   file:
-    path: "{{k8s_kubeadm_config_path}}"
     state: directory
-    owner: "{{k8s_user}}"
-    group: "{{k8s_user}}"
-    mode: 0755
+    path: "{{ k8s_kubeadm_log_path }}"
 
-- name: Copy custom kubeadm-config.yml
-  template:
-    src: kubeadm-config.yml.j2
-    dest: "{{k8s_kubeadm_config_path}}/kubeadm-config.yml"
 
-- name: SHOULD APPLY NEW CLUSTERCONFIGURATION WHEN ADDING NEW MASTERS!!!
-  debug:
-    msg: "NOT YET IMPLEMENTED"
+# Install some packages
+- name: Install some extra packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - iproute-tc
+    - nfs-utils
+
+- name: Upgrade pip
+  command: >
+    pip3 install
+    --upgrade pip
+    --user {{ k8s_user }}
+  changed_when: yes
+
+- name: Install Python requirements
+  pip:
+    executable: pip3
+    name:
+      - pyyaml>=3.11
+      - openshift>=0.6
+      - requests==2.22.0
+
+
+# Configure the k8s users and terminals
+- name: Include user and terminal customization tasks
+  include: configure-users.yml
+
+
+# Install k8s packages
+- name: Include Kubernetes package installation tasks
+  include: install-k8s-packages.yml
+
+
+# Install kubens and kubectx
+- name: Inclued installation of kubectx and kubens tools
+  include: install-kubectx-kubens.yml
+  when: inventory_hostname in groups['masters']
+
+
+# Prepare masters
+- name: Include tasks to prepare masters for cluster init
+  include: prepare-masters.yml
+  when: inventory_hostname in groups['masters']

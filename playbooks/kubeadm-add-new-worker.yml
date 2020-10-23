@@ -1,4 +1,0 @@
-- hosts: new-workers
-  become: yes
-  roles:
-    - kubeadm-add-worker

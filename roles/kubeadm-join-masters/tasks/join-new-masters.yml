@@ -1,0 +1,53 @@
+---
+
+########################### master-ha ###############################
+
+# Copy join vars from main-master to other HA-masters
+- name: Register vars on HA masters
+  set_fact:
+    master_join_command: >-
+      {{ hostvars[main_master]['kubeadm_token_create_result'].stdout
+      | regex_replace("\n", " ") }}
+    master_upload_certs: >-
+      {{ hostvars[main_master]['kubeadm_init_phase_result'].stdout
+      | regex_replace("\n", " ") }}
+
+
+# join master to cluster
+- name: "Join HA masters to the cluster and keep retrying if \
+         API server returns \"unexpected EOF\" errors"
+  shell: >
+    {{ master_join_command }}
+    --certificate-key {{ master_upload_certs }}
+    --control-plane
+    --v={{ k8s_api_debug_level }}
+    {{'--ignore-preflight-errors=all'
+    if k8s_ignore_preflight_errors |bool else ''}}
+    {{'|tee ' + k8s_kubeadm_log_path + '/kubeadm-join-master.log'
+    if k8s_kubeadm_log_to_file |bool else ''}}
+  register: join_result
+  until:
+    - join_result.stdout.find("40s passed") == -1
+    - join_result.stdout.find("unexpected EOF") == -1
+    - join_result.stdout.find("Peer URLs already exists") == -1
+  retries: 10
+  delay: 3
+  changed_when: yes
+
+
+# copy init conf
+- name: Create .kube directory
+  file:
+    path: "/home/{{ k8s_user }}/.kube"
+    state: directory
+    owner: "{{ k8s_user }}"
+    group: "{{ k8s_user }}"
+    mode: 0755
+
+- name: Copy admin.conf to .kube folder
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "/home/{{ k8s_user }}/.kube/config"
+    owner: "{{ k8s_user }}"
+    group: "{{ k8s_user }}"
+    remote_src: yes

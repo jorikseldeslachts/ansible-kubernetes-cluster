@@ -1,0 +1,14 @@
+---
+
+# nodes extra vars
+extra_handy_packages:
+  - wget
+  - htop
+  - nano
+  - vim
+  - tree
+  - git
+  - nc
+  - jq
+  - tcpdump
+  - iotop

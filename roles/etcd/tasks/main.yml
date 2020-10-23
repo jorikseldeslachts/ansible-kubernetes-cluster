@@ -1,0 +1,142 @@
+---
+
+# Create directory structure on etcd servers
+- name: Generate certs directory
+  file:
+    path: "{{ etcd_certs_directory }}"
+    state: directory
+    mode: 0755
+
+- name: Generate etcd directory
+  file:
+    path: "{{ etcd_data_directory }}"
+    state: directory
+    mode: 0700
+
+- name: Make sure /usr/local/bin directory exists
+  file:
+    path: /usr/local/bin
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+# Create CA and certs on one master and then distribute it to the etcd nodes
+- name: Create temporary directory on the first etcd node to generate certs
+  file:
+    path: "/tmp{{ etcd_certs_directory }}"
+    state: directory
+  when: "inventory_hostname == groups['etcd'][0]"
+
+- name: Include tasks to generate an etcd CA
+  include: generate-etcd-ca.yml
+  when: "inventory_hostname == groups['etcd'][0]"
+
+- name: Include etcd certificate creation tasks
+  include: generate-etcd-cert.yml
+  when: "inventory_hostname == groups['etcd'][0]"
+
+- name: Register certificate files to fetch
+  find:
+    path: "/tmp{{ etcd_certs_directory }}/"
+  register: etcd_certificates
+  when: "inventory_hostname == groups['etcd'][0]"
+
+- name: Fetch certificates from the first etcd node
+  fetch:
+    src: "{{ item.path }}"
+    dest: /tmp
+  with_items:
+    - "{{ etcd_certificates.files }}"
+  when: "inventory_hostname == groups['etcd'][0]"
+
+- name: Distribute etcd CA and certificates to etcd nodes
+  copy:
+    src: "/tmp/{{ main_master }}/tmp{{ etcd_certs_directory }}/"
+    dest: "{{ etcd_certs_directory }}/"
+    backup: "{{ etcd_backup_old_certs }}"
+
+- name: Remove temporary directory on localhost
+  file:
+    path: "/tmp/{{ groups['etcd'][0] }}"
+    state: absent
+  delegate_to: localhost
+
+
+# Download and install etcd binaries
+- name: Download etcd binaries
+  get_url:
+    url: "{{ etcd_download_url }}/v{{ etcd_version }}/\
+          etcd-v{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: "/tmp/etcd-v{{ etcd_version }}-linux-amd64.tar.gz"
+    mode: 0755
+
+- name: Unarchive etcd binary
+  unarchive:
+    remote_src: yes
+    src: "/tmp/etcd-v{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: "/tmp"
+    owner: root
+    group: root
+
+- name: Move etcd binaries to PATH location
+  copy:
+    remote_src: yes
+    src: "/tmp/etcd-v{{ etcd_version }}-linux-amd64/{{ item }}"
+    dest: "{{ etcd_path_location }}/{{ item }}"
+    mode: 0755
+  with_items:
+    - etcd
+    - etcdctl
+
+
+# Configure etcd service files
+- name: "Get IP on etcd network interface \"{{ etcd_network_interface }}\""
+  shell: |
+    echo $(ip addr show {{ etcd_network_interface }} \
+      | grep 'inet ' \
+      | awk '{print $2}' \
+      | cut -d / -f 1)
+  register: get_ip_address_result
+  changed_when: yes
+
+- name: Register etcd ip address
+  set_fact:
+    etcd_internal_ip_address: "{{ get_ip_address_result.stdout }}"
+
+- name: Configure etcd service
+  template:
+    src: etcd.service.j2
+    dest: /etc/systemd/system/etcd.service
+
+- name: Make sure etcd service is enabled and restarted
+  systemd:
+    name: etcd
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+
+
+# Test cluster
+- name: Test etcd cluster
+  shell: |
+    ETCDCTL_API=3 \
+    etcdctl member list \
+      --endpoints=https://127.0.0.1:2379 \
+      --cacert={{ etcd_certs_directory }}/ca.crt \
+      --cert={{ etcd_certs_directory }}/etcd-server.crt \
+      --key={{ etcd_certs_directory }}/etcd-server.key
+  register: etcd_test_results
+  until:
+    - etcd_test_results.stdout.find("error") == -1
+    - etcd_test_results.stdout.find("authentication handshake failed") == -1
+    - etcd_test_results.stdout.find("bad certificate") == -1
+    - etcd_test_results.stdout.find("TransientFailure") == -1
+  retries: "{{ etcd_test_cluster_retries }}"
+  delay: "{{ etcd_test_cluster_delay }}"
+  when: "inventory_hostname == groups['etcd'][0]"
+
+- name: Print etcd test results
+  debug:
+    msg: "{{ etcd_test_results.stdout_lines }}"
+  when: "inventory_hostname == groups['etcd'][0]"

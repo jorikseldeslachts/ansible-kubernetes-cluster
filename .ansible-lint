@@ -1,0 +1,10 @@
+---
+# Rules can be found at https://ansible-lint.readthedocs.io/en/latest/
+
+skip_list:
+  - '106'
+  - '208'
+  - '306'
+  - '403'
+
+

@@ -1,0 +1,29 @@
+---
+# k8s vars
+k8s_version_major: 1.18.6
+k8s_ha_masters: yes
+k8s_pods_scheduled_on_master: yes
+k8s_user: k8s
+k8s_user_password: $6$O5Or6GyG$rfAnZ84jbEq.WaX9WOFe0GM2Lpqev8v5z/rCXCSPeKnXInLwHJfUCXtq2g/kj/DcecOT6Iy7vPbYmpYOdCck2.
+k8s_service_cidr: 10.99.0.0/16
+k8s_packages_repository_url: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+k8s_kubectx_repository_url: https://github.com/ahmetb/kubectx
+k8s_api_debug_level: 6
+k8s_kubeadm_config_path: /etc/kubernetes/kubeadm
+k8s_apiserver_port: 6443
+k8s_ignore_preflight_errors: no
+k8s_pre_pull_images: yes
+k8s_kubelet_config_file: /var/lib/kubelet/config.yaml
+k8s_kubeadm_log_to_file: yes
+k8s_kubeadm_log_path: /var/log/kubeadm
+
+# CNI
+k8s_cni_plugin: flannel
+k8s_cni_pod_cidr: 10.88.0.0/16  # Make sure to match git yaml!!!
+k8s_cni_file_url: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+k8s_cni_config_path: /etc/kubernetes/cni
+
+# Metrics-Server
+k8s_metrics_server_file_url: https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.7/components.yaml
+k8s_metrics_server_config_path: /etc/kubernetes/metrics-server
+k8s_metrics_server_log_level: 2

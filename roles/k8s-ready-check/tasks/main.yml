@@ -1,0 +1,23 @@
+---
+
+# Debug
+- name: "Register node status. \
+         Wait for nodes with \"NotReady\" status to become \"Ready\""
+  shell: |
+    kubectl \
+      --kubeconfig=/home/{{ k8s_user }}/.kube/config \
+      get nodes \
+      -o wide
+  register: get_nodes
+  when: inventory_hostname == main_master
+  until:
+    - get_nodes.stdout.find("NotReady") == -1
+  retries: 20
+  delay: 10
+
+- name: Kubernetes installation complete
+  debug:
+    msg:
+      - "Kubernetes installation complete"
+      - "{{ get_nodes.stdout_lines }}"
+  when: inventory_hostname == main_master

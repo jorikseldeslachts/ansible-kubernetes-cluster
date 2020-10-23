@@ -1,0 +1,114 @@
+---
+
+stages:
+  - privacy-scan
+  - yaml-lint
+  - ansible-syntax-check
+  - ansible-lint
+  # - molecule
+  - vagrant-validate
+
+
+# Ansible Syntax Check
+.playook-syntax-check:
+  image: cytopia/ansible:2.8
+  stage: ansible-syntax-check
+  script:
+    - ansible-playbook -i $INVENTORY $PLAYBOOK --syntax-check
+
+full-install:
+  extends: .playook-syntax-check
+  variables:
+    PLAYBOOK: playbook-k8s-all.yml
+    INVENTORY: inventories/examples/vagrant-full-install.inv
+
+add-master:
+  extends: .playook-syntax-check
+  variables:
+    PLAYBOOK: playbook-kubeadm-add-new-master.yml
+    INVENTORY: inventories/examples/vagrant-add-master.inv
+
+add-worker:
+  extends: .playook-syntax-check
+  variables:
+    PLAYBOOK: playbook-kubeadm-add-new-worker.yml
+    INVENTORY: inventories/examples/vagrant-add-worker.inv
+
+
+# Yaml linting
+.yamllint:
+  # image: sdesbure/yamllint:latest
+  image: pipelinecomponents/yamllint
+  stage: yaml-lint
+  allow_failure: true
+  variables:
+    YAML_PATH: .
+    ALLOW_WARNINGS: "false"
+    LINT_STATUS: 0
+  script:
+    - cat .yamllint
+    - yamllint --strict ${YAML_PATH} || LINT_STATUS=$?
+    - |
+      if [ ${LINT_STATUS} -eq 2 ] && [ "${ALLOW_WARNINGS}" = true ]; then
+        echo -e "YAML warnings detected: ignoring because \"ALLOW_WARNINGS\" is set to \"true\""
+        exit 0
+      else
+        exit ${LINT_STATUS}
+      fi
+
+ansible-playbooks:
+  extends: .yamllint
+  variables:
+    YAML_PATH: >-
+      playbook-k8s-all.yml
+      playbook-kubeadm-add-new-master.yml
+      playbook-kubeadm-add-new-worker.yml
+    ALLOW_WARNINGS: "false"
+
+ansible-roles:
+  extends: .yamllint
+  variables:
+    YAML_PATH: roles
+    ALLOW_WARNINGS: "false"
+
+ansible-group-vars:
+  extends: .yamllint
+  variables:
+    YAML_PATH: group_vars
+    ALLOW_WARNINGS: "true"
+  before_script:
+    - "echo '  line-length: disable' >> .yamllint"
+
+vagrant-inventory:
+  extends: .yamllint
+  variables:
+    YAML_PATH: Vagrant/vagrant_servers.yaml
+    ALLOW_WARNINGS: "false"
+
+
+# ansible-lint
+roles:
+  image: pipelinecomponents/ansible-lint
+  stage: ansible-lint
+  allow_failure: true
+  script:
+    - export ANSIBLE_CONFIG=./ansible.cfg
+    - ansible --version
+    - ansible-lint roles/*
+
+vagrantfile:
+  image: engineerbetter/vagrant:latest
+  stage: vagrant-validate
+  allow_failure: true
+  script:
+    - cd Vagrant
+    - vagrant --version
+    # - VBoxManage --version
+    - vagrant validate --debug
+
+
+# privacy scan
+include:
+  - project: milkywaygalaxy/templates/pipelines
+    ref: master
+    file: privacy-scan/.gitlab-ci.yml

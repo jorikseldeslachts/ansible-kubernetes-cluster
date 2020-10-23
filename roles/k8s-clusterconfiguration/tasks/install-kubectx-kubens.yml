@@ -1,0 +1,25 @@
+---
+
+- name: Create .kubectx directory
+  file:
+    state: directory
+    path: "/home/{{ k8s_user }}/.kubectx"
+    mode: 0755
+
+- name: Clone kubectx and kubens git repository
+  git:
+    repo: "{{ k8s_kubectx_repository_url }}"
+    dest: "/home/{{ k8s_user }}/.kubectx"
+    version: master
+
+- name: Create symlink for kubens
+  file:
+    src: "/home/{{ k8s_user }}/.kubectx/kubens"
+    dest: /usr/local/bin/kubens
+    state: link
+
+- name: Create symlink for kubectx
+  file:
+    src: "/home/{{ k8s_user }}/.kubectx/kubectx"
+    dest: /usr/local/bin/kubectx
+    state: link
